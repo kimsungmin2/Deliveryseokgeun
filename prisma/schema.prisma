@@ -34,14 +34,16 @@ enum emailStatus{
 
 model Stores{
   storeId Int  @id @default(autoincrement()) @map("storeId")
-  storename     String   @unique @map("storename") 
-  storepassword  String   @map("storepassword")
-  storeaddress String @map("storeaddress")
-  storecontact String @map("storecontact")
-  storeemailstatus emailStatus @default(waiting) @map("storeemailstatus")
-  storeemailVerified Boolean  @default(false) @map("storeemailVerified")
-  storeverificationToken String? @map("storeverificationToken") 
-  storepoint Int @default(0)
+  storeName     String?   @unique @map("storename") 
+  storeEmail String @map("storeEmail")
+  adminName String @map("adminName")
+  storePassword  String   @map("storepassword")
+  storeAddress String? @map("storeaddress")
+  storeContact String? @map("storecontact")
+  storeEmailstatus storeemailstatus @default(waiting) @map("storeemailstatus")
+  storeEmailVerified Boolean  @default(false) @map("storeemailVerified")
+  storeVerificationToken String? @map("storeverificationToken") 
+  storePoint Int @default(0)
   createdAt DateTime @default(now()) @map("createdAt")
   updatedAt DateTime @updatedAt @map("updatedAt")
   menus Menus []
@@ -59,12 +61,11 @@ model Menus {
   userId Int @map("userId")
   storeId Int @map("storeId")
   orderId Int @map("orderId")
-  menuname     String   @map("menuname")
-  menuprice   String   @map("menuprice")
-  menucontent String @map("menucontent") @db.Text
+  menuName     String   @map("menuname")
+  menuPrice   Int   @map("menuprice")
+  menuContent String @map("menucontent") @db.Text
   createdAt DateTime @default(now()) @map("createdAt")
   updatedAt DateTime @updatedAt @map("updatedAt")
-
   user Users @relation(fields: [userId], references: [userId], onDelete: Cascade)
   store Stores @relation(fields: [storeId], references: [storeId], onDelete: Cascade)
   order Orders @relation(fields: [orderId], references: [orderId], onDelete: Cascade)
@@ -77,17 +78,18 @@ model Orders {
   userId Int @map("userId")
   storeId    Int     @map("storeId")
   menuId Int @map("menuId")
-  ordercontent String @map("ordercontent") @db.Text
-  orderstatus Orderstatus @default(cooking) @map("orderstatus")
+  orderContent String @map("ordercontent") @db.Text
+  orderStatus Orderstatus @default(cooking) @map("orderstatus")
   createdAt DateTime @default(now()) @map("createdAt")
   updatedAt DateTime @updatedAt @map("updatedAt")
+  ea Int @map("ea")
+  totalPrice Int @map("totalPrice")
   user Users @relation(fields: [userId], references: [userId], onDelete: Cascade)
   store Stores @relation(fields: [storeId], references: [storeId], onDelete: Cascade)
   menus Menus []
   reviews Reviews []
   @@map("Orders")
 }
-
 
 enum Orderstatus {
   cooking
