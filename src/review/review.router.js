@@ -1,9 +1,9 @@
 import express from "express";
-import { prisma } from "../utils/prisma/index.js";
+import { prisma } from "../../prisma/index.js";
 import { ReviewsController } from "./review.controller.js";
 import { ReviewsRepository } from "./review.repository.js";
 import { ReviewsService } from "./review.service.js";
-import { authMiddleware } from "../middlewares/auth.middlewares.js";
+// import { authMiddleware } from "../middlewares/auth.middlewares.js";
 
 const router = express.Router();
 

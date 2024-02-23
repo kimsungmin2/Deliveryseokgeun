@@ -15,7 +15,7 @@ model Users {
   email     String   @unique @map("email") 
   name String @map("name")
   password  String   @map("password")
-  emailstatus emailStatus @default(waiting) @map("emailstatus")
+  emailstatus emailStatus? @default(waiting) @map("emailstatus")
   emailVerified Boolean  @default(false) @map("emailVerified")
   verificationToken String? @map("verificationToken") 
   userpoint Int @default(0)
