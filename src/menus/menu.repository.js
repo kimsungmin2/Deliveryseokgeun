@@ -1,6 +1,11 @@
 export class MenusRepository {
-    constructor(prisma, redisClient) {
+    constructor(prisma) {
         this.prisma = prisma;
-        this.redisClient = redisClient;
     }
+    getMenuById = async (menuId) => {
+        const menu = await this.prisma.menus.findFirst({
+            where: { menuId: +menuId },
+        });
+        return menu;
+    };
 }
