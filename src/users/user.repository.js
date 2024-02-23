@@ -8,4 +8,9 @@ export class UsersRepository {
         const user = await this.prisma.users.findFirst({ where: { email } });
         return user;
     };
+
+    getUserById = async (userId) => {
+        const user = await this.prisma.users.findFirst({ where: { userId: +userId } });
+        return user;
+    };
 }

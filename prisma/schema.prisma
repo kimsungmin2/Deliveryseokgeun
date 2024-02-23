@@ -21,9 +21,9 @@ model Users {
   userpoint Int @default(0)
   createdAt DateTime @default(now()) @map("createdAt")
   updatedAt DateTime @updatedAt @map("updatedAt")
-  menus Menus []
   orders Orders []
   reviews  Reviews []
+  userspointh Userspointh []
   @@map("Users")
 }
 
@@ -32,43 +32,53 @@ enum emailStatus{
   completion
 }
 
-model Stores{
-  storeId Int  @id @default(autoincrement()) @map("storeId")
-  storeName     String?   @unique @map("storename") 
-  storeEmail String @map("storeEmail")
-  adminName String @map("adminName")
-  storePassword  String   @map("storepassword")
-  storeAddress String? @map("storeaddress")
-  storeContact String? @map("storecontact")
-  storeEmailstatus storeemailstatus @default(waiting) @map("storeemailstatus")
-  storeEmailVerified Boolean  @default(false) @map("storeemailVerified")
-  storeVerificationToken String? @map("storeverificationToken") 
-  storePoint Int @default(0)
-  createdAt DateTime @default(now()) @map("createdAt")
-  updatedAt DateTime @updatedAt @map("updatedAt")
-  menus Menus []
-  orders Orders []
-  reviews  Reviews []
-  @@map("Stores")
+model Aduser{
+storeId Int  @id @default(autoincrement()) @map("storeId")
+aduserId Int @unique @map("aduserId")
+adminName String @map("adminName")
+adEmail String @map("adEmail")
+adPassword  String   @map("adPassword")
+adEmailstatus AdEmailstatus @default(waiting) @map("adEmailstatus")
+adEmailVerified Boolean  @default(false) @map("adEmailVerified")
+adVerificationToken String? @map("adVerificationToken") 
+createdAt DateTime @default(now()) @map("createdAt")
+updatedAt DateTime @updatedAt @map("updatedAt")
+stores Stores?
 }
-enum storeemailstatus{
+
+enum AdEmailstatus{
   waiting
   completion
 }
 
+model Stores{
+  storeId Int  @id @default(autoincrement()) @map("storeId")
+  aduserId Int @unique @map("aduserId")
+  storeName     String?   @unique @map("storename") 
+  storeAddress String? @map("storeaddress")
+  storeContact String? @map("storecontact")
+  storePoint Int @default(0)
+  storeContent           String?           @map("storecontent")
+  createdAt DateTime @default(now()) @map("createdAt")
+  updatedAt DateTime @updatedAt @map("updatedAt") 
+  aduser Aduser @relation(fields: [aduserId], references: [aduserId], onDelete: Cascade)
+  menus Menus []
+  orders Orders []
+  reviews  Reviews []
+  storespointh Storespointh []
+  @@map("Stores")
+}
+
 model Menus {
   menuId    Int      @id @default(autoincrement()) @map("menuId")
-  userId Int @map("userId")
   storeId Int @map("storeId")
-  orderId Int @map("orderId")
   menuName     String   @map("menuname")
   menuPrice   Int   @map("menuprice")
   menuContent String @map("menucontent") @db.Text
   createdAt DateTime @default(now()) @map("createdAt")
   updatedAt DateTime @updatedAt @map("updatedAt")
-  user Users @relation(fields: [userId], references: [userId], onDelete: Cascade)
   store Stores @relation(fields: [storeId], references: [storeId], onDelete: Cascade)
-  order Orders @relation(fields: [orderId], references: [orderId], onDelete: Cascade)
+  orders Orders []
   reviews Reviews [] 
   @@map("Menus")
 }
@@ -84,10 +94,13 @@ model Orders {
   updatedAt DateTime @updatedAt @map("updatedAt")
   ea Int @map("ea")
   totalPrice Int @map("totalPrice")
+  orderAddress String @map("orderAddress")
   user Users @relation(fields: [userId], references: [userId], onDelete: Cascade)
   store Stores @relation(fields: [storeId], references: [storeId], onDelete: Cascade)
-  menus Menus []
+  menu Menus @relation(fields: [menuId], references: [menuId], onDelete: Cascade)
   reviews Reviews []
+  userspointh Userspointh []
+  storespointh Storespointh []
   @@map("Orders")
 }
 
@@ -114,4 +127,24 @@ model Reviews {
   @@map("Reviews")
 }
 
- 
+model Userspointh{
+  userpointhId Int  @id @default(autoincrement()) @map("userpointhId")
+  userId Int @map("userId")
+  orderId Int @map("orderId")
+  history String @map("history") 
+  amount Int @map("amount")
+  afteramount Int @map("afteramount")
+  user Users @relation(fields: [userId], references: [userId], onDelete: Cascade)
+  order Orders @relation(fields: [orderId], references: [orderId], onDelete: Cascade)
+}
+
+model Storespointh{
+  storepointhId Int  @id @default(autoincrement()) @map("storepointhId")
+  storeId Int @map("storeId")
+  orderId Int @map("orderId")
+  history String @map("history")
+  amount Int @map("amount")
+  afteramount Int @map("afteramount")
+  store Stores @relation(fields: [storeId], references: [storeId] , onDelete: Cascade)
+  order Orders @relation(fields: [orderId], references: [orderId], onDelete: Cascade)
+}
