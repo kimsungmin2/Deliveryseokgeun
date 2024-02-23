@@ -1,0 +1,115 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model Users {
+  userId    Int      @id @default(autoincrement()) @map("userId")
+  email     String   @unique @map("email") 
+  name String @map("name")
+  password  String   @map("password")
+  emailstatus emailStatus @default(waiting) @map("emailstatus")
+  emailVerified Boolean  @default(false) @map("emailVerified")
+  verificationToken String? @map("verificationToken") 
+  userpoint Int @default(0)
+  createdAt DateTime @default(now()) @map("createdAt")
+  updatedAt DateTime @updatedAt @map("updatedAt")
+  menus Menus []
+  orders Orders []
+  reviews  Reviews []
+  @@map("Users")
+}
+
+enum emailStatus{
+  waiting
+  completion
+}
+
+model Stores{
+  storeId Int  @id @default(autoincrement()) @map("storeId")
+  storename     String   @unique @map("storename") 
+  storepassword  String   @map("storepassword")
+  storeaddress String @map("storeaddress")
+  storecontact String @map("storecontact")
+  storeemailstatus emailStatus @default(waiting) @map("storeemailstatus")
+  storeemailVerified Boolean  @default(false) @map("storeemailVerified")
+  storeverificationToken String? @map("storeverificationToken") 
+  storepoint Int @default(0)
+  createdAt DateTime @default(now()) @map("createdAt")
+  updatedAt DateTime @updatedAt @map("updatedAt")
+  menus Menus []
+  orders Orders []
+  reviews  Reviews []
+  @@map("Stores")
+}
+enum storeemailstatus{
+  waiting
+  completion
+}
+
+model Menus {
+  menuId    Int      @id @default(autoincrement()) @map("menuId")
+  userId Int @map("userId")
+  storeId Int @map("storeId")
+  orderId Int @map("orderId")
+  menuname     String   @map("menuname")
+  menuprice   String   @map("menuprice")
+  menucontent String @map("menucontent") @db.Text
+  createdAt DateTime @default(now()) @map("createdAt")
+  updatedAt DateTime @updatedAt @map("updatedAt")
+
+  user Users @relation(fields: [userId], references: [userId], onDelete: Cascade)
+  store Stores @relation(fields: [storeId], references: [storeId], onDelete: Cascade)
+  order Orders @relation(fields: [orderId], references: [orderId], onDelete: Cascade)
+  reviews Reviews [] 
+  @@map("Menus")
+}
+
+model Orders {
+  orderId Int  @id @default(autoincrement()) @map("orderId")
+  userId Int @map("userId")
+  storeId    Int     @map("storeId")
+  menuId Int @map("menuId")
+  ordercontent String @map("ordercontent") @db.Text
+  orderstatus Orderstatus @default(cooking) @map("orderstatus")
+  createdAt DateTime @default(now()) @map("createdAt")
+  updatedAt DateTime @updatedAt @map("updatedAt")
+  user Users @relation(fields: [userId], references: [userId], onDelete: Cascade)
+  store Stores @relation(fields: [storeId], references: [storeId], onDelete: Cascade)
+  menus Menus []
+  reviews Reviews []
+  @@map("Orders")
+}
+
+
+enum Orderstatus {
+  cooking
+  deliveryready
+  delivering
+  deliverycompleted
+}
+
+model Reviews {
+  reviewId   Int      @id @default(autoincrement()) @map("likesId")
+  userId    Int @map("userId")
+  storeId    Int @map("storeId")
+  menuId    Int @map("menuId")
+  orderId Int @map("orderId")
+  review String @map("review") @db.Text
+  rate Int @map("rate")
+  createdAt    DateTime @default(now()) @map("createdAt")
+  user Users @relation(fields: [userId], references: [userId], onDelete: Cascade)
+  store Stores @relation(fields: [storeId], references: [storeId] , onDelete: Cascade)
+  menu Menus @relation(fields: [menuId], references: [menuId], onDelete: Cascade)
+  order Orders @relation(fields: [orderId], references: [orderId], onDelete: Cascade)
+  @@map("Reviews")
+}
+
+ 
