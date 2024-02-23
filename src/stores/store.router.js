@@ -13,4 +13,5 @@ const storesService = new StoresService(storesRepository);
 
 const storesController = new StoresController(storesService);
 
+router.post("/signin", storesController.signIn);
 export default router;
