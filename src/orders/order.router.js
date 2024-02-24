@@ -8,9 +8,10 @@ import { MenusRepository } from "../menus/menu.repository.js";
 import { StoresRepository } from "../stores/store.repository.js";
 import { authMiddleware } from "../middlewares/auth.middlewares.js";
 import { OrderlistRepository } from "../orderlist/orderlist.repository.js";
-import { adauthMiddleware } from "../middlewares/adauth.middlewares.js";
+// import { adauthMiddleware } from "../middlewares/adauth.middlewares.js";
 import { OrderlistService } from "../orderlist/orderlist.service.js";
-
+import { PointsRepository } from "../points/point.repository.js";
+import { StoresService } from "../stores/store.service.js";
 const router = express.Router();
 
 const ordersRepository = new OrdersRepository(prisma);
@@ -18,14 +19,18 @@ const usersRepository = new UsersRepository(prisma);
 const menusRepository = new MenusRepository(prisma);
 const storesRepository = new StoresRepository(prisma);
 const orderlistRepository = new OrderlistRepository(prisma);
-const ordersService = new OrdersService(ordersRepository, usersRepository, menusRepository, storesRepository, orderlistRepository);
+const pointsRepository = new PointsRepository(prisma);
+
+const ordersService = new OrdersService(ordersRepository, usersRepository, menusRepository, storesRepository, orderlistRepository, pointsRepository);
+const storesService = new StoresService(storesRepository);
 const orderlistService = new OrderlistService(orderlistRepository);
-const ordersController = new OrdersController(ordersService, orderlistService);
+
+const ordersController = new OrdersController(ordersService, storesService, orderlistService);
 
 router.post("/", authMiddleware, ordersController.createOrder);
 
 router.patch("/:orderId", authMiddleware, ordersController.userupdateOrder);
 
-router.patch("/deliveryready/:orderId", adauthMiddleware, ordersController.drstatusup);
+router.delete("/:orderId", authMiddleware, ordersController.deleteOrder);
 
 export default router;

@@ -3,7 +3,7 @@ export class StoresRepository {
         this.prisma = prisma;
     }
     getStoreById = async (storeId) => {
-        const store = await this.prisma.stores.findFirst({ where: { storeId } });
+        const store = await this.prisma.stores.findFirst({ where: { storeId: +storeId } });
         return store;
     };
     decrementPoint = (storeId, amount) => {
@@ -29,5 +29,17 @@ export class StoresRepository {
         });
 
         return store;
+    };
+    readystatusup = async (orderId, storeId, orderStatus) => {
+        const order = await this.prisma.orders.update({ where: { orderId: +orderId }, data: { storeId: +storeId, orderStatus } });
+        return order;
+    };
+    ingstatusup = async (orderId, storeId, orderStatus) => {
+        const order = await this.prisma.orders.update({ where: { orderId: +orderId }, data: { storeId: +storeId, orderStatus } });
+        return order;
+    };
+    completestatusup = async (orderId, storeId, orderStatus) => {
+        const order = await this.prisma.orders.update({ where: { orderId: +orderId }, data: { storeId: +storeId, orderStatus } });
+        return order;
     };
 }

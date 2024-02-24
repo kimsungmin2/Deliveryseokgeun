@@ -18,4 +18,16 @@ export class UsersController {
         res.cookie("refreshToken", tokens.refreshToken);
         return res.status(200).json({ message: "로그인 성공" });
     };
+
+    getUserPoint = async (req, res, next) => {
+        try {
+            const { userId } = req.params;
+
+            const user = await this.usersService.getUserPoint(userId);
+            console.log(point);
+            return res.status(200).json({ message: `현재 고객님의 포인트${user[0]._sum.possession}원 있습니다.` });
+        } catch (err) {
+            next(err);
+        }
+    };
 }

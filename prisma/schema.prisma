@@ -19,7 +19,7 @@ model Users {
   updatedAt DateTime @updatedAt @map("updatedAt")
   orders Orders []
   reviews  Reviews []
-  point Point []
+  userpoints Userpoints []
   @@map("Users")
 }
 enum emailStatus{
@@ -56,7 +56,7 @@ model Stores{
   menus Menus []
   orders Orders []
   reviews  Reviews []
-  point Point []
+  storepoints Storepoints []
   @@map("Stores")
 }
 model Menus {
@@ -118,13 +118,21 @@ model Reviews {
   order Orders @relation(fields: [orderId], references: [orderId], onDelete: Cascade)
   @@map("Reviews")
 }
-model Point{
+model Userpoints{
   pointId Int  @id @default(autoincrement()) @map("pointId")
   userId Int @map("userId")
-  storeId Int @map("storeId")
+  possession Int @map("possession")
   history String @map("history")
   createdAt DateTime @default(now()) @map("createdAt")
   user Users @relation(fields: [userId], references: [userId], onDelete: Cascade)
+  @@map("Userpoints")
+}
+model Storepoints{
+  pointId Int  @id @default(autoincrement()) @map("pointId")
+  storeId Int @map("storeId")
+  possession Int @map("possession")
+  history String @map("history")
+  createdAt DateTime @default(now()) @map("createdAt")
   store Stores @relation(fields: [storeId], references: [storeId], onDelete: Cascade)
-  @@map("Point")
+  @@map("Storepoints")
 }

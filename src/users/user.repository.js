@@ -15,7 +15,7 @@ export class UsersRepository {
     };
 
     getadUserByEmail = async (adEmail) => {
-        const aduser = await this.prisma.adusers.findFirst({ where: { adEmail } });
+        const aduser = await this.prisma.aduser.findFirst({ where: { adEmail } });
         return aduser;
     };
 

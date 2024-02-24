@@ -39,7 +39,13 @@ export class OrdersRepository {
         });
         return order;
     };
-    drstatusup = async (orderId, orderStatus) => {
-        const order = await this.prisma.orders.update({ where: { orderId: +orderId }, data: { orderStatus } });
+    deleteOrder = async (orderId, userId) => {
+        const deletedOrder = await this.prisma.orders.delete({
+            where: {
+                orderId: +orderId,
+                userId: +userId,
+            },
+        });
+        return deletedOrder;
     };
 }
