@@ -13,4 +13,34 @@ export class UsersRepository {
         const user = await this.prisma.users.findFirst({ where: { userId: +userId } });
         return user;
     };
+
+    getadUserByEmail = async (adEmail) => {
+        const aduser = await this.prisma.adusers.findFirst({ where: { adEmail } });
+        return aduser;
+    };
+
+    decrementPoint = (userId, amount) => {
+        const user = this.prisma.users.update({
+            where: { userId: +userId },
+            data: {
+                userpoint: {
+                    decrement: amount,
+                },
+            },
+        });
+
+        return user;
+    };
+    incrementPoint = (userId, amount) => {
+        const user = this.prisma.users.update({
+            where: { userId: +userId },
+            data: {
+                userpoint: {
+                    increment: amount,
+                },
+            },
+        });
+
+        return user;
+    };
 }

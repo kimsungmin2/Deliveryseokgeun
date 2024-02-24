@@ -15,4 +15,6 @@ const usersController = new UsersController(usersService);
 
 router.post("/signin", usersController.signIn);
 
+router.post("/adsignup", usersController.adsignIn);
+
 export default router;

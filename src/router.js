@@ -7,9 +7,9 @@ import ReviewRouter from "./review/review.router.js";
 
 const router = express.Router();
 
-router.use("/stores/", StoresRouter);
+router.use("/stores", StoresRouter);
 
-router.use("/users/", UsersRouter);
+router.use("/users", UsersRouter);
 
 router.use("/orders", OrdersRouter);
 

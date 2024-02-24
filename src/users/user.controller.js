@@ -10,4 +10,12 @@ export class UsersController {
         res.cookie("refreshToken", tokens.refreshToken);
         return res.status(200).json({ message: "로그인 성공" });
     };
+    adsignIn = async (req, res, next) => {
+        const { adEmail, adPassword } = req.body;
+
+        const tokens = await this.usersService.adsignIn(adEmail, adPassword);
+        res.cookie("authorization", `Bearer ${tokens.userJWT}`);
+        res.cookie("refreshToken", tokens.refreshToken);
+        return res.status(200).json({ message: "로그인 성공" });
+    };
 }
