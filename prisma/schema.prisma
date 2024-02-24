@@ -28,7 +28,7 @@ enum emailStatus{
   completion
 }
 model Aduser{
-aduserId Int  @id @default(autoincrement()) @map("storeId")
+aduserId Int  @id @default(autoincrement()) @map("aduserId")
 adminName String @map("adminName")
 adEmail String @map("adEmail")
 adPassword  String   @map("adPassword")
@@ -38,6 +38,7 @@ adVerificationToken String? @map("adVerificationToken")
 createdAt DateTime @default(now()) @map("createdAt")
 updatedAt DateTime @updatedAt @map("updatedAt")
 stores Stores []
+@@map("Aduser")
 }
 enum AdEmailstatus{
   waiting
@@ -46,11 +47,11 @@ enum AdEmailstatus{
 model Stores{
   storeId Int  @id @default(autoincrement()) @map("storeId")
   aduserId Int  @map("aduserId")
-  storeName     String   @map("storename")
-  storeAddress String @map("storeaddress")
-  storeContact String @map("storecontact")
+  storeName     String   @map("storeName")
+  storeAddress String @map("storeAddress")
+  storeContact String @map("storeContact")
   storePoint Int @default(0)
-  storeContent           String           @map("storecontent")
+  storeContent           String           @map("storeContent")
   createdAt DateTime @default(now()) @map("createdAt")
   updatedAt DateTime @updatedAt @map("updatedAt")
   aduser Aduser @relation(fields: [aduserId], references: [aduserId], onDelete: Cascade)
@@ -63,35 +64,42 @@ model Stores{
 model Menus {
   menuId    Int      @id @default(autoincrement()) @map("menuId")
   storeId Int @map("storeId")
-  menuName     String   @map("menuname")
-  menuPrice   Int   @map("menuprice")
-  menuContent String @map("menucontent") @db.Text
+  menuName     String   @map("menuName")
+  menuPrice   Int   @map("menuPrice")
+  menuContent String @map("menuContent") @db.Text
   createdAt DateTime @default(now()) @map("createdAt")
   updatedAt DateTime @updatedAt @map("updatedAt")
   store Stores @relation(fields: [storeId], references: [storeId], onDelete: Cascade)
-  orders Orders []
   reviews Reviews []
+  orderlist Orderlist []
   @@map("Menus")
 }
 model Orders {
   orderId Int  @id @default(autoincrement()) @map("orderId")
   userId Int @map("userId")
   storeId    Int     @map("storeId")
-  menuId Int @map("menuId")
-  orderContent String @map("ordercontent") @db.Text
-  orderStatus Orderstatus @default(cooking) @map("orderstatus")
+  orderContent String @map("orderContent") @db.Text
+  orderStatus Orderstatus @default(cooking) @map("orderStatus")
   createdAt DateTime @default(now()) @map("createdAt")
   updatedAt DateTime @updatedAt @map("updatedAt")
-  ea Int @map("ea")
-  totalPrice Int @map("totalPrice")
   orderAddress String @map("orderAddress")
+  totalprice Int @map("totalprice")
   user Users @relation(fields: [userId], references: [userId], onDelete: Cascade)
   store Stores @relation(fields: [storeId], references: [storeId], onDelete: Cascade)
-  menu Menus @relation(fields: [menuId], references: [menuId], onDelete: Cascade)
   reviews Reviews []
   userspointh Userspointh []
   storespointh Storespointh []
+  orderlist Orderlist []
   @@map("Orders")
+}
+model Orderlist{
+  orderlistId Int @id @default(autoincrement()) @map("orderlistId")
+  orderId Int @map("orderId")
+  menuId Int @map("menuId")
+  ea Int
+  order Orders @relation(fields: [orderId], references: [orderId], onDelete: Cascade)
+  menu Menus @relation(fields: [menuId], references: [menuId], onDelete: Cascade)
+  @@map("Orderlist")
 }
 enum Orderstatus {
   cooking
@@ -100,7 +108,7 @@ enum Orderstatus {
   deliverycompleted
 }
 model Reviews {
-  reviewId   Int      @id @default(autoincrement()) @map("likesId")
+  reviewId   Int      @id @default(autoincrement()) @map("reviewId")
   userId    Int @map("userId")
   storeId    Int @map("storeId")
   menuId    Int @map("menuId")
@@ -123,6 +131,7 @@ model Userspointh{
   afteramount Int @map("afteramount")
   user Users @relation(fields: [userId], references: [userId], onDelete: Cascade)
   order Orders @relation(fields: [orderId], references: [orderId], onDelete: Cascade)
+  @@map("Userspointh")
 }
 model Storespointh{
   storepointhId Int  @id @default(autoincrement()) @map("storepointhId")
@@ -133,4 +142,6 @@ model Storespointh{
   afteramount Int @map("afteramount")
   store Stores @relation(fields: [storeId], references: [storeId] , onDelete: Cascade)
   order Orders @relation(fields: [orderId], references: [orderId], onDelete: Cascade)
+
+  @@map("Storespointh")
 }

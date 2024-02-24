@@ -79,9 +79,9 @@ export class UsersController {
   const adusers = await this.usersService.adminregister(adEmail, adminName, adPassword, adPasswordconfirm);
   
   
-  // if (!adusers) {
-  //   return res.status(400).json({ message: "유저가 존재하지 않습니다." });
-  // }
+  if (!adusers) {
+    return res.status(400).json({ message: "유저가 존재하지 않습니다." });
+  }
   
   if (adPassword !== adPasswordconfirm) {
     return res
