@@ -1,7 +1,12 @@
+import { OrdersRepository } from "./order.repository.js";
+
 export class OrdersService {
-  constructor(ordersRepository) {
-    this.ordersRepository = ordersRepository;
-  }
+  menuRepository = new OrdersRepository();
+
+  // constructor(ordersRepository) {
+  //   this.ordersRepository = ordersRepository;
+  // }
+
   createOrder = async (
     userId,
     storeId,
@@ -58,5 +63,45 @@ export class OrdersService {
     );
 
     return searchData;
+  };
+
+  findStoreId = async (storeId) => {
+    const findStore = this.ordersRepository.findStoreById(storeId);
+
+    if (!findStore) {
+      return res.status(404).json({ message: "가게가 존재하지 않습니다." });
+    }
+    return findStore;
+  };
+
+  getOrderdata = async (storeId) => {
+    const orderData = prisma.orders.findMany({
+      where: {
+        storeId: +storeId,
+        orderStatus: {
+          in: ["cooking", "deliveryready", "delivering"],
+        },
+      },
+      select: {
+        //이중 select 이렇게 쓰면 되는지?..
+        user: {
+          select: {
+            name: true,
+          },
+        },
+        menu: {
+          select: {
+            menuName: true,
+          },
+        },
+        ea: true,
+        orderAddress: true,
+        totalPrice: true,
+        orderContent: true,
+        orderStatus: true,
+        createdAt: true,
+      },
+    });
+    return orderData;
   };
 }

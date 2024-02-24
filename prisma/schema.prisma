@@ -18,7 +18,7 @@ model Users {
   emailstatus emailStatus? @default(waiting) @map("emailstatus")
   emailVerified Boolean  @default(false) @map("emailVerified")
   verificationToken String? @map("verificationToken") 
-  userpoint Int @default(0)
+  userpoint Int @default(0) @map("userpoint")
   createdAt DateTime @default(now()) @map("createdAt")
   updatedAt DateTime @updatedAt @map("updatedAt")
   orders Orders []
@@ -44,6 +44,8 @@ adVerificationToken String? @map("adVerificationToken")
 createdAt DateTime @default(now()) @map("createdAt")
 updatedAt DateTime @updatedAt @map("updatedAt")
 stores Stores?
+
+@@map("Aduser")
 }
 
 enum AdEmailstatus{
@@ -51,30 +53,13 @@ enum AdEmailstatus{
   completion
 }
 
-model Stores{
-  storeId Int  @id @default(autoincrement()) @map("storeId")
-  aduserId Int @unique @map("aduserId")
-  storeName     String?   @unique @map("storename") 
-  storeAddress String? @map("storeaddress")
-  storeContact String? @map("storecontact")
-  storePoint Int @default(0)
-  storeContent           String?           @map("storecontent")
-  createdAt DateTime @default(now()) @map("createdAt")
-  updatedAt DateTime @updatedAt @map("updatedAt") 
-  aduser Aduser @relation(fields: [aduserId], references: [aduserId], onDelete: Cascade)
-  menus Menus []
-  orders Orders []
-  reviews  Reviews []
-  storespointh Storespointh []
-  @@map("Stores")
-}
 
 model Menus {
   menuId    Int      @id @default(autoincrement()) @map("menuId")
   storeId Int @map("storeId")
-  menuName     String   @map("menuname")
-  menuPrice   Int   @map("menuprice")
-  menuContent String @map("menucontent") @db.Text
+  menuName     String   @map("menuName")
+  menuPrice   Int   @map("menuPrice")
+  menuContent String @map("menuContent") @db.Text
   createdAt DateTime @default(now()) @map("createdAt")
   updatedAt DateTime @updatedAt @map("updatedAt")
   store Stores @relation(fields: [storeId], references: [storeId], onDelete: Cascade)
@@ -88,8 +73,8 @@ model Orders {
   userId Int @map("userId")
   storeId    Int     @map("storeId")
   menuId Int @map("menuId")
-  orderContent String @map("ordercontent") @db.Text
-  orderStatus Orderstatus @default(cooking) @map("orderstatus")
+  orderContent String @map("orderContent") @db.Text
+  orderStatus Orderstatus @default(cooking) @map("orderStatus")
   createdAt DateTime @default(now()) @map("createdAt")
   updatedAt DateTime @updatedAt @map("updatedAt")
   ea Int @map("ea")
@@ -112,7 +97,7 @@ enum Orderstatus {
 }
 
 model Reviews {
-  reviewId   Int      @id @default(autoincrement()) @map("likesId")
+  reviewId   Int      @id @default(autoincrement()) @map("reviewId")
   userId    Int @map("userId")
   storeId    Int @map("storeId")
   menuId    Int @map("menuId")
@@ -136,15 +121,36 @@ model Userspointh{
   afteramount Int @map("afteramount")
   user Users @relation(fields: [userId], references: [userId], onDelete: Cascade)
   order Orders @relation(fields: [orderId], references: [orderId], onDelete: Cascade)
+
+  @@map("Userspointh")
+}
+
+model Stores{
+  storeId Int  @id @default(autoincrement()) @map("storeId")
+  aduserId Int @unique @map("aduserId")
+  storeName     String?   @unique @map("storeName") 
+  storeAddress String? @map("storeAddress")
+  storeContact String? @map("storeContact")
+  storePoint Int @default(0) @map("storePoint")
+  storeContent           String?           @map("storeContent")
+  createdAt DateTime @default(now()) @map("createdAt")
+  updatedAt DateTime @updatedAt @map("updatedAt") 
+  aduser Aduser @relation(fields: [aduserId], references: [aduserId], onDelete: Cascade)
+  menus Menus []
+  orders Orders []
+  reviews  Reviews []
+  storespointh Storespointh []
+  @@map("Stores")
 }
 
 model Storespointh{
   storepointhId Int  @id @default(autoincrement()) @map("storepointhId")
-  storeId Int @map("storeId")
   orderId Int @map("orderId")
   history String @map("history")
   amount Int @map("amount")
   afteramount Int @map("afteramount")
   store Stores @relation(fields: [storeId], references: [storeId] , onDelete: Cascade)
   order Orders @relation(fields: [orderId], references: [orderId], onDelete: Cascade)
+
+   @@map("Storespointh")
 }

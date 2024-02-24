@@ -1,8 +1,10 @@
+import { prisma } from "../../prisma/index.js";
+
 export class OrdersRepository {
-  constructor(prisma, redisClient) {
-    this.prisma = prisma;
-    this.redisClient = redisClient;
-  }
+  //   constructor(prisma, redisClient) {
+  //     this.prisma = prisma;
+  //     this.redisClient = redisClient;
+  //   }
   createOrder = async (
     userId,
     storeId,
@@ -72,5 +74,14 @@ export class OrdersRepository {
       },
     });
     return searchByMenuId;
+  };
+
+  findStoreById = async (storeId) => {
+    const findStore = prisma.stores.findFirst({
+      where: {
+        storeId: +storeId,
+      },
+    });
+    return findStore;
   };
 }

@@ -1,9 +1,12 @@
-import { OrdersRepository } from "./order.repository";
+import { OrdersService } from "./order.service.js";
 
 export class OrdersController {
-  constructor(ordersService) {
-    this.ordersService = ordersService;
-  }
+  ordersService = new OrdersService();
+
+  // constructor(ordersService) {
+  //   this.ordersService = ordersService;
+  // }
+
   createResume = async (req, res, next) => {
     try {
       const { storeId } = req.params;
@@ -36,6 +39,24 @@ export class OrdersController {
 
     //검색키워드를 storeName에 포함한 가게들의 정보
     const searchData = await this.ordersService.findStore(search);
+
     return res.status(200).json({ data: searchData });
+  };
+
+  getOrderData = async (req, res, next) => {
+    const { storeId } = req.params;
+    const { userId } = req.user; //사장님도 같은 authMiddleware?
+
+    const store = await this.ordersService.findStoreId(storeId);
+
+    if (userId !== store.aduserId) {
+      return res
+        .status(403)
+        .json({ message: "사장님만 주문 조회를 할 수 있습니다." });
+    }
+
+    //storeId를 orders에서 찾기
+    const order = await this.ordersService.getOrderdata(storeId);
+    return res.status(200).json({ data: order });
   };
 }
