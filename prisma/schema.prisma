@@ -1,37 +1,31 @@
 // This is your Prisma schema file,
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
   provider = "prisma-client-js"
 }
-
 datasource db {
   provider = "mysql"
   url      = env("DATABASE_URL")
 }
-
 model Users {
   userId    Int      @id @default(autoincrement()) @map("userId")
-  email     String   @unique @map("email") 
+  email     String   @unique @map("email")
   name String @map("name")
   password  String   @map("password")
   emailstatus emailStatus? @default(waiting) @map("emailstatus")
   emailVerified Boolean  @default(false) @map("emailVerified")
-  verificationToken String? @map("verificationToken") 
-  userpoint Int @default(0)
+  verificationToken String? @map("verificationToken")
   createdAt DateTime @default(now()) @map("createdAt")
   updatedAt DateTime @updatedAt @map("updatedAt")
   orders Orders []
   reviews  Reviews []
-  userspointh Userspointh []
+  point Point []
   @@map("Users")
 }
-
 enum emailStatus{
   waiting
   completion
 }
-
 model Aduser{
 aduserId Int  @id @default(autoincrement()) @map("aduserId")
 adminName String @map("adminName")
@@ -39,56 +33,52 @@ adEmail String @map("adEmail")
 adPassword  String   @map("adPassword")
 adEmailstatus AdEmailstatus @default(waiting) @map("adEmailstatus")
 adEmailVerified Boolean  @default(false) @map("adEmailVerified")
-adVerificationToken String? @map("adVerificationToken") 
+adVerificationToken String? @map("adVerificationToken")
 createdAt DateTime @default(now()) @map("createdAt")
 updatedAt DateTime @updatedAt @map("updatedAt")
 stores Stores []
+@@map("Aduser")
 }
-
 enum AdEmailstatus{
   waiting
   completion
 }
-
 model Stores{
   storeId Int  @id @default(autoincrement()) @map("storeId")
   aduserId Int  @map("aduserId")
-  storeName     String   @map("storename") 
-  storeAddress String @map("storeaddress")
-  storeContact String @map("storecontact")
-  storePoint Int @default(0)
-  storeContent           String           @map("storecontent")
+  storeName     String   @map("storeName")
+  storeAddress String @map("storeAddress")
+  storeContact String @map("storeContact")
+  storeContent           String           @map("storeContent")
   createdAt DateTime @default(now()) @map("createdAt")
-  updatedAt DateTime @updatedAt @map("updatedAt") 
+  updatedAt DateTime @updatedAt @map("updatedAt")
   aduser Aduser @relation(fields: [aduserId], references: [aduserId], onDelete: Cascade)
   menus Menus []
   orders Orders []
   reviews  Reviews []
-  storespointh Storespointh []
+  point Point []
   @@map("Stores")
 }
-
 model Menus {
   menuId    Int      @id @default(autoincrement()) @map("menuId")
   storeId Int @map("storeId")
-  menuName     String   @map("menuname")
-  menuPrice   Int   @map("menuprice")
-  menuContent String @map("menucontent") @db.Text
+  menuName     String   @map("menuName")
+  menuPrice   Int   @map("menuPrice")
+  menuContent String @map("menuContent") @db.Text
   createdAt DateTime @default(now()) @map("createdAt")
   updatedAt DateTime @updatedAt @map("updatedAt")
   store Stores @relation(fields: [storeId], references: [storeId], onDelete: Cascade)
-  reviews Reviews [] 
+  reviews Reviews []
   orderlist Orderlist []
   @@map("Menus")
 }
-
 model Orders {
   orderId Int  @id @default(autoincrement()) @map("orderId")
   userId Int @map("userId")
   storeId    Int     @map("storeId")
   orderContent String @map("orderContent") @db.Text
-  orderStatus Orderstatus @default(cooking) @map("orderstatus")
-    ea Int @map("ea")
+  orderStatus Orderstatus @default(cooking) @map("orderStatus")
+  ea Int @map("ea")
   createdAt DateTime @default(now()) @map("createdAt")
   updatedAt DateTime @updatedAt @map("updatedAt")
   orderAddress String @map("orderAddress")
@@ -96,8 +86,6 @@ model Orders {
   user Users @relation(fields: [userId], references: [userId], onDelete: Cascade)
   store Stores @relation(fields: [storeId], references: [storeId], onDelete: Cascade)
   reviews Reviews []
-  userspointh Userspointh []
-  storespointh Storespointh []
   orderlist Orderlist []
   @@map("Orders")
 }
@@ -107,6 +95,7 @@ model Orderlist{
   menuId Int @map("menuId")
   order Orders @relation(fields: [orderId], references: [orderId], onDelete: Cascade)
   menu Menus @relation(fields: [menuId], references: [menuId], onDelete: Cascade)
+  @@map("Orderlist")
 }
 enum Orderstatus {
   cooking
@@ -114,9 +103,8 @@ enum Orderstatus {
   delivering
   deliverycompleted
 }
-
 model Reviews {
-  reviewId   Int      @id @default(autoincrement()) @map("likesId")
+  reviewId   Int      @id @default(autoincrement()) @map("reviewId")
   userId    Int @map("userId")
   storeId    Int @map("storeId")
   menuId    Int @map("menuId")
@@ -130,25 +118,13 @@ model Reviews {
   order Orders @relation(fields: [orderId], references: [orderId], onDelete: Cascade)
   @@map("Reviews")
 }
-
-model Userspointh{
-  userpointhId Int  @id @default(autoincrement()) @map("userpointhId")
+model Point{
+  pointId Int  @id @default(autoincrement()) @map("pointId")
   userId Int @map("userId")
-  orderId Int @map("orderId")
-  history String @map("history") 
-  amount Int @map("amount")
-  afteramount Int @map("afteramount")
-  user Users @relation(fields: [userId], references: [userId], onDelete: Cascade)
-  order Orders @relation(fields: [orderId], references: [orderId], onDelete: Cascade)
-}
-
-model Storespointh{
-  storepointhId Int  @id @default(autoincrement()) @map("storepointhId")
   storeId Int @map("storeId")
-  orderId Int @map("orderId")
   history String @map("history")
-  amount Int @map("amount")
-  afteramount Int @map("afteramount")
-  store Stores @relation(fields: [storeId], references: [storeId] , onDelete: Cascade)
-  order Orders @relation(fields: [orderId], references: [orderId], onDelete: Cascade)
+  createdAt DateTime @default(now()) @map("createdAt")
+  user Users @relation(fields: [userId], references: [userId], onDelete: Cascade)
+  store Stores @relation(fields: [storeId], references: [storeId], onDelete: Cascade)
+  @@map("Point")
 }
