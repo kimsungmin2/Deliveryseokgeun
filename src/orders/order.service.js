@@ -65,6 +65,7 @@ export class OrdersService {
     return searchData;
   };
 
+  //storeId로 해당 가게 검색하기
   findStoreId = async (storeId) => {
     const findStore = this.ordersRepository.findStoreById(storeId);
 
@@ -74,34 +75,9 @@ export class OrdersService {
     return findStore;
   };
 
+  //storeId로 주문받은 메뉴 확인하기
   getOrderdata = async (storeId) => {
-    const orderData = prisma.orders.findMany({
-      where: {
-        storeId: +storeId,
-        orderStatus: {
-          in: ["cooking", "deliveryready", "delivering"],
-        },
-      },
-      select: {
-        //이중 select 이렇게 쓰면 되는지?..
-        user: {
-          select: {
-            name: true,
-          },
-        },
-        menu: {
-          select: {
-            menuName: true,
-          },
-        },
-        ea: true,
-        orderAddress: true,
-        totalPrice: true,
-        orderContent: true,
-        orderStatus: true,
-        createdAt: true,
-      },
-    });
+    const orderData = this.ordersRepository.findOrderedMenu(storeId);
     return orderData;
   };
 }

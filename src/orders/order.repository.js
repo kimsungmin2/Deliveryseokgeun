@@ -84,4 +84,35 @@ export class OrdersRepository {
     });
     return findStore;
   };
+
+  findOrderedMenu = async (storeId) => {
+    const orderedMenu = await prisma.orders.findMany({
+      where: {
+        storeId: +storeId,
+        orderStatus: {
+          in: ["cooking", "deliveryready", "delivering"],
+        },
+      },
+      select: {
+        //이중 select 이렇게 쓰면 되는지?..
+        user: {
+          select: {
+            name: true,
+          },
+        },
+        menu: {
+          select: {
+            menuName: true,
+          },
+        },
+        ea: true,
+        orderAddress: true,
+        totalPrice: true,
+        orderContent: true,
+        orderStatus: true,
+        createdAt: true,
+      },
+    });
+    return orderedMenu;
+  };
 }

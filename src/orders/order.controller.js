@@ -30,6 +30,7 @@ export class OrdersController {
     }
   };
 
+  //입력받은 검색어를 가게이름에 포함하는 가게 & 메뉴이름에 포함하는 가게 검색기능
   searchData = async (req, res, next) => {
     const { search } = req.body;
 
@@ -43,6 +44,7 @@ export class OrdersController {
     return res.status(200).json({ data: searchData });
   };
 
+  //배달주문 조회 기능
   getOrderData = async (req, res, next) => {
     const { storeId } = req.params;
     const { userId } = req.user; //사장님도 같은 authMiddleware?
@@ -55,7 +57,6 @@ export class OrdersController {
         .json({ message: "사장님만 주문 조회를 할 수 있습니다." });
     }
 
-    //storeId를 orders에서 찾기
     const order = await this.ordersService.getOrderdata(storeId);
     return res.status(200).json({ data: order });
   };
