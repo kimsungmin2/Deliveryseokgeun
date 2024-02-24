@@ -3,15 +3,16 @@ export class OrdersRepository {
         this.prisma = prisma;
         this.redisClient = redisClient;
     }
-    createOrder = async (userId, storeId, menuId, orderstatus, ea, ordercontent) => {
+    createOrder = async (userId, storeId, orderStatus, ea, orderContent, orderAddress, totalPrice) => {
         const order = await this.prisma.orders.create({
             data: {
                 userId: +userId,
                 storeId: +storeId,
-                menuId: +menuId,
-                orderstatus,
+                orderStatus,
                 ea,
-                ordercontent,
+                orderContent,
+                orderAddress,
+                totalPrice: +totalPrice,
             },
         });
         return order;

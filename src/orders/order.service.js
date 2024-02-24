@@ -1,21 +1,28 @@
 export class OrdersService {
-    constructor(ordersRepository) {
+    constructor(ordersRepository, usersRepository, menusRepository, storesRepository, orderlistRepository) {
         this.ordersRepository = ordersRepository;
+        this.usersRepository = usersRepository;
+        this.menusRepository = menusRepository;
+        this.storesRepository = storesRepository;
+        this.orderlistRepository = orderlistRepository;
     }
-    createOrder = async (userId, storeId, menuId, orderstatus, ea, ordercontent) => {
-        const menu = await this.menuRepository.getMenuById(menuId);
 
-        const totalPrice = menu.price * ea;
+    createOrder = async (userId, storeId, menuId, orderStatus = "cooking", ea, orderContent, orderAddress) => {
+        const menu = await this.menusRepository.getMenuById(menuId);
+        const totalPrice = menu.menuPrice * ea;
 
-        const user = await this.userRepository.getUserById(userId);
+        const store = await this.storesRepository.getStoreById(storeId);
+        const user = await this.usersRepository.getUserById(userId);
 
         if (user.userpoint < totalPrice) {
-            throw new Error("잔액이 부족합닌다");
+            throw new Error("잔액이 부족합니다");
         }
 
-        const order = await this.ordersRepository.createOrder(userId, storeId, menuId, orderstatus, ea, ordercontent, totalPrice);
+        const order = await this.ordersRepository.createOrder(userId, storeId, orderStatus, ea, orderContent, orderAddress, totalPrice);
 
-        await this.userRepository.decrementPoint(userId, totalPrice);
+        const orderlist = await this.orderlistRepository.createOrderlist(order.orderId, menuId, ea);
+
+        await this.usersRepository.decrementPoint(userId, totalPrice);
 
         return order;
     };

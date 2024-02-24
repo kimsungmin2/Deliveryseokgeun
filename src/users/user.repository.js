@@ -13,4 +13,16 @@ export class UsersRepository {
         const user = await this.prisma.users.findFirst({ where: { userId: +userId } });
         return user;
     };
+    decrementPoint = async (userId, amount) => {
+        const user = await this.prisma.users.update({
+            where: { userId: userId },
+            data: {
+                userpoint: {
+                    decrement: amount,
+                },
+            },
+        });
+
+        return user;
+    };
 }
