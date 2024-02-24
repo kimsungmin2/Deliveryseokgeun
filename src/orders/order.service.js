@@ -37,55 +37,19 @@ export class OrdersService {
 
   //검색키워드를 storeName에 포함한 가게들의 정보
   findStore = async (search) => {
-    const searchStore = await prisma.stores.findMany({
-      where: {
-        storeName: {
-          contains: search,
-        },
-        select: {
-          storeId: true,
-          storeName: true,
-          storeAddress: true,
-          storeCategory: true,
-          rate: true,
-        },
-      },
-    });
+    const searchStore = await this.ordersRepository.searchStore(search);
 
     //검색키워드를 포함한 메뉴를 가진 storeId 호출
-    const searchMenu = await prisma.menus.findMany({
-      where: {
-        menuName: {
-          contains: search,
-        },
-      },
-      select: {
-        storeId: true,
-      },
-    });
+    const searchMenu = await this.ordersRepository.searchStoreByMenu(search);
 
     const storeIdList = searchMenu.map((menu) => +menu.storeId);
 
     //검색키워드를 포함한 메뉴를 가진 store의 정보들
-    const searchStore2 = await prisma.stores.findMany({
-      where: {
-        storeId: {
-          in: storeIdList,
-        },
-      },
-      select: {
-        storeId: true,
-        storeName: true,
-        storeAddress: true,
-        storeCategory: true,
-        rate: true,
-      },
-    });
+    const searchStore2 =
+      await this.ordersRepository.searchStoreByMenuId(storeIdList);
 
     if (!searchStore && !searchStore2) {
-      return res
-        .status(200)
-        .json({ message: "검색키워드와 일치하는 가게가 없습니다." });
+      throw { code: 404, message: "검색키워드와 일치하는 가게가 없습니다." };
     }
 
     //검색한 데이터를 평점 내림차순으로 정리해 searchData 변수에 저장
