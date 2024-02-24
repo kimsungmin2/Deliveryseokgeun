@@ -5,7 +5,6 @@ import { UsersRepository } from "./user.repository.js";
 import { UsersService } from "./user.service.js";
 // import { authMiddleware } from "../middlewares/auth.middlewares.js";
 import { redisClient } from "../redis/client.js";
-import bcrypt from 'bcrypt';
 
 
 const router = express.Router();

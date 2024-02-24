@@ -15,11 +15,12 @@ export class UsersController {
     }
   };
 
+
   userregister = async (req, res, next) => {
     try {
       const { email, name, password, passwordconfirm } = req.body;
         
-
+  
   if (!email) {
     return res.status(400).json({ message: "가입하실 이메일을 적지 않았습니다." });
   }
@@ -29,42 +30,37 @@ export class UsersController {
   if (!passwordconfirm) {
     return res.status(400).json({ message: "비밀번호 확인란을 적지 않았습니다." });
   }
-
+  
   if (!name) {
     return res.status(400).json({ message: "가입하실 이름을 적지 않았습니다." });
   }
-
-  const user = await this.usersService.getUserByEmail(email);
-
-
-  if (!user) {
+  
+  const users = await this.usersService.userregister(email, name, password, passwordconfirm);
+  
+  
+  if (!users) {
     return res.status(400).json({ message: "유저가 존재하지 않습니다." });
   }
-
+  
   if (password !== passwordconfirm) {
     return res
       .status(400)
       .json({ message: "가입하실 비밀번호가 비밀번호 확인란과 다릅니다" });
   }
-
-
-  const users = await this.usersService.usercreate({
-    email, password, name
-  });
+  
     
-  return res.status(201).json({ message : users})
+  return res.status(201).json({ message : users })
     } catch (err) {
         next(err);
     }
-};
-
-adminregister = async (req, res, next) => {
+  };
+  
+  adminregister = async (req, res, next) => {
     try {
-        const { adminName, adEmail, adPassword, adPasswordconfirm } = req.body;
+        const { adEmail, adminName, adPassword, adPasswordconfirm } = req.body;
         
-
-        console.log(adEmail);
-
+  
+  
   if (!adEmail) {
     return res.status(400).json({ message: "가입하실 이메일을 적지 않았습니다." });
   }
@@ -74,34 +70,31 @@ adminregister = async (req, res, next) => {
   if (!adPassword) {
     return res.status(400).json({ message: "가입하실 비밀번호를 적지 않았습니다." });
   }
-
+  
   if (!adPasswordconfirm) {
     return res.status(400).json({ message: "비밀번호 확인란을 적지 않았습니다." });
   }
-
-
-  const aduser = await this.usersService.adByEmails(adEmail);
-
-
-  if (!aduser) {
-    return res.status(400).json({ message: "유저가 존재하지 않습니다." });
-  }
-
+  
+  
+  const adusers = await this.usersService.adminregister(adEmail, adminName, adPassword, adPasswordconfirm);
+  
+  
+  // if (!adusers) {
+  //   return res.status(400).json({ message: "유저가 존재하지 않습니다." });
+  // }
+  
   if (adPassword !== adPasswordconfirm) {
     return res
       .status(400)
       .json({ message: "가입하실 비밀번호가 비밀번호 확인란과 다릅니다" });
   }
-
-
-  const adusers = await this.usersService.registeracreate({
-    adminName, adEmail, adPassword
-  });
+  
     
   return res.status(201).json({ message : adusers })
     } catch (err) {
         next(err);
     }
-};
+  };
 }
+
 

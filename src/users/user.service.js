@@ -16,31 +16,46 @@ export class UsersService {
         return userJWT, refreshToken;
     };
 
-    userregister = async (email, password, passwordconfirm, name) => {
-        const user = await this.usersRepository.getUserByEmail(email);
+    hashPassword = async (password) => {
+    const saltRounds = 10;
+    const hashedPassword = await bcrypt.hash(password, saltRounds);
+    return hashedPassword;
+};
 
-        const hashedPassword = await this.usersRepository.bcrypt.hash(password, 10);
-        
-
-        const usercreate = await this.usersRepository.registerucreate({
-            email, password: hashedPassword, name
-        });
-
-        return user, usercreate;
-
+userregister = async ( email, name, password, passwordconfirm ) => {
+    const user = await this.usersRepository.getUserByEmail(email);
+    if (user) {
+        throw new Error('이미 등록된 이메일입니다.');
     }
-    
-    
+    const hashedPassword = await this.hashPassword(password);
+    const usercreate = await this.usersRepository.registerucreate(
+        email, name, hashedPassword, 
+    );
+    return user, usercreate;
+}
+
+
+aduserhashPassword = async (adPassword) => {
+    const saltRounds = 10;
+    const hashedPassword = await bcrypt.hash(adPassword, saltRounds);
+    return hashedPassword;
+};
+
 
     adminregister = async (adEmail, adminName, adPassword, adPasswordconfirm) => {
-        const store = await this.usersRepository.adByEmail(storeEmail); 
+        const aduser = await this.usersRepository.adByEmails(adEmail); 
+        console.log(aduser);
+
+        if (aduser) {
+            throw new Error('이미 등록된 이메일입니다.');
+        }
         
-        const hashedPassword = await this.usersRepository.bcrypt.hash(adPassword, 10);
+        const hashedPassword = await this.aduserhashPassword(adPassword);
 
-        const storecreate = await this.usersRepository.registeracreate({
-            adEmail, adminName, adPassword : hashedPassword
-        });
+        const adusercreate = await this.usersRepository.registeracreate(
+            adEmail, adminName, hashedPassword
+        );
 
-        return { store, storecreate };
+        return aduser, adusercreate;
     }
 }

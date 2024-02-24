@@ -6,29 +6,35 @@ export class UsersRepository {
 
     getUserByEmail = async (email) => {
         const user = await this.prisma.users.findFirst({ where: { email } });
+        console.log(user);
         return user;
     };
 
     adByEmails = async (adEmail) => {
-        const store = await this.prisma.findFirst({ where : { adEmail } });
+        // const ddd = await this.prisma.Aduser.findFirst({ where : {adEmail}});
+        // console.log(adEmail);
+        const adusers = await this.prisma.aduser.findFirst({ where : { adEmail } });
+        console.log(adusers);
 
-        return store;
+        return adusers;
     }
 
-    registerucreate = async (email, password, passwordconfirm, name) => {
-        const user = await this.prisma.user.create({
-            data: { email, name, password },
+    registerucreate = async (email, name, hashedPassword) => {
+        const user = await this.prisma.users.create({
+            data: { email, name, password : hashedPassword },
           });
 
           return user;
     }
 
-    registeracreate = async (adEmail, adminName, adPassword, adPasswordconfirm) => {
+    registeracreate = async (adEmail, adminName, aduserhashPassword) => {
 
-        const aduser = await this.prisma.Stores.create({
-            adEmail, adminName, adPassword 
+        const aduser = await this.prisma.aduser.create({
+            data :{ adEmail, adminName, adPassword : aduserhashPassword }     
         });
 
         return aduser;
     }
+
+    
 }
