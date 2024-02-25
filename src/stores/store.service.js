@@ -14,12 +14,12 @@ export class StoresService {
 
         return { storeJWT, refreshToken };
     };
-
-    createStoreInfo = async (storeName, storeAddress, storeContact, storeContent, aduserId) => {
-        const storeInfo = await this.storesRepository.createStoreInfo(storeName, storeAddress, storeContact, storeContent, aduserId)
+    // 가게정보 생성
+    createStoreInfo = async (storeName, storeAddress, storeContact, storeContent, aduserId, storeCategory, storeRate) => {
+        const storeInfo = await this.storesRepository.createStoreInfo(aduserId, storeName, storeAddress, storeContact, storeContent, storeCategory, storeRate)
         return storeInfo
     }
-
+    // 가게정보 상세조회
     getStoreInfo = async (storeId) => {
         const detailStoreInfo = await this.storesRepository.getStoreInfo(storeId)
         if (!detailStoreInfo) {
@@ -27,14 +27,14 @@ export class StoresService {
         }
         return detailStoreInfo
     }
-
+    // 가게 목록
     getStoreList = async () => {
         const storeList = await this.storesRepository.getStoreList()
         return storeList
     }
-
-    updateStoreInfo = async (storeId, user, storeName, storeAddress, storeContact, storeContent) => {
-        const store = await this.storesRepository.updateStoreInfo(storeName, storeAddress, storeContact, storeContent,storeId)
+    // 가게 정보 수정
+    updateStoreInfo = async (storeId, user, storeName, storeAddress, storeContact, storeContent, storeCategory) => {
+        const store = await this.storesRepository.updateStoreInfo(storeId, storeName, storeAddress, storeContact, storeContent, storeCategory)
         if (!store) {
             return ("존재하지 않는 가게 입니다.")
         }
@@ -42,7 +42,7 @@ export class StoresService {
             return ("본인 가게만 수정 가능합니다.")
         }
     }
-
+    // 가게 정보 삭제
     deleteStoreInfo = async (storeId, aduserId) => {
         const store = await this.storesRepository.deleteStoreInfo(storeId, aduserId);
         return store;
