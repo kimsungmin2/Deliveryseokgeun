@@ -6,15 +6,12 @@ export class UsersRepository {
 
     getUserByEmail = async (email) => {
         const user = await this.prisma.users.findFirst({ where: { email } });
-        console.log(user);
+        console.log("repository: "+user);
         return user;
     };
 
     adByEmails = async (adEmail) => {
-        // const ddd = await this.prisma.Aduser.findFirst({ where : {adEmail}});
-        // console.log(adEmail);
         const adusers = await this.prisma.aduser.findFirst({ where : { adEmail } });
-        console.log(adusers);
 
         return adusers;
     }
@@ -35,6 +32,5 @@ export class UsersRepository {
 
         return aduser;
     }
-
     
 }

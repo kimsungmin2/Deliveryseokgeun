@@ -5,7 +5,7 @@ import ErrorHandlingMiddleware from "./middlewares/error-handling.middleware.js"
 import router from "./router.js";
 
 const app = express();
-const PORT = 3000;
+const PORT = 3020;
 
 app.use(LogMiddleware);
 app.use(express.json());

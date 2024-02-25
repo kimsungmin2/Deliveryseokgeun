@@ -17,6 +17,8 @@ const usersController = new UsersController(usersService);
 router.post("/signin", usersController.signIn);
 router.post("/userregistr", usersController.userregister);
 router.post("/adusers", usersController.adminregister);
+router.post("/email", usersController.useremailsend);
+router.post("/ademail", usersController.aduseremailsend);
 
 
 export default router;
