@@ -18,13 +18,17 @@ export class OrdersService {
         if (userpoint < totalPrice) {
             throw new Error("포인트가 부족합니다.");
         }
+        if (menu.quantity < ea) {
+            throw new Error("가능한 음식 갯수를 초과하였습니다.");
+        }
 
         const order = await this.ordersRepository.createOrder(userId, storeId, orderStatus, ea, orderContent, orderAddress, totalPrice);
         totalPrice = -totalPrice;
         const history = `주문 내역: ${store.storeName}에서${menu.menuName}을(를) 주문하셨습니다.)`;
         const decrementdPoint = this.pointsRepository.userdecrementPoint(userId, totalPrice, history);
-        console.log(userpoint);
+
         const orderlist = this.orderlistRepository.createOrderlist(order.orderId, menuId);
+        const menuquantity = await this.menusRepository.decrementquantity(menuId, ea);
 
         const tsorder = await this.ordersRepository.transaction([decrementdPoint, orderlist]);
         return tsorder;
@@ -33,10 +37,12 @@ export class OrdersService {
     userupdateOrder = async (orderId, userId, storeId, menuId, ea, orderContent, orderAddress) => {
         const order = await this.ordersRepository.getOrderById(orderId);
         const cancelPrice = order.totalPrice;
+        const cancelea = order.ea;
         const user = await this.pointsRepository.getUserPoint(userId);
         const store = await this.storesRepository.getStoreById(storeId);
         const Pasthistory = `주문 하신 점포 ${store.storeName}의 주문이 변경 되었습니다.`;
         const incrementdPoint = this.pointsRepository.userdecrementPoint(userId, cancelPrice, Pasthistory);
+        const incrementdMenu = await this.menusRepository.incrementquantity(menuId, cancelea);
 
         const menu = await this.menusRepository.getMenuById(menuId);
         let totalPrice = menu.menuPrice * ea;
@@ -45,10 +51,15 @@ export class OrdersService {
         if (userpoint < totalPrice) {
             throw new Error("포인트가 부족합니다.");
         }
+        if (menu.quantity < ea) {
+            throw new Error("가능한 음식 갯수를 초과하였습니다.");
+        }
+        console.log(menu.quantity);
         const updatedOrder = await this.ordersRepository.userupdateOrder(orderId, userId, ea, orderContent, orderAddress, totalPrice);
         totalPrice = -totalPrice;
         const history = `주문 내역: ${store.storeName}에서${menu.menuName}을(를) 으로 변경하셨습니다.)`;
         const decrementdPoint = this.pointsRepository.userdecrementPoint(userId, totalPrice, history);
+        const decrementdMenu = await this.menusRepository.decrementquantity(menuId, ea);
         const orderlist = this.orderlistRepository.createOrderlist(orderId, menuId);
 
         const tsorder = await this.ordersRepository.transaction([incrementdPoint, decrementdPoint, orderlist]);
@@ -103,14 +114,14 @@ export class OrdersService {
     deleteOrder = async (orderId, userId) => {
         const order = await this.ordersRepository.getOrderById(orderId);
         if (!order) {
-            throw new Error("해당 이력서를 찾을 수 없습니다.");
+            throw new Error("해당 오더를 찾을 수 없습니다.");
         }
         const cancelPrice = order.totalPrice;
-        const Pasthistory = `주문 하신 점포의 주문이 취소되었습니다.`;
+        const Pasthistory = `주문하신 점포의 주문이 취소되었습니다.`;
         const incrementdPoint = this.pointsRepository.userdecrementPoint(userId, cancelPrice, Pasthistory);
 
         const deletedResume = await this.ordersRepository.deleteOrder(orderId, userId);
         const tsorder = await this.ordersRepository.transaction([incrementdPoint]);
-        return { message: "삭제 성공" };
+        return { message: "주문하신 점포의 주문이 취소되었습니다." };
     };
 }

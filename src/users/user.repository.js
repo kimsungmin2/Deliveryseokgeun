@@ -18,29 +18,4 @@ export class UsersRepository {
         const aduser = await this.prisma.aduser.findFirst({ where: { adEmail } });
         return aduser;
     };
-
-    decrementPoint = (userId, amount) => {
-        const user = this.prisma.users.update({
-            where: { userId: +userId },
-            data: {
-                userpoint: {
-                    decrement: amount,
-                },
-            },
-        });
-
-        return user;
-    };
-    incrementPoint = (userId, amount) => {
-        const user = this.prisma.users.update({
-            where: { userId: +userId },
-            data: {
-                userpoint: {
-                    increment: amount,
-                },
-            },
-        });
-
-        return user;
-    };
 }

@@ -16,7 +16,7 @@ const usersController = new UsersController(usersService);
 
 router.post("/signin", usersController.signIn);
 
-router.post("/adsignup", usersController.adsignIn);
+router.post("/adsignin", usersController.adsignIn);
 
 router.get("/point/:userId", authMiddleware, usersController.getUserPoint);
 

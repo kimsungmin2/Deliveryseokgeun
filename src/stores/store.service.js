@@ -21,16 +21,16 @@ export class StoresService {
         if (!store) throw new Error("존재하지 않는 상점입니다.");
         return store;
     };
-    readystatusup = async (orderId, storeId, orderStatus = "deliveryready") => {
+    readystatusup = async (orderId, storeId, orderStatus) => {
         const updatedOrder = await this.storesRepository.readystatusup(orderId, storeId, orderStatus);
         return updatedOrder;
     };
 
-    ingstatusup = async (orderId, storeId, orderStatus = "delivering") => {
+    ingstatusup = async (orderId, storeId, orderStatus) => {
         const updatedOrder = await this.storesRepository.ingstatusup(orderId, storeId, orderStatus);
         return updatedOrder;
     };
-    completestatusup = async (orderId, storeId, orderStatus = "deliverycompleted") => {
+    completestatusup = async (orderId, storeId, orderStatus) => {
         const order = await this.ordersRepository.getOrderById(orderId);
         console.log(order);
         const totalPrice = order.totalPrice;

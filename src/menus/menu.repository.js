@@ -8,4 +8,28 @@ export class MenusRepository {
         });
         return menu;
     };
+    decrementquantity = async (menuId, quantity) => {
+        const user = await this.prisma.menus.update({
+            where: { menuId: +menuId },
+            data: {
+                quantity: {
+                    decrement: +quantity,
+                },
+            },
+        });
+
+        return user;
+    };
+    incrementquantity = async (menuId, quantity) => {
+        const user = await this.prisma.menus.update({
+            where: { menuId: +menuId },
+            data: {
+                quantity: {
+                    increment: +quantity,
+                },
+            },
+        });
+
+        return user;
+    };
 }

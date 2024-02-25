@@ -14,7 +14,7 @@ export class StoresController {
         try {
             const { storeId, orderId } = req.params;
             const { aduserId } = req.user;
-            const { orderStatus = "deliveryready" } = req.body;
+            const { orderStatus = "deliveryReady" } = req.body;
             const store = await this.storesService.getStoreById(storeId);
             console.log(store.aduserId);
             if (aduserId !== store.aduserId) return res.status(401).json({ message: "권한이 없습니다." });
@@ -44,7 +44,7 @@ export class StoresController {
         try {
             const { storeId, orderId } = req.params;
             const { aduserId } = req.user;
-            const { orderStatus = "deliverycompleted" } = req.body;
+            const { orderStatus = "deliveryCompleted" } = req.body;
             const store = await this.storesService.getStoreById(storeId);
             console.log(store.aduserId);
             if (aduserId !== store.aduserId) return res.status(401).json({ message: "권한이 없습니다." });

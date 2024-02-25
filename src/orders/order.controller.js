@@ -19,7 +19,16 @@ export class OrdersController {
             next(err);
         }
     };
+    getOrderById = async (req, res, next) => {
+        try {
+            const { orderId } = req.params;
+            const order = await this.ordersService.getOrderById(orderId);
 
+            return res.status(200).json({ data: order });
+        } catch (err) {
+            next(err);
+        }
+    };
     userupdateOrder = async (req, res, next) => {
         try {
             const { orderId } = req.params;

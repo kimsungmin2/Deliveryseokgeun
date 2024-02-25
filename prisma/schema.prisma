@@ -12,9 +12,9 @@ model Users {
   email     String   @unique @map("email")
   name String @map("name")
   password  String   @map("password")
-  emailstatus emailStatus? @default(waiting) @map("emailstatus")
+  emailStatus emailStatus? @default(waiting) @map("emailStatus")
   emailVerified Boolean  @default(false) @map("emailVerified")
-  verificationToken String? @map("verificationToken")
+  verifiCationToken String? @map("verifiCationToken")
   createdAt DateTime @default(now()) @map("createdAt")
   updatedAt DateTime @updatedAt @map("updatedAt")
   orders Orders []
@@ -31,15 +31,15 @@ aduserId Int  @id @default(autoincrement()) @map("aduserId")
 adminName String @map("adminName")
 adEmail String @map("adEmail")
 adPassword  String   @map("adPassword")
-adEmailstatus AdEmailstatus @default(waiting) @map("adEmailstatus")
+adEmailStatus AdEmailStatus @default(waiting) @map("adEmailStatus")
 adEmailVerified Boolean  @default(false) @map("adEmailVerified")
-adVerificationToken String? @map("adVerificationToken")
+adVerifiCationToken String? @map("adVerifiCationToken")
 createdAt DateTime @default(now()) @map("createdAt")
 updatedAt DateTime @updatedAt @map("updatedAt")
 stores Stores []
 @@map("Aduser")
 }
-enum AdEmailstatus{
+enum AdEmailStatus{
   waiting
   completion
 }
@@ -50,6 +50,8 @@ model Stores{
   storeAddress String @map("storeAddress")
   storeContact String @map("storeContact")
   storeContent           String           @map("storeContent")
+  storeCategory StoreCategory @map("storeCategory")
+  storeRate Int @map("storeRate")
   createdAt DateTime @default(now()) @map("createdAt")
   updatedAt DateTime @updatedAt @map("updatedAt")
   aduser Aduser @relation(fields: [aduserId], references: [aduserId], onDelete: Cascade)
@@ -59,12 +61,20 @@ model Stores{
   storepoints Storepoints []
   @@map("Stores")
 }
+enum StoreCategory{
+  JapaneseFood
+  ChineseFood
+  KoreanFood
+  WesternFood
+  SchoolFood
+}
 model Menus {
   menuId    Int      @id @default(autoincrement()) @map("menuId")
   storeId Int @map("storeId")
   menuName     String   @map("menuName")
   menuPrice   Int   @map("menuPrice")
   menuContent String @map("menuContent") @db.Text
+  quantity Int @map("quantity")
   createdAt DateTime @default(now()) @map("createdAt")
   updatedAt DateTime @updatedAt @map("updatedAt")
   store Stores @relation(fields: [storeId], references: [storeId], onDelete: Cascade)
@@ -99,9 +109,9 @@ model Orderlist{
 }
 enum Orderstatus {
   cooking
-  deliveryready
+  deliveryReady
   delivering
-  deliverycompleted
+  deliveryCompleted
 }
 model Reviews {
   reviewId   Int      @id @default(autoincrement()) @map("reviewId")
@@ -110,7 +120,7 @@ model Reviews {
   menuId    Int @map("menuId")
   orderId Int @map("orderId")
   review String @map("review") @db.Text
-  rate Int @map("rate")
+  reviewRate Int @map("reviewRate")
   createdAt    DateTime @default(now()) @map("createdAt")
   user Users @relation(fields: [userId], references: [userId], onDelete: Cascade)
   store Stores @relation(fields: [storeId], references: [storeId] , onDelete: Cascade)

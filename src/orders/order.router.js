@@ -29,6 +29,8 @@ const ordersController = new OrdersController(ordersService, storesService, orde
 
 router.post("/", authMiddleware, ordersController.createOrder);
 
+router.get("/:orderId", authMiddleware, ordersController.getOrderById);
+
 router.patch("/:orderId", authMiddleware, ordersController.userupdateOrder);
 
 router.delete("/:orderId", authMiddleware, ordersController.deleteOrder);
