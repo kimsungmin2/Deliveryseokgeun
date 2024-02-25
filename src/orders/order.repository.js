@@ -9,18 +9,18 @@ export class OrdersRepository {
     userId,
     storeId,
     menuId,
-    orderstatus,
+    orderStatus,
     ea,
-    ordercontent
+    orderContent
   ) => {
     const order = await this.prisma.orders.create({
       data: {
         userId: +userId,
         storeId: +storeId,
         menuId: +menuId,
-        orderstatus,
+        orderStatus,
         ea,
-        ordercontent,
+        orderContent,
       },
     });
     return order;
@@ -37,8 +37,8 @@ export class OrdersRepository {
         storeId: true,
         storeName: true,
         storeAddress: true,
-        // storeCategory: true,
-        // rate: true,
+        storeCategory: true,
+        storeRate: true,
       },
     });
     console.log(searchStore);
@@ -70,8 +70,8 @@ export class OrdersRepository {
         storeId: true,
         storeName: true,
         storeAddress: true,
-        // storeCategory: true,
-        // rate: true,
+        storeCategory: true,
+        storeRate: true,
       },
     });
     return searchByMenuId;

@@ -52,15 +52,15 @@ export class OrdersController {
   getOrderData = async (req, res, next) => {
     try {
       const { storeId } = req.params;
-      // const { userId } = req.user; //사장님도 같은 authMiddleware?
+      const { userId } = req.user;
 
-      // const store = await this.ordersService.findStoreId(storeId);
+      const store = await this.ordersService.findStoreId(storeId);
 
-      // if (userId !== store.aduserId) {
-      //   return res
-      //     .status(403)
-      //     .json({ message: "사장님만 주문 조회를 할 수 있습니다." });
-      // }
+      if (userId !== store.aduserId) {
+        return res
+          .status(403)
+          .json({ message: "사장님만 주문 조회를 할 수 있습니다." });
+      }
 
       const order = await this.ordersService.getOrderdata(storeId);
       return res.status(200).json({ data: order });

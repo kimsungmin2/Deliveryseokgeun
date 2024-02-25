@@ -4,6 +4,7 @@ import { OrdersController } from "./order.controller.js";
 import { OrdersRepository } from "./order.repository.js";
 import { OrdersService } from "./order.service.js";
 import { authMiddleware } from "../middlewares/auth.middlewares.js";
+import { adauthMiddleware } from "../middlewares/adauth.middlewares.js";
 
 const router = express.Router();
 
@@ -26,7 +27,7 @@ router.post("/search", ordersController.searchData);
 //주문 배달메뉴 조회
 router.get(
   "/:storeId/ordered",
-  // authMiddleware,
+  adauthMiddleware,
   ordersController.getOrderData
 );
 

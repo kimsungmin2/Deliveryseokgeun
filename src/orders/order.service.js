@@ -11,9 +11,9 @@ export class OrdersService {
     userId,
     storeId,
     menuId,
-    orderstatus,
+    orderStatus,
     ea,
-    ordercontent
+    orderContent
   ) => {
     const menu = await this.menuRepository.getMenuById(menuId);
 
@@ -29,9 +29,9 @@ export class OrdersService {
       userId,
       storeId,
       menuId,
-      orderstatus,
+      orderStatus,
       ea,
-      ordercontent,
+      orderContent,
       totalPrice
     );
 
