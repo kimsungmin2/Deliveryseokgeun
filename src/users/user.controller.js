@@ -5,6 +5,14 @@ export class UsersController {
   signIn = async (req, res, next) => {
     try {
       const { email, password } = req.body;
+
+      if(!email){
+        return res.status(400).json({ message : "이메일이 존재하지 않습니다."});
+      }
+
+      if(!password){
+        return res.status(400).json({ message : "비밀번호가 존재하지 않습니다."});
+      }
       
       if (
         !email.includes("@naver.com") &&
@@ -25,6 +33,48 @@ export class UsersController {
       }
 
       const tokens = await this.usersService.signIn(email, password);
+
+      
+      res.cookie("authorization", `Bearer ${tokens.userJWT}`);
+      res.cookie("refreshToken", tokens.refreshToken);
+      return res.status(200).json({ message: "로그인 성공" });
+    } catch (err) {
+      next(err);
+    }
+  };
+
+  adsignIn = async (req, res, next) => {
+    try {
+      const { adEmail, adPassword } = req.body;
+
+      if(!adEmail){
+        return res.status(400).json({ message : "어드민 이메일이 존재하지 않습니다."});
+      }
+
+      if(!adPassword){
+        return res.status(400).json({ message : "어드민 비밀번호가 존재하지 않습니다."});
+      }
+      
+      if (
+        !adEmail.includes("@naver.com") &&
+        !adEmail.includes("@daum.net") &&
+        !adEmail.includes("@goole.com") &&
+        !adEmail.includes("@googlemail.com") &&
+        !adEmail.includes("@hanmail.net") &&
+        !adEmail.includes("@icloud.com") &&
+        !adEmail.includes("@cyworld.com") &&
+        !adEmail.includes("@kakao.com") &&
+        !adEmail.includes("@mail.com") &&
+        !adEmail.includes("@narasarang.or.kr") &&
+        !adEmail.includes("@tistory.com")
+      ) {
+        return res
+          .status(400)
+          .json({ message: "이메일 조건이 맞지 않습니다." });
+      }
+
+      const tokens = await this.usersService.adsignIn(adEmail, adPassword);
+      
       res.cookie("authorization", `Bearer ${tokens.userJWT}`);
       res.cookie("refreshToken", tokens.refreshToken);
       return res.status(200).json({ message: "로그인 성공" });
@@ -80,6 +130,7 @@ export class UsersController {
           .status(400)
           .json({ message: "이메일 조건이 맞지 않습니다." });
       }
+      
 
       const users = await this.usersService.userregister(
         email,
@@ -98,7 +149,7 @@ export class UsersController {
           .json({ message: "가입하실 비밀번호가 비밀번호 확인란과 다릅니다" });
       }
 
-      return res.status(201).json({ message: users });
+      return res.status(201).json({ message: "이메일 인증 필요" });
     } catch (err) {
       next(err);
     }
@@ -233,6 +284,7 @@ export class UsersController {
           .json({ message: "이메일 조건이 맞지 않습니다." });
       }
 
+      
       await this.usersService.aduseremailsend(adEmail);
       return res
         .status(201)

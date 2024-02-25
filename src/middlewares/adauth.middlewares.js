@@ -1,6 +1,6 @@
 import jwt from "jsonwebtoken";
 import { prisma } from "../../prisma/index.js";
-export const authMiddleware = async function (req, res, next) {
+export const adauthMiddleware = async function (req, res, next) {
     try {
         const { authorization } = req.cookies;
         if (!authorization) throw new Error("토큰이 존재하지 않습니다.");
@@ -10,15 +10,15 @@ export const authMiddleware = async function (req, res, next) {
             return res.status(400).json({ message : "인증 정보가 올바르지 않습니다." });
         }
         const decodedToken = jwt.verify(token, process.env.JWT_SECRET);
-        const { userId } = jwt.verify(token, process.env.JWT_SECRET);
-        const user = await prisma.users.findFirst({
-            where: { userId: +userId },
+        const { aduserId } = jwt.verify(token, process.env.JWT_SECRET);
+        const aduser = await prisma.aduser.findFirst({
+            where: { aduserId: +aduserId },
         });
-        if (!user) {
+        if (!aduser) {
             res.clearCookie("authorization");
             throw new Error("토큰 사용자가 존재하지 않습니다.");
         }
-        req.user = user;
+        req.aduser = aduser;
         next();
     } catch (error) {
         res.clearCookie("authorization");

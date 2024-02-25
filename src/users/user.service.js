@@ -9,7 +9,7 @@ export class UsersService {
   constructor(usersRepository) {
     this.usersRepository = usersRepository;
   }
-  adsignIn = async (email, password) => {
+  signIn = async (email, password) => {
     const user = await this.usersRepository.getUserByEmail(email);
 
     const userJWT = jwt.sign({ userId: user.userId }, process.env.JWT_SECRET, {
@@ -24,14 +24,14 @@ export class UsersService {
     return userJWT, refreshToken;
   };
 
-  signIn = async (email, password) => {
-    const user = await this.usersRepository.getUserByEmail(email);
+  adsignIn = async (adEmail, adPassword) => {
+    const aduser = await this.usersRepository.adByEmails(adEmail);
 
-    const userJWT = jwt.sign({ userId: user.userId }, process.env.JWT_SECRET, {
+    const userJWT = jwt.sign({ aduserId: aduser.aduserId }, process.env.JWT_SECRET, {
       expiresIn: "12h",
     });
     const refreshToken = jwt.sign(
-      { userId: user.userId },
+      { aduserId: aduser.aduserId },
       process.env.REFRESH_SECRET,
       { expiresIn: "7d" }
     );
@@ -86,8 +86,9 @@ export class UsersService {
   };
 
   useremailsend = async (email) => {
+    
     const transporter = nodemailer.createTransport({
-      service: "gmail",
+      service: process.env.SEND_SERVICES,
       auth: {
         user: process.env.SEND_MAIL_ID,
         pass: process.env.SEND_MAIL_PASSWORD,
@@ -122,7 +123,7 @@ export class UsersService {
 
   aduseremailsend = async (adEmail) => {
     const transporter = nodemailer.createTransport({
-      service: "gmail",
+      service: process.env.SEND_SERVICES,
       auth: {
         user: process.env.SEND_MAIL_ID,
         pass: process.env.SEND_MAIL_PASSWORD,
@@ -142,8 +143,8 @@ export class UsersService {
     const mailsend = {
       from: process.env.SEND_MAIL_ID,
       to: adEmail,
-      subject: "이메일 인증",
-      text: `이메일 인증번호: ${random}`,
+      subject: "어드민 이메일 인증",
+      text: `어드민 이메일 인증번호: ${random}`,
     };
 
     transporter.sendMail(mailsend, (err) => {

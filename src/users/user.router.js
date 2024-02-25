@@ -5,6 +5,8 @@ import { UsersRepository } from "./user.repository.js";
 import { UsersService } from "./user.service.js";
 // import { authMiddleware } from "../middlewares/auth.middlewares.js";
 import { redisClient } from "../redis/client.js";
+import { authMiddleware } from "../middlewares/auth.middlewares.js";
+import { adauthMiddleware } from "../middlewares/adauth.middlewares.js";
 
 
 const router = express.Router();

@@ -1,3 +1,5 @@
+import { emailStatus } from "@prisma/client";
+
 export class UsersRepository {
     constructor(prisma, redisClient) {
         this.prisma = prisma;
@@ -31,6 +33,16 @@ export class UsersRepository {
         });
 
         return aduser;
+    }
+
+
+
+    testemail = async (email) => {
+        const emails = await this.prisma.users.findFirst({
+            where : {
+                email
+            }
+        })
     }
     
 }
