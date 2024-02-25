@@ -4,6 +4,7 @@ import StoresRouter from "./stores/store.router.js";
 import OrdersRouter from "./orders/order.router.js";
 import MenusRouter from "./menus/menu.router.js";
 import ReviewRouter from "./review/review.router.js";
+// import pracStoreRouter from "./stores/pracstore.js"
 
 const router = express.Router();
 
@@ -16,5 +17,7 @@ router.use("/orders", OrdersRouter);
 router.use("/menus", MenusRouter);
 
 router.use("/reviews", ReviewRouter);
+
+// router.use('/stores', pracStoreRouter)
 
 export default router;
