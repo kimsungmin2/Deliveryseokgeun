@@ -24,6 +24,10 @@ router.post("/search", ordersController.searchData);
 // });
 
 //주문 배달메뉴 조회
-router.get("/:storeId/ordered", authMiddleware, ordersController.getOrderData);
+router.get(
+  "/:storeId/ordered",
+  // authMiddleware,
+  ordersController.getOrderData
+);
 
 export default router;

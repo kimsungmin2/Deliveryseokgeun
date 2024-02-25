@@ -32,15 +32,16 @@ export class OrdersRepository {
         storeName: {
           contains: search,
         },
-        select: {
-          storeId: true,
-          storeName: true,
-          storeAddress: true,
-          storeCategory: true,
-          rate: true,
-        },
+      },
+      select: {
+        storeId: true,
+        storeName: true,
+        storeAddress: true,
+        // storeCategory: true,
+        // rate: true,
       },
     });
+    console.log(searchStore);
     return searchStore;
   };
 
@@ -69,8 +70,8 @@ export class OrdersRepository {
         storeId: true,
         storeName: true,
         storeAddress: true,
-        storeCategory: true,
-        rate: true,
+        // storeCategory: true,
+        // rate: true,
       },
     });
     return searchByMenuId;
@@ -86,6 +87,7 @@ export class OrdersRepository {
   };
 
   findOrderedMenu = async (storeId) => {
+    console.log(storeId);
     const orderedMenu = await prisma.orders.findMany({
       where: {
         storeId: +storeId,
@@ -100,12 +102,16 @@ export class OrdersRepository {
             name: true,
           },
         },
-        menu: {
+        orderlist: {
           select: {
-            menuName: true,
+            menu: {
+              select: {
+                menuName: true,
+              },
+            },
+            ea: true,
           },
         },
-        ea: true,
         orderAddress: true,
         totalPrice: true,
         orderContent: true,
