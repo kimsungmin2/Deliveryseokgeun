@@ -54,10 +54,7 @@ export class OrdersService {
       await this.ordersRepository.searchStoreByMenuId(storeIdList);
 
     if (!searchStore && !searchStore2) {
-      throw new Error({
-        code: 404,
-        message: "검색키워드와 일치하는 가게가 없습니다.",
-      });
+      throw new NotFoundError("검색키워드와 일치하는 가게가 없습니다.");
     }
 
     //검색한 데이터를 평점 내림차순으로 정리해 searchData 변수에 저장
@@ -73,7 +70,7 @@ export class OrdersService {
     const findStore = this.ordersRepository.findStoreById(storeId);
 
     if (!findStore) {
-      throw new Error({ code: 404, message: "가게가 존재하지 않습니다." });
+      throw new NotFoundError("가게가 존재하지 않습니다.");
     }
     return findStore;
   };

@@ -87,38 +87,55 @@ export class OrdersRepository {
   };
 
   findOrderedMenu = async (storeId) => {
-    console.log(storeId);
-    const orderedMenu = await prisma.orders.findMany({
+    const orderedMenuByStoreId = await prisma.orders.findMany({
       where: {
         storeId: +storeId,
         orderStatus: {
-          in: ["cooking", "deliveryready", "delivering"],
+          in: ["cooking", "deliveryReady", "delivering"],
         },
       },
       select: {
-        //이중 select 이렇게 쓰면 되는지?..
-        user: {
-          select: {
-            name: true,
-          },
-        },
-        orderlist: {
-          select: {
-            menu: {
-              select: {
-                menuName: true,
-              },
-            },
-            ea: true,
-          },
-        },
-        orderAddress: true,
-        totalPrice: true,
-        orderContent: true,
-        orderStatus: true,
-        createdAt: true,
+        orderId: true,
+        updatedAt: true,
       },
     });
+
+    console.log(orderedMenuByStoreId);
+
+    const orderedMenu = [];
+
+    for (const order of orderedMenuByStoreId) {
+      const orderDetails = await prisma.orderlist.findFirst({
+        where: {
+          orderId: +order.orderId,
+        },
+        select: {
+          order: {
+            select: {
+              // ea: true, //데이터베이스 정보가 잘못들어가있는거 같읍니다
+              orderAddress: true,
+              orderContent: true,
+              orderStatus: true,
+              createdAt: true,
+              updatedAt: true,
+              totalPrice: true,
+              user: {
+                select: {
+                  name: true,
+                },
+              },
+              orderId: true,
+            },
+          },
+          menu: {
+            select: { menuName: true },
+          },
+        },
+      });
+      console.log(orderDetails);
+      orderedMenu.push(orderDetails);
+    }
+
     return orderedMenu;
   };
 }
