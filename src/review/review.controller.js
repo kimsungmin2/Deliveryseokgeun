@@ -1,7 +1,5 @@
-// import { ReviewsService } from "./review.service.js";
-
 export class ReviewsController {
-  // reviewService = new ReviewsService();
+  reviewService = new ReviewsService();
   constructor(reviewsService) {
     this.reviewsService = reviewsService;
   }

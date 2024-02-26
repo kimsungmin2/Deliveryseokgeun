@@ -5,6 +5,7 @@ export default (err, req, res, next) => {
     case "PrismaClientValidationError":
       return res.status(400).json({ message: err.message });
 
+
     case "UnauthorizedError":
       return res.status(401).json({ message: err.message });
 
