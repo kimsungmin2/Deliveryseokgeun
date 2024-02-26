@@ -102,12 +102,6 @@ export class StoresRepository {
     storeContent,
     storeCategory
   ) => {
-    // const store = await this.prisma.stores.findFirst({
-    //   where: {
-    //     storeId: +storeId,
-    //   },
-    // });
-
     const store = await this.prisma.stores.update({
       where: {
         storeId: +storeId,
@@ -125,15 +119,6 @@ export class StoresRepository {
   };
   // 가게 정보 삭제
   deleteStoreInfo = async (storeId, aduserId) => {
-    // const store = await this.prisma.stores.findFirst({
-    //   where: {
-    //     storeId: +deleteStoreId,
-    //   },
-    // });
-    // if (store.storeId !== deleteStoreId) {
-    //   throw new Error("삭제 하려는 가게 정보가 없습니다.");
-    // }
-
     const store = await this.prisma.stores.delete({
       where: {
         storeId: +storeId,

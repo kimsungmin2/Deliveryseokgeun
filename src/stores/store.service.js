@@ -1,4 +1,6 @@
 import dotenv from "dotenv";
+import jwt from "jsonwebtoken";
+import bcrypt from "bcrypt";
 
 dotenv.config();
 export class StoresService {
@@ -13,6 +15,24 @@ export class StoresService {
     this.ordersRepository = ordersRepository;
     this.menusRepository = menusRepository;
   }
+  // 로그인
+  signIn = async (adEmail, adPassword) => {
+    const aduser = await this.storesRepository.getStoreByEmail(adEmail);
+
+    const storeJWT = jwt.sign(
+      { aduserId: aduser.aduserId },
+      process.env.JWT_SECRET,
+      { expiresIn: "12h" }
+    );
+    const refreshToken = jwt.sign(
+      { aduserId: aduser.aduserId },
+      process.env.REFRESH_SECRET,
+      { expiresIn: "7d" }
+    );
+
+    return { storeJWT, refreshToken };
+  };
+  
   // 가게정보 생성
   createStoreInfo = async (
     aduserId,
@@ -32,22 +52,7 @@ export class StoresService {
     );
     return storeInfo;
   };
-  signIn = async (adEmail, adPassword) => {
-    const aduser = await this.storesRepository.getStoreByEmail(adEmail);
-
-    const storeJWT = jwt.sign(
-      { aduserId: aduser.aduserId },
-      process.env.JWT_SECRET,
-      { expiresIn: "12h" }
-    );
-    const refreshToken = jwt.sign(
-      { aduserId: aduser.aduserId },
-      process.env.REFRESH_SECRET,
-      { expiresIn: "7d" }
-    );
-
-    return { storeJWT, refreshToken };
-  };
+  
   // 가게정보 상세조회
   getStoreById = async (storeId) => {
     const store = await this.storesRepository.getStoreById(storeId);
@@ -144,7 +149,7 @@ export class StoresService {
     storeContent,
     storeCategory
   ) => {
-    const store = await this.storesRepository.getStoreInfo(storeId);
+    const store = await this.storesRepository.getStoreById(storeId);
     if (!store) {
       throw new Error("존재하지 않는 가게 입니다.");
     }
@@ -162,11 +167,16 @@ export class StoresService {
     );
   };
   // 가게 정보 삭제
-  deleteStoreInfo = async (storeId, aduserId) => {
+  deleteStoreInfo = async (storeId, aduserId, password, hashedPassword) => {
     const store = await this.storesRepository.deleteStoreInfo(
       storeId,
       aduserId
     );
+    const youPwHashPw = await bcrypt.compare(password, hashedPassword);
+    if (!youPwHashPw){
+      throw new Error("비밀번호가 일치하지 않습니다.");
+    }
+    
     return store;
   };
   findStore = async (search) => {

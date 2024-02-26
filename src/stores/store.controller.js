@@ -3,6 +3,14 @@ export class StoresController {
     this.storesService = storesService;
     this.ordersService = ordersService;
   }
+  // 로그인
+  signIn = async (req, res, next) => {
+    const { adEmail, adPassword } = req.body;
+    const tokens = await this.storesService.signIn(adEmail, adPassword);
+    res.cookie("authorization", `Bearer ${tokens.storeJWT}`);
+    res.cookie("refreshToken", tokens.refreshToken);
+    return res.status(200).json({ message: "로그인 성공" });
+  };
   // 가게정보 생성
   createStoreInfo = async (req, res, next) => {
     const {
@@ -128,26 +136,28 @@ export class StoresController {
   deleteStoreInfo = async (req, res, next) => {
     try {
       const { storeId } = req.params;
-      const { aduserId } = req.user;
+      const hashedPassword = req.user.adPassword; // DB에서 가져온 해시된 비밀번호
+      const { aduserId } = req.user
       const { password } = req.body;
       if (!aduserId) {
         return res.status(401).json({ message: "권한이 없습니다." });
       }
-      if (password !== req.user.adPassword) {
-        return res
-          .status(401)
-          .json({ message: "비밀번호가 일치하지 않습니다." });
-      }
+
       const store = await this.storesService.getStoreById(storeId);
 
       const deleteStore = await this.storesService.deleteStoreInfo(
         storeId,
-        aduserId
+        aduserId,
+        password,
+        hashedPassword
       );
 
       return res.status(201).json({ message: "가게 정보가 삭제되었습니다." });
     } catch (err) {
       if (err.message === "등록된 가게가 없습니다.") {
+        return res.status(401).json({ message: err.message });
+      }
+      if (err.message === "비밀번호가 일치하지 않습니다.") {
         return res.status(401).json({ message: err.message });
       }
       next(err);

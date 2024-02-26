@@ -54,7 +54,7 @@ router.get("/:orderId", authMiddleware, ordersController.getOrderById);
 
 router.delete("/:orderId", authMiddleware, ordersController.deleteOrder);
 //음식점 검색기능
-router.post("/search", ordersController.searchData);
+// router.post("/search", ordersController.searchData);
 
 //카테고리 검색기능(추후 만들기)
 // router.post("/store/search", async (req, res, next) => {
@@ -62,10 +62,10 @@ router.post("/search", ordersController.searchData);
 // });
 
 //주문 배달메뉴 조회
-router.get(
-  "/:storeId/ordered",
-  // adauthMiddleware,
-  ordersController.getOrderData
-);
+// router.get(
+//   "/:storeId/ordered",
+//   // adauthMiddleware,
+//   ordersController.getOrderData
+// );
 
 export default router;
