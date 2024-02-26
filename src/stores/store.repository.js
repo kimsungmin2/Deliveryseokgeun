@@ -16,8 +16,7 @@ export class StoresRepository {
     storeAddress,
     storeContact,
     storeContent,
-    storeCategory,
-    storeRate
+    storeCategory
   ) => {
     const storeInfo = await this.prisma.stores.create({
       data: {
@@ -26,8 +25,7 @@ export class StoresRepository {
         storeAddress,
         storeContact,
         storeContent,
-        storeCategory : "KoreanFood",
-        storeRate : 5
+        storeCategory,
       },
     });
     return storeInfo;
@@ -44,8 +42,8 @@ export class StoresRepository {
         storeAddress: true,
         storeContact: true,
         storeContent: true,
-        storeCategory : true,
-        storeRate : true,
+        storeCategory: true,
+        storeRate: true,
       },
     });
     return detailStoreInfo;
@@ -54,12 +52,12 @@ export class StoresRepository {
   getStoreList = async () => {
     const storeList = await this.prisma.stores.findMany({
       select: {
-        storeId : true,
-        storeName : true,
-        storeAddress : true,
-        storeContact : true,
-        storeCategory : true,
-        storeRate : true
+        storeId: true,
+        storeName: true,
+        storeAddress: true,
+        storeContact: true,
+        storeCategory: true,
+        storeRate: true,
       },
     });
     return storeList;
@@ -78,6 +76,12 @@ export class StoresRepository {
         storeId: +storeId,
       },
     });
+    if (!store) {
+      throw new Error("존재하지 않는 가게 입니다.");
+    }
+    if (store.userId !== user) {
+      throw new Error("본인 가게만 수정 가능합니다.");
+    }
     await this.prisma.stores.update({
       where: {
         storeId: +storeId,
@@ -87,19 +91,29 @@ export class StoresRepository {
         storeAddress,
         storeContact,
         storeContent,
-        storeCategory : "KoreanFood"
+        storeCategory,
       },
     });
     return store;
   };
   // 가게 정보 삭제
   deleteStoreInfo = async (storeId, aduserId) => {
+    // const store = await this.prisma.stores.findFirst({
+    //   where: {
+    //     storeId: +deleteStoreId,
+    //   },
+    // });
+    // if (store.storeId !== deleteStoreId) {
+    //   throw new Error("삭제 하려는 가게 정보가 없습니다.");
+    // }
+
     const store = await this.prisma.stores.delete({
-        where: {
-            storeId: +storeId,
-            aduserId: +aduserId,
-        },
+      where: {
+        storeId: +storeId,
+        aduserId: +aduserId,
+      },
     });
+    
     return store;
-};
+  };
 }

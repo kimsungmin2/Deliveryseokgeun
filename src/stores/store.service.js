@@ -15,8 +15,8 @@ export class StoresService {
         return { storeJWT, refreshToken };
     };
     // 가게정보 생성
-    createStoreInfo = async (storeName, storeAddress, storeContact, storeContent, aduserId, storeCategory, storeRate) => {
-        const storeInfo = await this.storesRepository.createStoreInfo(aduserId, storeName, storeAddress, storeContact, storeContent, storeCategory, storeRate)
+    createStoreInfo = async (aduserId, storeName, storeAddress, storeContact, storeContent, storeCategory ) => {
+        const storeInfo = await this.storesRepository.createStoreInfo(aduserId, storeName, storeAddress, storeContact, storeContent, storeCategory)
         return storeInfo
     }
     // 가게정보 상세조회
@@ -35,12 +35,6 @@ export class StoresService {
     // 가게 정보 수정
     updateStoreInfo = async (storeId, user, storeName, storeAddress, storeContact, storeContent, storeCategory) => {
         const store = await this.storesRepository.updateStoreInfo(storeId, storeName, storeAddress, storeContact, storeContent, storeCategory)
-        if (!store) {
-            return ("존재하지 않는 가게 입니다.")
-        }
-        if (store.userId !== user) {
-            return ("본인 가게만 수정 가능합니다.")
-        }
     }
     // 가게 정보 삭제
     deleteStoreInfo = async (storeId, aduserId) => {
