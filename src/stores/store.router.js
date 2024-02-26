@@ -17,7 +17,6 @@ const storesService = new StoresService(storesRepository, pointsRepository, orde
 const storesController = new StoresController(storesService);
 
 router.post("/signin", storesController.signIn);
-
 router.patch("/orders/:orderId/ready", adauthMiddleware, storesController.readystatusup);
 
 router.patch("/orders/:orderId/ing", adauthMiddleware, storesController.ingstatusup);
