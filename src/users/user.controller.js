@@ -1,6 +1,7 @@
 export class UsersController {
-    constructor(usersService) {
+    constructor(usersService, pointsService) {
         this.usersService = usersService;
+        this.pointsService = pointsService;
     }
     signIn = async (req, res, next) => {
         const { email, password } = req.body;
@@ -21,7 +22,7 @@ export class UsersController {
 
     getUserPoint = async (req, res, next) => {
         try {
-            const { userId } = req.params;
+            const { userId } = req.user;
 
             const user = await this.usersService.getUserPoint(userId);
 

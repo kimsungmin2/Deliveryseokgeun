@@ -3,13 +3,12 @@ export class OrdersRepository {
         this.prisma = prisma;
         this.redisClient = redisClient;
     }
-    createOrder = async (userId, storeId, orderStatus, ea, orderContent, orderAddress, totalPrice) => {
+    createOrder = async (userId, storeId, orderStatus, orderContent, orderAddress, totalPrice) => {
         const order = await this.prisma.orders.create({
             data: {
                 userId: +userId,
                 storeId: +storeId,
                 orderStatus,
-                ea,
                 orderContent,
                 orderAddress,
                 totalPrice: +totalPrice,
@@ -44,6 +43,15 @@ export class OrdersRepository {
             where: {
                 orderId: +orderId,
                 userId: +userId,
+            },
+        });
+        return deletedOrder;
+    };
+    deleteOrder = async (orderId, storeId) => {
+        const deletedOrder = await this.prisma.orders.delete({
+            where: {
+                orderId: +orderId,
+                storeId: +storeId,
             },
         });
         return deletedOrder;

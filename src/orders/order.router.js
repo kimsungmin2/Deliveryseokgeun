@@ -12,26 +12,45 @@ import { OrderlistRepository } from "../orderlist/orderlist.repository.js";
 import { OrderlistService } from "../orderlist/orderlist.service.js";
 import { PointsRepository } from "../points/point.repository.js";
 import { StoresService } from "../stores/store.service.js";
+import { CouponsRepository } from "../coupons/coupon.repository.js";
+import { CouponsService } from "../coupons/coupon.service.js";
+
 const router = express.Router();
 
 const ordersRepository = new OrdersRepository(prisma);
+
 const usersRepository = new UsersRepository(prisma);
+
 const menusRepository = new MenusRepository(prisma);
+
 const storesRepository = new StoresRepository(prisma);
+
 const orderlistRepository = new OrderlistRepository(prisma);
+
 const pointsRepository = new PointsRepository(prisma);
 
-const ordersService = new OrdersService(ordersRepository, usersRepository, menusRepository, storesRepository, orderlistRepository, pointsRepository);
+const couponsRepository = new CouponsRepository(prisma);
+
+const ordersService = new OrdersService(
+    ordersRepository,
+    usersRepository,
+    menusRepository,
+    storesRepository,
+    orderlistRepository,
+    pointsRepository,
+    couponsRepository
+);
 const storesService = new StoresService(storesRepository);
+
 const orderlistService = new OrderlistService(orderlistRepository);
 
-const ordersController = new OrdersController(ordersService, storesService, orderlistService);
+const couponsService = new CouponsService(couponsRepository);
+
+const ordersController = new OrdersController(ordersService, storesService, orderlistService, couponsService);
 
 router.post("/", authMiddleware, ordersController.createOrder);
 
 router.get("/:orderId", authMiddleware, ordersController.getOrderById);
-
-router.patch("/:orderId", authMiddleware, ordersController.userupdateOrder);
 
 router.delete("/:orderId", authMiddleware, ordersController.deleteOrder);
 

@@ -1,4 +1,4 @@
-INSERT INTO Users
-(userId, email, password, emailStatus,emailVerified ,name, verifiCationToken createdAt, updatedAt)
+INSERT INTO Userpoints
+(pointId, userId, history, possession, createdAt)
 VALUES
-(2,"user@gmail.com", "123456", 'completion',"0" ,"김성민",123456 ,'2024-02-19 21:09:39', '2024-02-19 21:10:12');
+(28,2, '족발',20 ,35000, '2024-02-19 21:10:12');

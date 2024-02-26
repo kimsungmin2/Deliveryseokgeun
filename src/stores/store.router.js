@@ -18,10 +18,12 @@ const storesController = new StoresController(storesService);
 
 router.post("/signin", storesController.signIn);
 
-router.patch("/:storeId/orders/:orderId/ready", adauthMiddleware, storesController.readystatusup);
+router.patch("/orders/:orderId/ready", adauthMiddleware, storesController.readystatusup);
 
-router.patch("/:storeId/orders/:orderId/ing", adauthMiddleware, storesController.ingstatusup);
+router.patch("/orders/:orderId/ing", adauthMiddleware, storesController.ingstatusup);
 
-router.patch("/:storeId/orders/:orderId/complet", adauthMiddleware, storesController.completestatusup);
+router.patch("/orders/:orderId/complet", adauthMiddleware, storesController.completestatusup);
+
+router.delete("/:storeId/orders/:orderId", adauthMiddleware, storesController.deleteOrder);
 
 export default router;

@@ -15,4 +15,6 @@ const couponsController = new CouponsController(couponsService);
 
 router.post("/discount", authMiddleware, couponsController.discountCoupon);
 
+router.post("/percentage", authMiddleware, couponsController.percentageCoupon);
+
 export default router;

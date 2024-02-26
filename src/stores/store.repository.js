@@ -42,4 +42,7 @@ export class StoresRepository {
         const order = await this.prisma.orders.update({ where: { orderId: +orderId }, data: { storeId: +storeId, orderStatus } });
         return order;
     };
+    // deleteOrder = async (storeId, orderId) => {
+    //     const order = await this.prisma.orders.
+    // }
 }
