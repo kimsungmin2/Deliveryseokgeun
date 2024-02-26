@@ -20,6 +20,8 @@ const storesService = new StoresService(
 
 const storesController = new StoresController(storesService);
 
+router.post("/signin", storesController.signIn);
+
 router.post("/", adauthMiddleware, storesController.createStoreInfo);
 
 router.get("/:storeId", storesController.getStoreById);

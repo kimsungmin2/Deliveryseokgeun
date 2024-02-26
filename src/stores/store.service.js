@@ -32,6 +32,22 @@ export class StoresService {
     );
     return storeInfo;
   };
+  signIn = async (adEmail, adPassword) => {
+    const aduser = await this.storesRepository.getStoreByEmail(adEmail);
+
+    const storeJWT = jwt.sign(
+      { aduserId: aduser.aduserId },
+      process.env.JWT_SECRET,
+      { expiresIn: "12h" }
+    );
+    const refreshToken = jwt.sign(
+      { aduserId: aduser.aduserId },
+      process.env.REFRESH_SECRET,
+      { expiresIn: "7d" }
+    );
+
+    return { storeJWT, refreshToken };
+  };
   // 가게정보 상세조회
   getStoreById = async (storeId) => {
     const store = await this.storesRepository.getStoreById(storeId);
