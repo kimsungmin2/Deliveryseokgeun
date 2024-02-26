@@ -1,5 +1,3 @@
-import { emailStatus } from "@prisma/client";
-
 export class UsersRepository {
     constructor(prisma, redisClient) {
         this.prisma = prisma;
@@ -8,7 +6,6 @@ export class UsersRepository {
 
     getUserByEmail = async (email) => {
         const user = await this.prisma.users.findFirst({ where: { email } });
-        console.log("repository: "+user);
         return user;
     };
 
@@ -18,31 +15,37 @@ export class UsersRepository {
         return adusers;
     }
 
-    registerucreate = async (email, name, hashedPassword) => {
+    // 유저 회원가입
+    registercreate = async (email, name, hashedPassword, token) => {
+        
         const user = await this.prisma.users.create({
-            data: { email, name, password : hashedPassword },
+            data: { email, name, password : hashedPassword, verifiCationToken : token },
           });
 
           return user;
     }
 
-    registeracreate = async (adEmail, adminName, aduserhashPassword) => {
+    // 사장 회원가입
+    adregistercreate = async (adEmail, adminName, aduserhashPassword, token) => {
 
         const aduser = await this.prisma.aduser.create({
-            data :{ adEmail, adminName, adPassword : aduserhashPassword }     
+            data : { adEmail, adminName, adPassword : aduserhashPassword, adVerifiCationToken : token }     
         });
 
         return aduser;
     }
 
-
-
-    testemail = async (email) => {
-        const emails = await this.prisma.users.findFirst({
-            where : {
-                email
-            }
-        })
+    useridedit = async (userId) => {
+        
+        const update = await this.prisma.users.update({
+            where: {
+                userId: +userId,
+            },
+            data: {
+                emailStatus : "completion"
+            },
+          });
+        return update;
     }
     
 }

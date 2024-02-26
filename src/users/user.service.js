@@ -1,8 +1,7 @@
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
 import bcrypt from "bcrypt";
-import { emailStatus } from "@prisma/client";
-import nodemailer from "nodemailer";
+import { sendVerificationEmail } from "../middlewares/sendEmail.middlewares.js";
 
 dotenv.config();
 export class UsersService {
@@ -24,135 +23,98 @@ export class UsersService {
     return userJWT, refreshToken;
   };
 
-  adsignIn = async (adEmail, adPassword) => {
-    const aduser = await this.usersRepository.adByEmails(adEmail);
-
-    const userJWT = jwt.sign({ aduserId: aduser.aduserId }, process.env.JWT_SECRET, {
-      expiresIn: "12h",
-    });
-    const refreshToken = jwt.sign(
-      { aduserId: aduser.aduserId },
-      process.env.REFRESH_SECRET,
-      { expiresIn: "7d" }
-    );
-
-    return userJWT, refreshToken;
-  };
-
-  
-
   hashPassword = async (password) => {
     const saltRounds = 10;
     const hashedPassword = await bcrypt.hash(password, saltRounds);
     return hashedPassword;
   };
 
-  userregister = async (email, name, password, passwordconfirm) => {
+  
+   /// 고객님 회원가입
+  register = async (email, name, password) => {
     const user = await this.usersRepository.getUserByEmail(email);
+
     if (user) {
       throw new Error("이미 등록된 이메일입니다.");
     }
+
     const hashedPassword = await this.hashPassword(password);
-    const usercreate = await this.usersRepository.registerucreate(
+
+    const randomNum = () => {
+        return Math.floor(1000 + Math.random() * 9000);
+      };
+
+    const token = randomNum();
+
+    const usercreate = await this.usersRepository.registercreate(
       email,
       name,
-      hashedPassword
+      hashedPassword,
+      token
     );
-    return user, usercreate;
+
+    await sendVerificationEmail(email, token);
+
+    return usercreate;
   };
 
-  aduserhashPassword = async (adPassword) => {
+  adhashPassword = async (adPassword) => {
     const saltRounds = 10;
     const hashedPassword = await bcrypt.hash(adPassword, saltRounds);
     return hashedPassword;
   };
 
-  adminregister = async (adEmail, adminName, adPassword, adPasswordconfirm) => {
+  /// 사장님 회원가입
+  adregister = async (adEmail, adminName, adPassword) => {
     const aduser = await this.usersRepository.adByEmails(adEmail);
 
     if (aduser) {
       throw new Error("이미 등록된 이메일입니다.");
     }
 
-    const hashedPassword = await this.aduserhashPassword(adPassword);
+    const hashedPassword = await this.adhashPassword(adPassword);
 
-    const adusercreate = await this.usersRepository.registeracreate(
+    const randomNum = () => {
+      return Math.floor(1000 + Math.random() * 9000);
+    };
+    
+    const token = randomNum();
+
+    const adusercreate = await this.usersRepository.adregistercreate(
       adEmail,
       adminName,
-      hashedPassword
+      hashedPassword,
+      token
     );
 
-    return aduser, adusercreate;
+    await sendVerificationEmail(adEmail, token);
+
+    return adusercreate;
   };
 
-  useremailsend = async (email) => {
+  useridedit = async (email, verifiCationToken) => {
+    const user = await this.usersRepository.getUserByEmail(email);
+
+    if(!user){
+      throw new Error("유저가 존재하지 않습니다.");
+    }
+
+    if(user.emailStatus !== "waiting"){
+      throw new Error("이미 인증된 메일입니다.");
+    }
+  
+
+    const update = await this.usersRepository.useridedit(user.userId, verifiCationToken);
     
-    const transporter = nodemailer.createTransport({
-      service: process.env.SEND_SERVICES,
-      auth: {
-        user: process.env.SEND_MAIL_ID,
-        pass: process.env.SEND_MAIL_PASSWORD,
-      },
-    });
+    
+    return update; 
+  }
 
-    const verifyCode = {};
+  
+  getUserEmail = async (email) => {
+    const user = await this.usersRepository.getUserByEmail(email);
+    
+    return user;
+  }
 
-    const randomNum = () => {
-        return Math.floor(Math.random() * 9999);
-      };
-
-    const random = randomNum();
-
-    verifyCode[email] = random;
-
-    const mailsend = {
-      from: process.env.SEND_MAIL_ID,
-      to: email,
-      subject: "이메일 인증",
-      text: `이메일 인증번호: ${random}`,
-    };
-
-    transporter.sendMail(mailsend, (err) => {
-      if (err) {
-         throw new Error("이메일 전송 중 오류가 발생했습니다.");
-      }
-    });
-
-    return email;
-  };
-
-  aduseremailsend = async (adEmail) => {
-    const transporter = nodemailer.createTransport({
-      service: process.env.SEND_SERVICES,
-      auth: {
-        user: process.env.SEND_MAIL_ID,
-        pass: process.env.SEND_MAIL_PASSWORD,
-      },
-    });
-
-    const verifyCode = {};
-
-    const randomNum = () => {
-        return Math.floor(Math.random() * 9999);
-      };
-
-    const random = randomNum();
-
-    verifyCode[adEmail] = random;
-
-    const mailsend = {
-      from: process.env.SEND_MAIL_ID,
-      to: adEmail,
-      subject: "어드민 이메일 인증",
-      text: `어드민 이메일 인증번호: ${random}`,
-    };
-
-    transporter.sendMail(mailsend, (err) => {
-      if (err) {
-         throw new Error("이메일 전송 중 오류가 발생했습니다.");
-      }
-    });
-
-    return adEmail;
-  };
 }
