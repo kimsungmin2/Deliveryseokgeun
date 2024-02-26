@@ -1,5 +1,4 @@
 export class ReviewsController {
-    reviewService = new ReviewsService();
     constructor(reviewsService) {
         this.reviewsService = reviewsService;
     }
