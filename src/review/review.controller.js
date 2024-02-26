@@ -1,10 +1,10 @@
-import { ReviewsService } from "./review.service.js";
+// import { ReviewsService } from "./review.service.js";
 
 export class ReviewsController {
-  reviewService = new ReviewsService();
-  //   constructor(reviewsService) {
-  //     this.reviewsService = reviewsService;
-  //   }
+  // reviewService = new ReviewsService();
+  constructor(reviewsService) {
+    this.reviewsService = reviewsService;
+  }
 
   createReview = async (req, res, next) => {
     try {
@@ -47,13 +47,13 @@ export class ReviewsController {
         await this.reviewService.findStoreByMenuId(menuId);
 
       //orderId 조회 userId로 찾으면 되겠따
-      const findOrderIdbyUserId = await this.reviewService.findOrderId(userId);
+      const findOrderIdbyUserId = await reviewService.findOrderId(userId);
 
       const storeId = findStoreByMenuId.store.storeId;
       const orderId = findOrderIdbyUserId.orderId;
 
       //바디에서 받은 부분 리뷰테이블에 새로 생성
-      const createReview = await this.reviewService.createReview(
+      const createReview = await reviewService.createReview(
         review,
         reviewRate,
         userId,
