@@ -65,28 +65,25 @@ export class StoresRepository {
   // 가게 정보 수정
   updateStoreInfo = async (
     storeId,
+    userId,
     storeName,
     storeAddress,
     storeContact,
     storeContent,
     storeCategory
   ) => {
-    const store = await this.prisma.stores.findFirst({
-      where: {
-        storeId: +storeId,
-      },
-    });
-    if (!store) {
-      throw new Error("존재하지 않는 가게 입니다.");
-    }
-    if (store.userId !== user) {
-      throw new Error("본인 가게만 수정 가능합니다.");
-    }
-    await this.prisma.stores.update({
+    // const store = await this.prisma.stores.findFirst({
+    //   where: {
+    //     storeId: +storeId,
+    //   },
+    // });
+    
+    const store = await this.prisma.stores.update({
       where: {
         storeId: +storeId,
       },
       data: {
+        userId,
         storeName,
         storeAddress,
         storeContact,

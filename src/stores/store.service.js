@@ -34,7 +34,14 @@ export class StoresService {
     }
     // 가게 정보 수정
     updateStoreInfo = async (storeId, user, storeName, storeAddress, storeContact, storeContent, storeCategory) => {
-        const store = await this.storesRepository.updateStoreInfo(storeId, storeName, storeAddress, storeContact, storeContent, storeCategory)
+        const store = await this.storesRepository.getStoreInfo(storeId)
+        if (!store) {
+            throw new Error("존재하지 않는 가게 입니다.");
+          }
+          if (store.userId !== user) {
+            throw new Error("본인 가게만 수정 가능합니다.");
+          }
+        await this.storesRepository.updateStoreInfo(storeId, user, storeName, storeAddress, storeContact, storeContent, storeCategory)
     }
     // 가게 정보 삭제
     deleteStoreInfo = async (storeId, aduserId) => {
