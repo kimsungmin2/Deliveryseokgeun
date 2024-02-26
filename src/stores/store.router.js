@@ -17,6 +17,17 @@ const storesService = new StoresService(storesRepository, pointsRepository, orde
 const storesController = new StoresController(storesService);
 
 router.post("/signin", storesController.signIn);
+
+router.post('/', adminMiddleware, storesController.createStoreInfo)
+
+router.get('/:storeId', storesController.getStoreInfo)
+
+router.get('/', storesController.getStoreList)
+
+router.patch('/:storeId', adminMiddleware, storesController.updateStoreInfo)
+
+router.delete('/:storeId', adminMiddleware, storesController.deleteStoreInfo)
+
 router.patch("/orders/:orderId/ready", adauthMiddleware, storesController.readystatusup);
 
 router.patch("/orders/:orderId/ing", adauthMiddleware, storesController.ingstatusup);
@@ -26,3 +37,4 @@ router.patch("/orders/:orderId/complet", adauthMiddleware, storesController.comp
 router.delete("/:storeId/orders/:orderId", adauthMiddleware, storesController.deleteOrder);
 
 export default router;
+

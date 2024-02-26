@@ -6,6 +6,8 @@ const { SEND_MAIL_ID, SEND_MAIL_PASSWORD, SEND_SERVICES } = process.env;
 
 
 
+const { email_service, user, pass } = process.env;
+// 트랜스포터 라는 것을 이용해서 이메일을 보낼 것이다.
 const transporter = nodemailer.createTransport({
   service: SEND_SERVICES,
   auth: {
@@ -14,7 +16,7 @@ const transporter = nodemailer.createTransport({
   },
 });
 
-export const sendVerificationEmail = (email, token) => {
+export const sendVerificationEmail = (email , token) => {
   return new Promise((resolve, reject) => {
     
     const mailOptions = {
@@ -25,7 +27,6 @@ export const sendVerificationEmail = (email, token) => {
     };
 
     
-
     transporter.sendMail(mailOptions, (error, info) => {
       if (error) {
         reject(error);

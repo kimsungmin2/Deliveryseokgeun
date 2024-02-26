@@ -33,4 +33,4 @@ export const authMiddleware = async function (req, res, next) {
                 return res.status(401).json({ message: error.message ?? "비정상적인 요청입니다." });
         }
     }
-};
+}; 
