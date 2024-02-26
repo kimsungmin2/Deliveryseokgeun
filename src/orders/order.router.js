@@ -13,6 +13,4 @@ const ordersService = new OrdersService(ordersRepository);
 
 const ordersController = new OrdersController(ordersService);
 
-router.post("/", authMiddleware, ordersController.neworder);
-
 export default router;
