@@ -31,23 +31,49 @@ export class StoresRepository {
     return storeInfo;
   };
   // 가게 정보 상세조회
-  getStoreInfo = async (storeId) => {
-    const detailStoreInfo = await this.prisma.stores.findFirst({
-      where: {
-        storeId: +storeId,
-      },
-      select: {
-        storeId: true,
-        storeName: true,
-        storeAddress: true,
-        storeContact: true,
-        storeContent: true,
-        storeCategory: true,
-        storeRate: true,
-      },
-    });
-    return detailStoreInfo;
-  };
+    constructor(prisma) {
+        this.prisma = prisma;
+    }
+    getStoreById = async (storeId) => {
+        const store = await this.prisma.stores.findFirst({ where: { storeId: +storeId } });
+        return store;
+    };
+    decrementPoint = (storeId, amount) => {
+        const store = this.prisma.store.update({
+            where: { storeId: +storeId },
+            data: {
+                storepoint: {
+                    decrement: amount,
+                },
+            },
+        });
+
+        return store;
+    };
+    incrementPoint = (storeId, amount) => {
+        const store = this.prisma.users.update({
+            where: { storeId: +storeId },
+            data: {
+                storepoint: {
+                    increment: amount,
+                },
+            },
+        });
+
+        return store;
+    };
+    readystatusup = async (orderId, storeId, orderStatus) => {
+        const order = await this.prisma.orders.update({ where: { orderId: +orderId }, data: { storeId: +storeId, orderStatus } });
+        return order;
+    };
+    ingstatusup = async (orderId, storeId, orderStatus) => {
+        const order = await this.prisma.orders.update({ where: { orderId: +orderId }, data: { storeId: +storeId, orderStatus } });
+        return order;
+    };
+    completestatusup = async (orderId, storeId, orderStatus) => {
+        const order = await this.prisma.orders.update({ where: { orderId: +orderId }, data: { storeId: +storeId, orderStatus } });
+        return order;
+    };
   // 가게 목록 조회
   getStoreList = async () => {
     const storeList = await this.prisma.stores.findMany({
