@@ -17,7 +17,6 @@ export class OrdersRepository {
         updatedAt: true,
       },
     });
-    dd;
 
     console.log(orderedMenuByStoreId);
 

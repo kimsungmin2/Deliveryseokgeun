@@ -2,6 +2,10 @@ export class StoresRepository {
   constructor(prisma) {
     this.prisma = prisma;
   }
+  getStoreByEmail = async (adEmail) => {
+    const store = await this.prisma.aduser.findFirst({ where: { adEmail } });
+    return store;
+  };
   createStoreInfo = async (
     aduserId,
     storeName,

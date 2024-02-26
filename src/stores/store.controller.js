@@ -53,7 +53,7 @@ export class StoresController {
 
       return res.status(200).json({ detailStoreInfo });
     } catch (err) {
-      if (err.message === "등록된 가게가 없습니다.") {
+      if (err.message === "존재하지 않는 상점입니다.") {
         return res.status(401).json({ message: err.message });
       }
       next(err);
