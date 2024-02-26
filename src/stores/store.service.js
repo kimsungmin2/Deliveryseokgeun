@@ -35,7 +35,7 @@ export class StoresService {
   // 가게정보 상세조회
   getStoreById = async (storeId) => {
     const store = await this.storesRepository.getStoreById(storeId);
-    if (!store) throw new Error("존재하지 않는 상점입니다.");
+    if (!store) throw new Error("등록된 가게가 없습니다.");
     return store;
   };
   readystatusup = async (orderId, storeId, orderStatus) => {
