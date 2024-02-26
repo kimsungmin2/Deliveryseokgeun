@@ -1,7 +1,8 @@
 export class ReviewsController {
-  reviewService = new ReviewsService();
-  constructor(reviewsService) {
+  constructor(reviewsService, ordersService, menusService) {
     this.reviewsService = reviewsService;
+    this.ordersService = ordersService;
+    this.menusService = menusService;
   }
 
   createReview = async (req, res, next) => {
@@ -42,10 +43,10 @@ export class ReviewsController {
 
       //메뉴 아이디 조회해서 해당 가게 찾기
       const findStoreByMenuId =
-        await this.reviewService.findStoreByMenuId(menuId);
+        await this.menusService.findStoreByMenuId(menuId);
 
       //orderId 조회 userId로 찾으면 되겠따
-      const findOrderIdbyUserId = await reviewService.findOrderId(userId);
+      const findOrderIdbyUserId = await ordersService.getOrderById(userId);
 
       const storeId = findStoreByMenuId.store.storeId;
       const orderId = findOrderIdbyUserId.orderId;

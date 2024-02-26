@@ -1,37 +1,20 @@
-import { prisma } from "../../prisma/index.js";
-
 export class ReviewsRepository {
-  //   constructor(prisma, redisClient) {
-  //     this.prisma = prisma;
-  //     this.redisClient = redisClient;
-  //   }
+  constructor(prisma, redisClient) {
+    this.prisma = prisma;
+    this.redisClient = redisClient;
+  }
 
-  findStoreBymenuId = async (menuId) => {
-    const store = await prisma.menus.findFirst({
-      where: { menuId: +menuId },
-      select: {
-        store: {
-          select: {
-            storeId: true,
-            storeName: true,
-          },
-        },
-      },
-    });
-    return store;
-  };
-
-  findOrderid = async (userId) => {
-    const orderId = await prisma.orders.findFirst({
-      where: {
-        userId: +userId,
-      },
-      select: {
-        orderId: true,
-      },
-    });
-    return orderId;
-  };
+  //   findOrderid = async (userId) => {
+  //     const orderId = await prisma.orders.findFirst({
+  //       where: {
+  //         userId: +userId,
+  //       },
+  //       select: {
+  //         orderId: true,
+  //       },
+  //     });
+  //     return orderId;
+  //   };
 
   createReview = async (
     review,

@@ -1,68 +1,8 @@
 export class OrdersRepository {
-  //   constructor(prisma, redisClient) {
-  //     this.prisma = prisma;
-  //     this.redisClient = redisClient;
-  //   }
- 
-  searchStore = async (search) => {
-    const searchStore = await prisma.stores.findMany({
-      where: {
-        storeName: {
-          contains: search,
-        },
-      },
-      select: {
-        storeId: true,
-        storeName: true,
-        storeAddress: true,
-        storeCategory: true,
-        storeRate: true,
-      },
-    });
-    console.log(searchStore);
-    return searchStore;
-  };
-
-  searchStoreByMenu = async (search) => {
-    const searchByMenu = await prisma.menus.findMany({
-      where: {
-        menuName: {
-          contains: search,
-        },
-      },
-      select: {
-        storeId: true,
-      },
-    });
-    return searchByMenu;
-  };
-
-  searchStoreByMenuId = async (storeIdList) => {
-    const searchByMenuId = await prisma.stores.findMany({
-      where: {
-        storeId: {
-          in: storeIdList,
-        },
-      },
-      select: {
-        storeId: true,
-        storeName: true,
-        storeAddress: true,
-        storeCategory: true,
-        storeRate: true,
-      },
-    });
-    return searchByMenuId;
-  };
-
-  findStoreById = async (storeId) => {
-    const findStore = prisma.stores.findFirst({
-      where: {
-        storeId: +storeId,
-      },
-    });
-    return findStore;
-  };
+  constructor(prisma, redisClient) {
+    this.prisma = prisma;
+    this.redisClient = redisClient;
+  }
 
   findOrderedMenu = async (storeId) => {
     const orderedMenuByStoreId = await prisma.orders.findMany({
@@ -77,6 +17,7 @@ export class OrdersRepository {
         updatedAt: true,
       },
     });
+    dd;
 
     console.log(orderedMenuByStoreId);
 
@@ -116,58 +57,65 @@ export class OrdersRepository {
 
     return orderedMenu;
   };
-    createOrder = async (userId, storeId, orderStatus, orderContent, orderAddress, totalPrice) => {
-        const order = await this.prisma.orders.create({
-            data: {
-                userId: +userId,
-                storeId: +storeId,
-                orderStatus,
-                orderContent,
-                orderAddress,
-                totalPrice: +totalPrice,
-            },
-        });
-        return order;
-    };
-    transaction = async (operations) => {
-        return this.prisma.$transaction(operations);
-    };
+  createOrder = async (
+    userId,
+    storeId,
+    orderStatus,
+    orderContent,
+    orderAddress,
+    totalPrice
+  ) => {
+    const order = await this.prisma.orders.create({
+      data: {
+        userId: +userId,
+        storeId: +storeId,
+        orderStatus,
+        orderContent,
+        orderAddress,
+        totalPrice: +totalPrice,
+      },
+    });
+    return order;
+  };
+  transaction = async (operations) => {
+    return this.prisma.$transaction(operations);
+  };
 
-    getOrderById = async (orderId) => {
-        const order = await this.prisma.orders.findFirst({ where: { orderId: +orderId } });
-        return order;
-    };
+  getOrderById = async (orderId) => {
+    const order = await this.prisma.orders.findFirst({
+      where: { orderId: +orderId },
+    });
+    return order;
+  };
 
-    userupdateOrder = async (orderId, userId, ea, orderContent, orderAddress, totalPrice) => {
-        const order = await this.prisma.orders.update({
-            where: { orderId: +orderId },
-            data: {
-                userId: +userId,
-                ea,
-                orderContent,
-                orderAddress,
-                totalPrice: +totalPrice,
-            },
-        });
-        return order;
-    };
+  userupdateOrder = async (
+    orderId,
+    userId,
+    ea,
+    orderContent,
+    orderAddress,
+    totalPrice
+  ) => {
+    const order = await this.prisma.orders.update({
+      where: { orderId: +orderId },
+      data: {
+        userId: +userId,
+        ea,
+        orderContent,
+        orderAddress,
+        totalPrice: +totalPrice,
+      },
+    });
+    return order;
+  };
 
-    deleteOrder = async (orderId, userId) => {
-        const deletedOrder = await this.prisma.orders.delete({
-            where: {
-                orderId: +orderId,
-                userId: +userId,
-            },
-        });
-        return deletedOrder;
-    };
-    deleteOrder = async (orderId, storeId) => {
-        const deletedOrder = await this.prisma.orders.delete({
-            where: {
-                orderId: +orderId,
-                storeId: +storeId,
-            },
-        });
-        return deletedOrder;
-    };
+  deleteOrder = async (orderId, userId) => {
+    const deletedOrder = await this.prisma.orders.delete({
+      where: {
+        orderId: +orderId,
+        userId: +userId,
+      },
+    });
+    return deletedOrder;
+  };
 }

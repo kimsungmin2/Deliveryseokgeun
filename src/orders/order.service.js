@@ -209,37 +209,4 @@ export class OrdersService {
         const tsorder = await this.ordersRepository.transaction([incrementdPoint]);
         return { message: "주문하신 점포의 주문이 취소되었습니다." };
     };
- findStore = async (search) => {
-    const searchStore = await this.ordersRepository.searchStore(search);
-
-    //검색키워드를 포함한 메뉴를 가진 storeId 호출
-    const searchMenu = await this.ordersRepository.searchStoreByMenu(search);
-
-    const storeIdList = searchMenu.map((menu) => +menu.storeId);
-
-    //검색키워드를 포함한 메뉴를 가진 store의 정보들
-    const searchStore2 =
-      await this.ordersRepository.searchStoreByMenuId(storeIdList);
-
-    if (!searchStore && !searchStore2) {
-      throw new NotFoundError("검색키워드와 일치하는 가게가 없습니다.");
-    }
-
-    //검색한 데이터를 평점 내림차순으로 정리해 searchData 변수에 저장
-    const searchData = [...searchStore, ...searchStore2].sort(
-      (a, b) => b.rate - a.rate
-    );
-
-    return searchData;
-  };
-
-  //storeId로 해당 가게 검색하기
-  findStoreId = async (storeId) => {
-    const findStore = this.ordersRepository.findStoreById(storeId);
-
-    if (!findStore) {
-      throw new NotFoundError("가게가 존재하지 않습니다.");
-    }
-    return findStore;
-  };
 }

@@ -12,29 +12,46 @@ const router = express.Router();
 const storesRepository = new StoresRepository(prisma);
 const pointsRepository = new PointsRepository(prisma);
 const ordersRepository = new OrdersRepository(prisma);
-const storesService = new StoresService(storesRepository, pointsRepository, ordersRepository);
+const storesService = new StoresService(
+  storesRepository,
+  pointsRepository,
+  ordersRepository
+);
 
 const storesController = new StoresController(storesService);
 
-router.post("/signin", storesController.signIn);
+router.post("/", adauthMiddleware, storesController.createStoreInfo);
 
-router.post('/', adminMiddleware, storesController.createStoreInfo)
+router.get("/:storeId", storesController.getStoreById);
 
-router.get('/:storeId', storesController.getStoreInfo)
+router.get("/", storesController.getStoreList);
 
-router.get('/', storesController.getStoreList)
+router.patch("/:storeId", adauthMiddleware, storesController.updateStoreInfo);
 
-router.patch('/:storeId', adminMiddleware, storesController.updateStoreInfo)
+router.delete("/:storeId", adauthMiddleware, storesController.deleteStoreInfo);
 
-router.delete('/:storeId', adminMiddleware, storesController.deleteStoreInfo)
+router.patch(
+  "/orders/:orderId/ready",
+  adauthMiddleware,
+  storesController.readystatusup
+);
 
-router.patch("/orders/:orderId/ready", adauthMiddleware, storesController.readystatusup);
+router.patch(
+  "/orders/:orderId/ing",
+  adauthMiddleware,
+  storesController.ingstatusup
+);
 
-router.patch("/orders/:orderId/ing", adauthMiddleware, storesController.ingstatusup);
+router.patch(
+  "/orders/:orderId/complet",
+  adauthMiddleware,
+  storesController.completestatusup
+);
 
-router.patch("/orders/:orderId/complet", adauthMiddleware, storesController.completestatusup);
-
-router.delete("/:storeId/orders/:orderId", adauthMiddleware, storesController.deleteOrder);
+router.delete(
+  "/:storeId/orders/:orderId",
+  adauthMiddleware,
+  storesController.deleteOrder
+);
 
 export default router;
-
