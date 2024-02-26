@@ -162,7 +162,6 @@ model Coupons{
   user Users @relation(fields: [userId], references: [userId], onDelete: Cascade)
   @@map("Coupons")
 }
-
 enum Discount{
 discountamount
 percentage
