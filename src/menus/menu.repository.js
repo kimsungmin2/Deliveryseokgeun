@@ -38,16 +38,13 @@ export class MenusRepository {
     return deleteMenu;
   };
 
-  // ----------------------------------------------------------------------------------------------------------------
-
   // 메뉴 조회
-  getMenuById = async (menuId) => {
-    const getmenu = await this.prisma.menus.findFirst({
-      where: { menuId: +menuId },
-    });
-
-    return getmenu;
-  };
+   getMenuById = async (menuId) => {
+        const menu = await this.prisma.menus.findFirst({
+            where: { menuId: +menuId },
+        });
+        return menu;
+    };
 
   // 가게 메뉴 조회
   getStoreById = async (storeId) => {
@@ -57,4 +54,28 @@ export class MenusRepository {
 
     return getstore;
   };
+ decrementquantity = async (menuId, quantity) => {
+        const user = await this.prisma.menus.update({
+            where: { menuId: +menuId },
+            data: {
+                quantity: {
+                    decrement: +quantity,
+                },
+            },
+        });
+
+        return user;
+    };
+ incrementquantity = async (menuId, quantity) => {
+        const user = await this.prisma.menus.update({
+            where: { menuId: +menuId },
+            data: {
+                quantity: {
+                    increment: +quantity,
+                },
+            },
+        });
+
+        return user;
+    };
 }
