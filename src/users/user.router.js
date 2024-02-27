@@ -8,7 +8,6 @@ import { redisClient } from "../redis/client.js";
 import { PointsRepository } from "../points/point.repository.js";
 import { PointsService } from "../points/point.service.js";
 
-
 const router = express.Router();
 const usersRepository = new UsersRepository(prisma, redisClient);
 const pointsRepository = new PointsRepository(prisma);

@@ -5,120 +5,111 @@ import { sendVerificationEmail } from "../middlewares/sendEmail.middlewares.js";
 
 dotenv.config();
 export class UsersService {
-  constructor(usersRepository, pointsRepository) {
+    constructor(usersRepository, pointsRepository) {
         this.usersRepository = usersRepository;
         this.pointsRepository = pointsRepository;
     }
-  signIn = async (email, password) => {
-    const user = await this.usersRepository.getUserByEmail(email);
+    signIn = async (email, password) => {
+        const user = await this.usersRepository.getUserByEmail(email);
+        if (!user) {
+            throw new Error("존재하지 않는 이메일입니다.");
+        }
 
-    const userJWT = jwt.sign({ userId: user.userId }, process.env.JWT_SECRET, {
-      expiresIn: "12h",
-    });
-    const refreshToken = jwt.sign(
-      { userId: user.userId },
-      process.env.REFRESH_SECRET,
-      { expiresIn: "7d" }
-    );
+        const checkpass = await bcrypt.compare(password, user.password);
+        if (!checkpass) {
+            throw new Error("비밀번호가 일치하지 않습니다.");
+        }
 
-    return userJWT, refreshToken;
-  };
+        const userJWT = jwt.sign({ userId: user.userId }, process.env.JWT_SECRET, {
+            expiresIn: "12h",
+        });
+        const refreshToken = jwt.sign({ userId: user.userId }, process.env.REFRESH_SECRET, { expiresIn: "7d" });
 
-  hashPassword = async (password) => {
-    const saltRounds = 10;
-    const hashedPassword = await bcrypt.hash(password, saltRounds);
-    return hashedPassword;
-  };
-
-  
-   /// 고객님 회원가입
-  register = async (email, name, password) => {
-    const user = await this.usersRepository.getUserByEmail(email);
-
-    if (user) {
-      throw new Error("이미 등록된 이메일입니다.");
-    }
-
-    const hashedPassword = await this.hashPassword(password);
-
-    const randomNum = () => {
-        return Math.floor(1000 + Math.random() * 9000);
-      };
-
-    const token = randomNum();
-
-    const usercreate = await this.usersRepository.registercreate(
-      email,
-      name,
-      hashedPassword,
-      token
-    );
-
-    await sendVerificationEmail(email, token);
-
-    return usercreate;
-  };
-
-  adhashPassword = async (adPassword) => {
-    const saltRounds = 10;
-    const hashedPassword = await bcrypt.hash(adPassword, saltRounds);
-    return hashedPassword;
-  };
-
-  /// 사장님 회원가입
-  adregister = async (adEmail, adminName, adPassword) => {
-    const aduser = await this.usersRepository.adByEmails(adEmail);
-
-    if (aduser) {
-      throw new Error("이미 등록된 이메일입니다.");
-    }
-
-    const hashedPassword = await this.adhashPassword(adPassword);
-
-    const randomNum = () => {
-      return Math.floor(1000 + Math.random() * 9000);
+        return { userJWT, refreshToken };
     };
-    
-    const token = randomNum();
 
-    const adusercreate = await this.usersRepository.adregistercreate(
-      adEmail,
-      adminName,
-      hashedPassword,
-      token
-    );
+    hashPassword = async (password) => {
+        const saltRounds = 10;
+        const hashedPassword = await bcrypt.hash(password, saltRounds);
+        return hashedPassword;
+    };
 
-    await sendVerificationEmail(adEmail, token);
+    /// 고객님 회원가입
+    register = async (email, name, password) => {
+        const user = await this.usersRepository.getUserByEmail(email);
 
-    return adusercreate;
-  };
+        if (user) {
+            throw new Error("이미 등록된 이메일입니다.");
+        }
 
-  useridedit = async (email, verifiCationToken) => {
-    const user = await this.usersRepository.getUserByEmail(email);
+        const hashedPassword = await this.hashPassword(password);
 
-    if(!user){
-      throw new Error("유저가 존재하지 않습니다.");
-    }
+        const randomNum = () => {
+            return Math.floor(1000 + Math.random() * 9000);
+        };
 
-    if(user.emailStatus !== "waiting"){
-      throw new Error("이미 인증된 메일입니다.");
-    }
-  
+        const token = randomNum();
 
-    const update = await this.usersRepository.useridedit(user.userId, verifiCationToken);
-    
-    
-    return update; 
-  }
+        const usercreate = await this.usersRepository.registercreate(email, name, hashedPassword, token);
 
-  
-  getUserEmail = async (email) => {
-    const user = await this.usersRepository.getUserByEmail(email);
-    
-    return user;
-  }
-  
- getUserPoint = async (userId) => {
+        await sendVerificationEmail(email, token);
+
+        return usercreate;
+    };
+
+    adhashPassword = async (adPassword) => {
+        const saltRounds = 10;
+        const hashedPassword = await bcrypt.hash(adPassword, saltRounds);
+        return hashedPassword;
+    };
+
+    /// 사장님 회원가입
+    adregister = async (adEmail, adminName, adPassword) => {
+        const aduser = await this.usersRepository.adByEmails(adEmail);
+
+        if (aduser) {
+            throw new Error("이미 등록된 이메일입니다.");
+        }
+
+        const hashedPassword = await this.adhashPassword(adPassword);
+
+        const randomNum = () => {
+            return Math.floor(1000 + Math.random() * 9000);
+        };
+
+        const token = randomNum();
+
+        const adusercreate = await this.usersRepository.adregistercreate(adEmail, adminName, hashedPassword, token);
+
+        await sendVerificationEmail(adEmail, token);
+
+        return adusercreate;
+    };
+
+    useridedit = async (email, verifiCationToken) => {
+        const user = await this.usersRepository.getUserByEmail(email);
+
+        if (!user) {
+            s;
+            throw new Error("유저가 존재하지 않습니다.");
+        }
+
+        if (user.emailStatus !== "waiting") {
+            throw new Error("이미 인증된 메일입니다.");
+        }
+
+        const update = await this.usersRepository.useridedit(user.userId, verifiCationToken);
+
+        return update;
+    };
+
+    getUserEmail = async (email) => {
+        const user = await this.usersRepository.getUserByEmail(email);
+
+        return user;
+    };
+
+    getUserPoint = async (userId) => {
         const point = await this.pointsRepository.getUserPoint(userId);
 
         return point;
@@ -132,5 +123,4 @@ export class UsersService {
 
         return { userJWT, refreshToken };
     };
-   
 }
