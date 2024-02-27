@@ -2,11 +2,13 @@ import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
 import bcrypt from "bcrypt";
 import { sendVerificationEmail } from "../middlewares/sendEmail.middlewares.js";
+
 import { ValidationError } from "../common.error.js";
 import { UnauthorizedError } from "../common.error.js";
 import { NotFoundError } from "../common.error.js";
 import { ConflictError } from "../common.error.js";
 import { ForbiddenError } from "../common.error.js";
+
 
 dotenv.config();
 export class UsersService {
@@ -83,7 +85,8 @@ export class UsersService {
     const aduser = await this.usersRepository.adByEmails(adEmail);
 
     if (aduser) {
-      throw new ForbiddenError("이미 등록된 이메일입니다.");
+      throw new NotFoundError("이미 등록된 이메일 입니다.");
+
     }
 
     const hashedPassword = await this.adhashPassword(adPassword);

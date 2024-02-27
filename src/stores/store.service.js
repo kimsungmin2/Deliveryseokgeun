@@ -1,9 +1,15 @@
 import dotenv from "dotenv";
+
+import jwt from "jsonwebtoken";
+import bcrypt from "bcrypt";
+import {NotFoundError} from "../common.error.js"
+
 import { ValidationError } from "../common.error.js";
 import { UnauthorizedError } from "../common.error.js";
-import { NotFoundError } from "../common.error.js";
+
 import { ConflictError } from "../common.error.js";
 import { ForbiddenError } from "../common.error.js";
+
 
 dotenv.config();
 export class StoresService {
@@ -18,6 +24,24 @@ export class StoresService {
     this.ordersRepository = ordersRepository;
     this.menusRepository = menusRepository;
   }
+  // 로그인
+  signIn = async (adEmail, adPassword) => {
+    const aduser = await this.storesRepository.getStoreByEmail(adEmail);
+    console.log(aduser)
+    const storeJWT = jwt.sign(
+      { aduserId: aduser.aduserId },
+      process.env.JWT_SECRET,
+      { expiresIn: "12h" }
+    );
+    const refreshToken = jwt.sign(
+      { aduserId: aduser.aduserId },
+      process.env.REFRESH_SECRET,
+      { expiresIn: "7d" }
+    );
+
+    return { storeJWT, refreshToken };
+  };
+  
   // 가게정보 생성
   createStoreInfo = async (
     aduserId,
@@ -37,26 +61,11 @@ export class StoresService {
     );
     return storeInfo;
   };
-  signIn = async (adEmail, adPassword) => {
-    const aduser = await this.storesRepository.getStoreByEmail(adEmail);
-
-    const storeJWT = jwt.sign(
-      { aduserId: aduser.aduserId },
-      process.env.JWT_SECRET,
-      { expiresIn: "12h" }
-    );
-    const refreshToken = jwt.sign(
-      { aduserId: aduser.aduserId },
-      process.env.REFRESH_SECRET,
-      { expiresIn: "7d" }
-    );
-
-    return { storeJWT, refreshToken };
-  };
+  
   // 가게정보 상세조회
   getStoreById = async (storeId) => {
     const store = await this.storesRepository.getStoreById(storeId);
-    if (!store) throw new Error("존재하지 않는 상점입니다.");
+    if (!store) throw new NotFoundError("등록된 가게가 없습니다.");
     return store;
   };
   readystatusup = async (orderId, storeId, orderStatus) => {
@@ -167,11 +176,21 @@ export class StoresService {
     );
   };
   // 가게 정보 삭제
-  deleteStoreInfo = async (storeId, aduserId) => {
-    const store = await this.storesRepository.deleteStoreInfo(
-      storeId,
-      aduserId
-    );
+  deleteStoreInfo = async (storeId, aduserId, password, hashedPassword) => {
+    const deleteStoreId = await this.storesRepository.getStoreById(storeId);
+  
+    const youPwHashPw = await bcrypt.compare(password, hashedPassword);
+  
+    if (!youPwHashPw) {
+      throw new NotFoundError("비밀번호가 일치하지 않습니다.");
+    }
+  
+    if (deleteStoreId.aduserId !== aduserId) {
+      throw new NotFoundError("본인 가게만 삭제 가능합니다.");
+    }
+  
+    const store = await this.storesRepository.deleteStoreInfo(storeId, aduserId);
+  
     return store;
   };
   findStore = async (search) => {

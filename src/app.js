@@ -1,7 +1,7 @@
 import express from "express";
 import cookieParser from "cookie-parser";
 import LogMiddleware from "./middlewares/log.middleware.js";
-import ErrorHandlingMiddleware from "./middlewares/error-handling.middleware.js";
+import {ErrorHandlingMiddleware} from "./middlewares/error-handling.middleware.js";
 import router from "./router.js";
 
 const app = express();
