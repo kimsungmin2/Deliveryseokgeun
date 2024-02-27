@@ -30,7 +30,7 @@ router.get("/adusers", usersController.getadUsermany);
 router.patch("/useraceess", usersController.useraceess);
 router.patch("/aduseraceess", usersController.aduseraceess);
 
-router.delete("/users/:userId", authMiddleware, usersController.userdelete);
-router.delete("/adusers/:aduserId", adauthMiddleware, usersController.aduserdelete);
+router.delete("/users/:userId", authMiddleware, usersController.userdelete); //
+router.delete("/adusers/:aduserId", adauthMiddleware, usersController.aduserdelete); //
 
 export default router;

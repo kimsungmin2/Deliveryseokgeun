@@ -21,11 +21,9 @@ export class MenusService {
     // 메뉴 수정
     updateMenu = async (menuId, menuName, menuPrice, menuContent, quantity) => {
         const menu = await this.menusRepository.getMenuById(menuId);
-        if (!menu) {
-            throw new Error("해당 메뉴를 찾을 수 없습니다.");
-        }
+
         const updateMenu = await this.menusRepository.updateMenu(menuId, menuName, menuPrice, menuContent, quantity);
-        return { message: "메뉴 업데이트에 성공하였습니다." };
+        return updateMenu;
     };
 
     // 메뉴 삭제
