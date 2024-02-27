@@ -6,9 +6,9 @@ import { sendVerificationEmail } from "../middlewares/sendEmail.middlewares.js";
 dotenv.config();
 export class UsersService {
   constructor(usersRepository, pointsRepository) {
-        this.usersRepository = usersRepository;
-        this.pointsRepository = pointsRepository;
-    }
+    this.usersRepository = usersRepository;
+    this.pointsRepository = pointsRepository;
+  }
   signIn = async (email, password) => {
     const user = await this.usersRepository.getUserByEmail(email);
 
@@ -30,8 +30,7 @@ export class UsersService {
     return hashedPassword;
   };
 
-  
-   /// 고객님 회원가입
+  /// 고객님 회원가입
   register = async (email, name, password) => {
     const user = await this.usersRepository.getUserByEmail(email);
 
@@ -42,8 +41,8 @@ export class UsersService {
     const hashedPassword = await this.hashPassword(password);
 
     const randomNum = () => {
-        return Math.floor(1000 + Math.random() * 9000);
-      };
+      return Math.floor(1000 + Math.random() * 9000);
+    };
 
     const token = randomNum();
 
@@ -78,7 +77,7 @@ export class UsersService {
     const randomNum = () => {
       return Math.floor(1000 + Math.random() * 9000);
     };
-    
+
     const token = randomNum();
 
     const adusercreate = await this.usersRepository.adregistercreate(
@@ -96,41 +95,48 @@ export class UsersService {
   useridedit = async (email, verifiCationToken) => {
     const user = await this.usersRepository.getUserByEmail(email);
 
-    if(!user){
+    if (!user) {
       throw new Error("유저가 존재하지 않습니다.");
     }
 
-    if(user.emailStatus !== "waiting"){
+    if (user.emailStatus !== "waiting") {
       throw new Error("이미 인증된 메일입니다.");
     }
-  
 
-    const update = await this.usersRepository.useridedit(user.userId, verifiCationToken);
-    
-    
-    return update; 
-  }
+    const update = await this.usersRepository.useridedit(
+      user.userId,
+      verifiCationToken
+    );
 
-  
+    return update;
+  };
+
   getUserEmail = async (email) => {
     const user = await this.usersRepository.getUserByEmail(email);
-    
+
     return user;
-  }
-  
- getUserPoint = async (userId) => {
-        const point = await this.pointsRepository.getUserPoint(userId);
+  };
 
-        return point;
-    };
+  getUserPoint = async (userId) => {
+    const point = await this.pointsRepository.getUserPoint(userId);
 
-    adsignIn = async (adEmail) => {
-        const aduser = await this.usersRepository.getadUserByEmail(adEmail);
+    return point;
+  };
 
-        const userJWT = jwt.sign({ aduserId: aduser.aduserId }, process.env.JWT_SECRET, { expiresIn: "12h" });
-        const refreshToken = jwt.sign({ aduserId: aduser.aduserId }, process.env.REFRESH_SECRET, { expiresIn: "7d" });
+  adsignIn = async (adEmail) => {
+    const aduser = await this.usersRepository.getadUserByEmail(adEmail);
 
-        return { userJWT, refreshToken };
-    };
-   
+    const userJWT = jwt.sign(
+      { aduserId: aduser.aduserId },
+      process.env.JWT_SECRET,
+      { expiresIn: "12h" }
+    );
+    const refreshToken = jwt.sign(
+      { aduserId: aduser.aduserId },
+      process.env.REFRESH_SECRET,
+      { expiresIn: "7d" }
+    );
+
+    return { userJWT, refreshToken };
+  };
 }

@@ -3,6 +3,16 @@ export class StoresController {
     this.storesService = storesService;
     this.ordersService = ordersService;
   }
+
+  // 로그인
+  signIn = async (req, res, next) => {
+    const { adEmail, adPassword } = req.body;
+    const tokens = await this.storesService.signIn(adEmail, adPassword);
+    res.cookie("authorization", `Bearer ${tokens.storeJWT}`);
+    res.cookie("refreshToken", tokens.refreshToken);
+    return res.status(200).json({ message: "로그인 성공" });
+  };
+
   // 가게정보 생성
   createStoreInfo = async (req, res, next) => {
     const {

@@ -1,49 +1,70 @@
 export class UsersController {
-  constructor(usersService,pointsService) {
+  constructor(usersService, pointsService) {
     this.usersService = usersService;
     this.pointsService = pointsService;
   }
-  signIn = async (req, res, next) => {
-    try {
-      const { email, password } = req.body;
 
-      if (!email) {
-        return res.status(400).json({ message: "이메일이 존재하지 않습니다." });
-      }
-
-      if (!password) {
-        return res
-          .status(400)
-          .json({ message: "비밀번호가 존재하지 않습니다." });
-      }
-
-      if (
-        !email.includes("@naver.com") &&
-        !email.includes("@daum.net") &&
-        !email.includes("@google.com") &&
-        !email.includes("@googlemail.com") &&
-        !email.includes("@hanmail.net") &&
-        !email.includes("@icloud.com") &&
-        !email.includes("@cyworld.com") &&
-        !email.includes("@kakao.com") &&
-        !email.includes("@mail.com") &&
-        !email.includes("@narasarang.or.kr") &&
-        !email.includes("@tistory.com")
-      ) {
-        return res
-          .status(400)
-          .json({ message: "이메일 조건이 맞지 않습니다." });
-      }
-
-      const tokens = await this.usersService.signIn(email, password);
-
-      res.cookie("authorization", `Bearer ${tokens.userJWT}`);
-      res.cookie("refreshToken", tokens.refreshToken);
-      return res.status(200).json({ message: "로그인 성공" });
-    } catch (err) {
-      next(err);
+  signIn = async (email, password) => {
+    const user = await this.usersRepository.getUserByEmail(email);
+    if (!user) {
+      throw new Error("존재하지 않는 이메일입니다.");
     }
+    const checkpass = await bcrypt.compare(password, user.password);
+    if (!checkpass) {
+      throw new Error("비밀번호가 일치하지 않습니다.");
+    }
+    const userJWT = jwt.sign({ userId: user.userId }, process.env.JWT_SECRET, {
+      expiresIn: "12h",
+    });
+    const refreshToken = jwt.sign(
+      { userId: user.userId },
+      process.env.REFRESH_SECRET,
+      { expiresIn: "7d" }
+    );
+    return { userJWT, refreshToken };
   };
+
+  // signIn = async (req, res, next) => {
+  //   try {
+  //     const { email, password } = req.body;
+
+  //     if (!email) {
+  //       return res.status(400).json({ message: "이메일이 존재하지 않습니다." });
+  //     }
+
+  //     if (!password) {
+  //       return res
+  //         .status(400)
+  //         .json({ message: "비밀번호가 존재하지 않습니다." });
+  //     }
+
+  //     if (
+  //       !email.includes("@naver.com") &&
+  //       !email.includes("@daum.net") &&
+  //       !email.includes("@google.com") &&
+  //       !email.includes("@googlemail.com") &&
+  //       !email.includes("@hanmail.net") &&
+  //       !email.includes("@icloud.com") &&
+  //       !email.includes("@cyworld.com") &&
+  //       !email.includes("@kakao.com") &&
+  //       !email.includes("@mail.com") &&
+  //       !email.includes("@narasarang.or.kr") &&
+  //       !email.includes("@tistory.com")
+  //     ) {
+  //       return res
+  //         .status(400)
+  //         .json({ message: "이메일 조건이 맞지 않습니다." });
+  //     }
+
+  //     const tokens = await this.usersService.signIn(email, password);
+
+  //     res.cookie("authorization", `Bearer ${tokens.userJWT}`);
+  //     res.cookie("refreshToken", tokens.refreshToken);
+  //     return res.status(200).json({ message: "로그인 성공" });
+  //   } catch (err) {
+  //     next(err);
+  //   }
+  // };
 
   // 고객님 회원가입
   userregister = async (req, res, next) => {
@@ -71,7 +92,6 @@ export class UsersController {
           .status(400)
           .json({ message: "가입하실 이름을 적지 않았습니다." });
       }
-
 
       if (
         !email.includes("@naver.com") &&
@@ -187,16 +207,19 @@ export class UsersController {
       next(err);
     }
   };
-    getUserPoint = async (req, res, next) => {
-        try {
-            const { userId } = req.user;
+  getUserPoint = async (req, res, next) => {
+    try {
+      const { userId } = req.user;
 
-            const user = await this.usersService.getUserPoint(userId);
+      const user = await this.usersService.getUserPoint(userId);
 
-            return res.status(200).json({ message: `현재 고객님의 포인트는 ${user[0]._sum.possession}원 있습니다.` });
-        } catch (err) {
-            next(err);
-        }
-    };
-      
+      return res
+        .status(200)
+        .json({
+          message: `현재 고객님의 포인트는 ${user[0]._sum.possession}원 있습니다.`,
+        });
+    } catch (err) {
+      next(err);
+    }
+  };
 }
