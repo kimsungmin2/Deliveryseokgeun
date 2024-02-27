@@ -259,28 +259,7 @@ export class StoresController {
       next(err);
     }
   };
-  getOrderData = async (req, res, next) => {
-    try {
-      const { storeId } = req.params;
-      const { adusrId } = req.user;
 
-      // const store = await this.ordersService.findStoreId(storeId);
-
-      // if (userId !== store.aduserId) {
-      //   return res
-      //     .status(403)
-      //     .json({ message: "사장님만 주문 조회를 할 수 있습니다." });
-      // }
-
-      const order = await this.storesService.getOrderdata(storeId);
-      return res.status(200).json({ data: order });
-    } catch (err) {
-      if (err instanceof NotFoundError) {
-        res.status(404).json({ message: err.message });
-      }
-      next(err);
-    }
-  };
   searchData = async (req, res, next) => {
     try {
       const { search } = req.body;
