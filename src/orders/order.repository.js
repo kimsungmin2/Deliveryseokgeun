@@ -103,4 +103,16 @@ export class OrdersRepository {
         });
         return deletedOrder;
     };
+
+    ratingUserPoint = async (userId) => {
+        const point = await this.prisma.orders.groupBy({
+            by: ["userId"],
+            where: { userId: +userId },
+            _sum: {
+                totalPrice: true,
+            },
+        });
+
+        return point;
+    };
 }

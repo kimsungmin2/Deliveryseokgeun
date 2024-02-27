@@ -168,7 +168,22 @@ export class StoresController {
       next(err);
     }
   };
+   // 가게 정보 상세조회
+    getStoreById = async (req, res, next) => {
+        try {
+            const storeId = req.params.storeId;
 
+            const detailStoreInfo = await this.storesService.getStoreById(storeId);
+
+            return res.status(200).json({ detailStoreInfo });
+        } catch (err) {
+            if (err.message === "존재하지 않는 상점입니다.") {
+                return res.status(401).json({ message: err.message });
+            }
+            next(err);
+        }
+    };
+ 
   readystatusup = async (req, res, next) => {
     try {
       const { storeId, orderId } = req.params;
@@ -300,7 +315,6 @@ export class StoresController {
       }
       next(err);
     }
-  };
 
   searchData = async (req, res, next) => {
     try {

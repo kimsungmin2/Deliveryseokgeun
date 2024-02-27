@@ -3,18 +3,19 @@ export class MenusRepository {
     this.prisma = prisma;
   }
 
-  // 메뉴 작성
-  createMenu = async (storeId, menuName, menuPrice, menuContent, quantity) => {
-    const menu = await this.prisma.menus.create({
-      data: {
-        storeId: +storeId,
-        menuName,
-        menuPrice,
-        menuContent,
-        quantity: +quantity,
-      },
-    });
 
+    // 메뉴 작성
+    createMenu = async (storeId, menuName, menuPrice, menuContent, quantity, imageUrl) => {
+        const menu = await this.prisma.menus.create({
+            data: {
+                storeId: +storeId,
+                menuName,
+                menuPrice: +menuPrice,
+                menuContent,
+                quantity: +quantity,
+                menuImage: imageUrl,
+            },
+        });
     return menu;
   };
   searchStoreByMenu = async (search) => {

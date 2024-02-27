@@ -10,24 +10,30 @@ datasource db {
 }
 
 model Users {
-  userId            Int          @id @default(autoincrement()) @map("userId")
-  email             String       @unique @map("email")
-  name              String       @map("name")
-  password          String       @map("password")
-  emailStatus       emailStatus? @default(waiting) @map("emailStatus")
-  emailVerified     Boolean      @default(false) @map("emailVerified")
-  verifiCationToken Int?         @map("verifiCationToken")
-  createdAt         DateTime     @default(now()) @map("createdAt")
-  updatedAt         DateTime     @updatedAt @map("updatedAt")
-  orders            Orders[]
-  reviews           Reviews[]
-  userpoints        Userpoints[]
-  coupons           Coupons[]
-
+  userId    Int      @id @default(autoincrement()) @map("userId")
+  email     String   @unique @map("email")
+  name String @map("name")
+  password  String   @map("password")
+  emailStatus emailStatus? @default(waiting) @map("emailStatus")
+  emailVerified Boolean  @default(false) @map("emailVerified")
+  verifiCationToken Int? @map("verifiCationToken")
+  rating rating @map("rating")
+  createdAt DateTime @default(now()) @map("createdAt")
+  updatedAt DateTime @updatedAt @map("updatedAt")
+  orders Orders []
+  reviews  Reviews []
+  userpoints Userpoints []
+  coupons Coupons []
   @@map("Users")
 }
 
-enum emailStatus {
+enum rating {
+basic
+rare
+epic
+}
+enum emailStatus{
+
   waiting
   completion
 }
@@ -81,17 +87,18 @@ enum StoreCategory {
 }
 
 model Menus {
-  menuId      Int         @id @default(autoincrement()) @map("menuId")
-  storeId     Int         @map("storeId")
-  menuName    String      @map("menuName")
-  menuPrice   Int         @map("menuPrice")
-  menuContent String      @map("menuContent") @db.Text
-  quantity    Int         @map("quantity")
-  createdAt   DateTime    @default(now()) @map("createdAt")
-  updatedAt   DateTime    @updatedAt @map("updatedAt")
-  store       Stores      @relation(fields: [storeId], references: [storeId], onDelete: Cascade)
-  reviews     Reviews[]
-  orderlist   Orderlist[]
+  menuId    Int      @id @default(autoincrement()) @map("menuId")
+  storeId Int @map("storeId")
+  menuName     String   @map("menuName")
+  menuPrice   Int   @map("menuPrice")
+  menuContent String @map("menuContent") @db.Text
+  quantity Int @map("quantity")
+  menuImage String @map("menuImage")
+  createdAt DateTime @default(now()) @map("createdAt")
+  updatedAt DateTime @updatedAt @map("updatedAt")
+  store Stores @relation(fields: [storeId], references: [storeId], onDelete: Cascade)
+  reviews Reviews []
+  orderlist Orderlist []
 
   @@map("Menus")
 }
