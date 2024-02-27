@@ -18,8 +18,10 @@ const usersService = new UsersService(usersRepository, pointsRepository, ordersR
 const pointsService = new PointsService(pointsRepository);
 const usersController = new UsersController(usersService, pointsService);
 
+
 router.post("/signin", usersController.signIn);
 router.post("/adsignin", usersController.adsignIn);
+
 router.post("/userregistr", usersController.userregister);
 router.post("/adusers", usersController.adminregister);
 router.get("/point", authMiddleware, usersController.getUserPoint);

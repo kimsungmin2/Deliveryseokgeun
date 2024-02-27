@@ -2,6 +2,7 @@ import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
 import bcrypt from "bcrypt";
 import { sendVerificationEmail } from "../middlewares/sendEmail.middlewares.js";
+
 dotenv.config();
 export class UsersService {
     constructor(usersRepository, pointsRepository, ordersRepository) {
@@ -201,4 +202,5 @@ export class UsersService {
 
         return point;
     };
+
 }

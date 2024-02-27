@@ -6,6 +6,16 @@ export class StoresRepository {
         const store = await this.prisma.aduser.findFirst({ where: { adEmail } });
         return store;
     };
+
+    findStoreId = async (aduserId)  => {
+      const findStoreId = await this.prisma.stores.findFirst({
+        where : {
+          aduserId : +aduserId
+        }
+      })
+      return findStoreId
+    }
+
     createStoreInfo = async (aduserId, storeName, storeAddress, storeContact, storeContent, storeCategory) => {
         const storeInfo = await this.prisma.stores.create({
             data: {
@@ -47,84 +57,77 @@ export class StoresRepository {
                 },
             },
         });
+    return store;
+  };
+  readystatusup = async (orderId, storeId, orderStatus) => {
+    const order = await this.prisma.orders.update({
+      where: { orderId: +orderId },
+      data: { storeId: +storeId, orderStatus },
+    });
+    return order;
+  };
+  ingstatusup = async (orderId, storeId, orderStatus) => {
+    const order = await this.prisma.orders.update({
+      where: { orderId: +orderId },
+      data: { storeId: +storeId, orderStatus },
+    });
+    return order;
+  };
+  completestatusup = async (orderId, storeId, orderStatus) => {
+    const order = await this.prisma.orders.update({
+      where: { orderId: +orderId },
+      data: { storeId: +storeId, orderStatus },
+    });
+    return order;
+  };
+  // 가게 목록 조회
+  getStoreList = async () => {
+    const storeList = await this.prisma.stores.findMany({
+      select: {
+        storeId: true,
+        storeName: true,
+        storeAddress: true,
+        storeContact: true,
+        storeCategory: true,
+        storeRate: true,
+      },
+    });
+    return storeList;
+  };
+  // 가게 정보 수정
+  updateStoreInfo = async (
+    storeId,
+    userId,
+    storeName,
+    storeAddress,
+    storeContact,
+    storeContent,
+    storeCategory
+  ) => {
+    const store = await this.prisma.stores.update({
+      where: {
+        storeId: +storeId,
+      },
+      data: {
+        userId,
+        storeName,
+        storeAddress,
+        storeContact,
+        storeContent,
+        storeCategory,
+      },
+    });
+    return store;
+  };
+  // 가게 정보 삭제
+  deleteStoreInfo = async (storeId, aduserId) => {
+    const store = await this.prisma.stores.delete({
+      where: {
+        storeId: +storeId,
+        aduserId: +aduserId,
+      },
+    });
 
-        return store;
-    };
-    readystatusup = async (orderId, storeId, orderStatus) => {
-        const order = await this.prisma.orders.update({
-            where: { orderId: +orderId },
-            data: { storeId: +storeId, orderStatus },
-        });
-        return order;
-    };
-    ingstatusup = async (orderId, storeId, orderStatus) => {
-        const order = await this.prisma.orders.update({
-            where: { orderId: +orderId },
-            data: { storeId: +storeId, orderStatus },
-        });
-        return order;
-    };
-    completestatusup = async (orderId, storeId, orderStatus) => {
-        const order = await this.prisma.orders.update({
-            where: { orderId: +orderId },
-            data: { storeId: +storeId, orderStatus },
-        });
-        return order;
-    };
-    // 가게 목록 조회
-    getStoreList = async () => {
-        const storeList = await this.prisma.stores.findMany({
-            select: {
-                storeId: true,
-                storeName: true,
-                storeAddress: true,
-                storeContact: true,
-                storeCategory: true,
-                storeRate: true,
-            },
-        });
-        return storeList;
-    };
-    // 가게 정보 수정
-    updateStoreInfo = async (storeId, userId, storeName, storeAddress, storeContact, storeContent, storeCategory) => {
-        // const store = await this.prisma.stores.findFirst({
-        //   where: {
-        //     storeId: +storeId,
-        //   },
-        // });
-
-        const store = await this.prisma.stores.update({
-            where: {
-                storeId: +storeId,
-            },
-            data: {
-                userId,
-                storeName,
-                storeAddress,
-                storeContact,
-                storeContent,
-                storeCategory,
-            },
-        });
-        return store;
-    };
-    // 가게 정보 삭제
-    deleteStoreInfo = async (storeId, aduserId) => {
-        // const store = await this.prisma.stores.findFirst({
-        //   where: {
-        //     storeId: +deleteStoreId,
-        //   },
-        // });
-        // if (store.storeId !== deleteStoreId) {
-        //   throw new Error("삭제 하려는 가게 정보가 없습니다.");
-        // }
-
-        const store = await this.prisma.stores.delete({
-            where: {
-                storeId: +storeId,
-                aduserId: +aduserId,
-            },
-        });
 
         return store;
     };
