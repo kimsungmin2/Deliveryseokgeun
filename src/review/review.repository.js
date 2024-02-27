@@ -48,6 +48,14 @@ export class ReviewsRepository {
     return findReivew;
   };
 
+  GetReviews = async (menuId) => {
+    const Reviews = await this.prisma.reviews.findMany({
+      where: { menuId: +menuId },
+      orderBy: { createdAt: "desc" },
+    });
+    return Reviews;
+  };
+
   updateReview = async (userId, reviewId, review, reviewRate) => {
     console.log("유저아이디", userId);
     console.log("리뷰", review);

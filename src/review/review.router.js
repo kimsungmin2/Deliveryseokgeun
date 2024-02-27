@@ -30,6 +30,9 @@ const reviewsController = new ReviewsController(
 
 router.post("/:menuId/reviews", authMiddleware, reviewsController.createReview);
 
+//메뉴 리뷰조회
+router.get("/:menuId", reviewsController.getReviews);
+
 //리뷰삭제
 router.delete(
   "/:reviewId/reviews",
