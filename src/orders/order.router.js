@@ -53,8 +53,10 @@ router.post("/", authMiddleware, ordersController.createOrder);
 router.get("/:orderId", authMiddleware, ordersController.getOrderById);
 
 router.delete("/:orderId", authMiddleware, ordersController.deleteOrder);
+
 //음식점 검색기능
-// router.post("/search", ordersController.searchData);
+ router.post("/search", ordersController.searchData);
+
 
 //카테고리 검색기능(추후 만들기)
 // router.post("/store/search", async (req, res, next) => {
@@ -67,5 +69,6 @@ router.delete("/:orderId", authMiddleware, ordersController.deleteOrder);
 //   // adauthMiddleware,
 //   ordersController.getOrderData
 // );
+
 
 export default router;

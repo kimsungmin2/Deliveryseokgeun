@@ -2,15 +2,30 @@ import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
 import bcrypt from "bcrypt";
 import { sendVerificationEmail } from "../middlewares/sendEmail.middlewares.js";
-import {NotFoundError} from "../common.error.js"
+
+import { ValidationError } from "../common.error.js";
+import { UnauthorizedError } from "../common.error.js";
+import { NotFoundError } from "../common.error.js";
+import { ConflictError } from "../common.error.js";
+import { ForbiddenError } from "../common.error.js";
+
+
 dotenv.config();
 export class UsersService {
   constructor(usersRepository, pointsRepository) {
-        this.usersRepository = usersRepository;
-        this.pointsRepository = pointsRepository;
-    }
+    this.usersRepository = usersRepository;
+    this.pointsRepository = pointsRepository;
+  }
   signIn = async (email, password) => {
     const user = await this.usersRepository.getUserByEmail(email);
+    if (!user) {
+      throw new ForbiddenError("존재하지 않는 이메일입니다.");
+    }
+
+    const checkpass = await bcrypt.compare(password, user.password);
+    if (!checkpass) {
+      throw new ForbiddenError("비밀번호가 일치하지 않습니다.");
+    }
 
     const userJWT = jwt.sign({ userId: user.userId }, process.env.JWT_SECRET, {
       expiresIn: "12h",
@@ -21,7 +36,7 @@ export class UsersService {
       { expiresIn: "7d" }
     );
 
-    return userJWT, refreshToken;
+    return { userJWT, refreshToken };
   };
 
   hashPassword = async (password) => {
@@ -30,31 +45,31 @@ export class UsersService {
     return hashedPassword;
   };
 
-  
-   /// 고객님 회원가입
+  /// 고객님 회원가입
   register = async (email, name, password) => {
     const user = await this.usersRepository.getUserByEmail(email);
 
     if (user) {
-      throw new Error("이미 등록된 이메일입니다.");
+      throw new ForbiddenError("이미 등록된 이메일입니다.");
     }
 
+    //해쉬화한 비밀번호
     const hashedPassword = await this.hashPassword(password);
 
     const randomNum = () => {
-        return Math.floor(1000 + Math.random() * 9000);
-      };
+      return Math.floor(1000 + Math.random() * 9000);
+    };
 
     const token = randomNum();
 
     const usercreate = await this.usersRepository.registercreate(
       email,
       name,
-      hashedPassword,
-      token
+      hashedPassword
+      // token
     );
 
-    await sendVerificationEmail(email, token);
+    // await sendVerificationEmail(email, token);
 
     return usercreate;
   };
@@ -65,12 +80,13 @@ export class UsersService {
     return hashedPassword;
   };
 
-  /// 사장님 회원가입
+  /// 사장님 회원가입(임시방편 수정했습니다.)
   adregister = async (adEmail, adminName, adPassword) => {
     const aduser = await this.usersRepository.adByEmails(adEmail);
 
     if (aduser) {
       throw new NotFoundError("이미 등록된 이메일 입니다.");
+
     }
 
     const hashedPassword = await this.adhashPassword(adPassword);
@@ -78,7 +94,7 @@ export class UsersService {
     const randomNum = () => {
       return Math.floor(1000 + Math.random() * 9000);
     };
-    
+
     const token = randomNum();
 
     const adusercreate = await this.usersRepository.adregistercreate(
@@ -96,41 +112,49 @@ export class UsersService {
   useridedit = async (email, verifiCationToken) => {
     const user = await this.usersRepository.getUserByEmail(email);
 
-    if(!user){
-      throw new Error("유저가 존재하지 않습니다.");
+    if (!user) {
+      s;
+      throw new ForbiddenError("유저가 존재하지 않습니다.");
     }
 
-    if(user.emailStatus !== "waiting"){
-      throw new Error("이미 인증된 메일입니다.");
+    if (user.emailStatus !== "waiting") {
+      throw new ForbiddenError("이미 인증된 메일입니다.");
     }
-  
 
-    const update = await this.usersRepository.useridedit(user.userId, verifiCationToken);
-    
-    
-    return update; 
-  }
+    const update = await this.usersRepository.useridedit(
+      user.userId,
+      verifiCationToken
+    );
 
-  
+    return update;
+  };
+
   getUserEmail = async (email) => {
     const user = await this.usersRepository.getUserByEmail(email);
-    
+
     return user;
-  }
-  
- getUserPoint = async (userId) => {
-        const point = await this.pointsRepository.getUserPoint(userId);
+  };
 
-        return point;
-    };
+  getUserPoint = async (userId) => {
+    const point = await this.pointsRepository.getUserPoint(userId);
 
-    adsignIn = async (adEmail) => {
-        const aduser = await this.usersRepository.getadUserByEmail(adEmail);
+    return point;
+  };
 
-        const userJWT = jwt.sign({ aduserId: aduser.aduserId }, process.env.JWT_SECRET, { expiresIn: "12h" });
-        const refreshToken = jwt.sign({ aduserId: aduser.aduserId }, process.env.REFRESH_SECRET, { expiresIn: "7d" });
+  adsignIn = async (adEmail) => {
+    const aduser = await this.usersRepository.getadUserByEmail(adEmail);
 
-        return { userJWT, refreshToken };
-    };
-   
+    const userJWT = jwt.sign(
+      { aduserId: aduser.aduserId },
+      process.env.JWT_SECRET,
+      { expiresIn: "12h" }
+    );
+    const refreshToken = jwt.sign(
+      { aduserId: aduser.aduserId },
+      process.env.REFRESH_SECRET,
+      { expiresIn: "7d" }
+    );
+
+    return { userJWT, refreshToken };
+  };
 }

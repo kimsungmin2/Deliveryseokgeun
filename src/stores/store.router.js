@@ -6,21 +6,22 @@ import { StoresService } from "./store.service.js";
 import { adauthMiddleware } from "../middlewares/adauth.middlewares.js";
 import { PointsRepository } from "../points/point.repository.js";
 import { OrdersRepository } from "../orders/order.repository.js";
+import { MenusRepository } from "../menus/menu.repository.js";
 
 const router = express.Router();
 
 const storesRepository = new StoresRepository(prisma);
 const pointsRepository = new PointsRepository(prisma);
 const ordersRepository = new OrdersRepository(prisma);
+const menusRepository = new MenusRepository(prisma);
 const storesService = new StoresService(
   storesRepository,
   pointsRepository,
-  ordersRepository
+  ordersRepository,
+  menusRepository
 );
 
 const storesController = new StoresController(storesService);
-
-router.post("/signin", storesController.signIn);
 
 router.post("/", adauthMiddleware, storesController.createStoreInfo);
 
@@ -56,4 +57,11 @@ router.delete(
   storesController.deleteOrder
 );
 
+router.post("/search", storesController.searchData);
+
+router.get(
+  "/:storeId/ordered",
+  adauthMiddleware,
+  storesController.getOrderData
+);
 export default router;

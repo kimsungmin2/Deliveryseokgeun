@@ -1,7 +1,15 @@
 import dotenv from "dotenv";
+
 import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
 import {NotFoundError} from "../common.error.js"
+
+import { ValidationError } from "../common.error.js";
+import { UnauthorizedError } from "../common.error.js";
+
+import { ConflictError } from "../common.error.js";
+import { ForbiddenError } from "../common.error.js";
+
 
 dotenv.config();
 export class StoresService {
@@ -197,14 +205,18 @@ export class StoresService {
     const searchStore2 =
       await this.storesRepository.searchStoreByMenuId(storeIdList);
 
-    if (!searchStore && !searchStore2) {
-      throw new NotFoundError("검색키워드와 일치하는 가게가 없습니다.");
-    }
+    // if (!searchStore && !searchStore2) {
+    //     throw new NotFoundError("검색키워드와 일치하는 가게가 없습니다.");
+    // }
 
     //검색한 데이터를 평점 내림차순으로 정리해 searchData 변수에 저장
     const searchData = [...searchStore, ...searchStore2].sort(
       (a, b) => b.rate - a.rate
     );
+
+    if (searchData.length == 0) {
+      throw new NotFoundError("검색키워드와 일치하는 가게가 없습니다.");
+    }
 
     return searchData;
   };

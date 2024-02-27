@@ -1,48 +1,22 @@
 export class UsersController {
-  constructor(usersService,pointsService) {
+  constructor(usersService, pointsService) {
     this.usersService = usersService;
     this.pointsService = pointsService;
   }
+
+  //
+  //유저 부분 싹 임시방편으로 수정했습니다. merge시 삭제필요 ★★★★★★★★★★★★
+  //
+
   signIn = async (req, res, next) => {
-    try {
-      const { email, password } = req.body;
+    const { email, password } = req.body;
 
-      if (!email) {
-        return res.status(400).json({ message: "이메일이 존재하지 않습니다." });
-      }
+    const tokens = await this.usersService.signIn(email, password);
 
-      if (!password) {
-        return res
-          .status(400)
-          .json({ message: "비밀번호가 존재하지 않습니다." });
-      }
+    res.cookie("authorization", `Bearer ${tokens.userJWT}`);
+    res.cookie("refreshToken", tokens.refreshToken);
 
-      if (
-        !email.includes("@naver.com") &&
-        !email.includes("@daum.net") &&
-        !email.includes("@google.com") &&
-        !email.includes("@googlemail.com") &&
-        !email.includes("@hanmail.net") &&
-        !email.includes("@icloud.com") &&
-        !email.includes("@cyworld.com") &&
-        !email.includes("@kakao.com") &&
-        !email.includes("@mail.com") &&
-        !email.includes("@narasarang.or.kr") &&
-        !email.includes("@tistory.com")
-      ) {
-        return res
-          .status(400)
-          .json({ message: "이메일 조건이 맞지 않습니다." });
-      }
-
-      const tokens = await this.usersService.signIn(email, password);
-
-      res.cookie("authorization", `Bearer ${tokens.userJWT}`);
-      res.cookie("refreshToken", tokens.refreshToken);
-      return res.status(200).json({ message: "로그인 성공" });
-    } catch (err) {
-      next(err);
-    }
+    return res.status(200).json({ message: "로그인 성공" });
   };
 
   // 고객님 회원가입
@@ -72,24 +46,23 @@ export class UsersController {
           .json({ message: "가입하실 이름을 적지 않았습니다." });
       }
 
-
-      if (
-        !email.includes("@naver.com") &&
-        !email.includes("@daum.net") &&
-        !email.includes("@google.com") &&
-        !email.includes("@googlemail.com") &&
-        !email.includes("@hanmail.net") &&
-        !email.includes("@icloud.com") &&
-        !email.includes("@cyworld.com") &&
-        !email.includes("@kakao.com") &&
-        !email.includes("@mail.com") &&
-        !email.includes("@narasarang.or.kr") &&
-        !email.includes("@tistory.com")
-      ) {
-        return res
-          .status(400)
-          .json({ message: "이메일 조건이 맞지 않습니다." });
-      }
+      //   if (
+      //     !email.includes("@naver.com") &&
+      //     !email.includes("@daum.net") &&
+      //     !email.includes("@google.com") &&
+      //     !email.includes("@googlemail.com") &&
+      //     !email.includes("@hanmail.net") &&
+      //     !email.includes("@icloud.com") &&
+      //     !email.includes("@cyworld.com") &&
+      //     !email.includes("@kakao.com") &&
+      //     !email.includes("@mail.com") &&
+      //     !email.includes("@narasarang.or.kr") &&
+      //     !email.includes("@tistory.com")
+      //   ) {
+      //     return res
+      //       .status(400)
+      //       .json({ message: "이메일 조건이 맞지 않습니다." });
+      //   }
 
       if (password !== passwordconfirm) {
         return res
@@ -99,7 +72,9 @@ export class UsersController {
 
       const users = await this.usersService.register(email, name, password);
 
-      return res.status(201).json({ message: users });
+      return res
+        .status(201)
+        .json({ message: `${name}님 회원가입을 축하드립니다.` });
     } catch (err) {
       next(err);
     }
@@ -132,23 +107,23 @@ export class UsersController {
           .json({ message: "비밀번호 확인란을 적지 않았습니다." });
       }
 
-      if (
-        !adEmail.includes("@naver.com") &&
-        !adEmail.includes("@daum.net") &&
-        !adEmail.includes("@google.com") &&
-        !adEmail.includes("@googlemail.com") &&
-        !adEmail.includes("@hanmail.net") &&
-        !adEmail.includes("@icloud.com") &&
-        !adEmail.includes("@cyworld.com") &&
-        !adEmail.includes("@kakao.com") &&
-        !adEmail.includes("@mail.com") &&
-        !adEmail.includes("@narasarang.or.kr") &&
-        !adEmail.includes("@tistory.com")
-      ) {
-        return res
-          .status(400)
-          .json({ message: "이메일 조건이 맞지 않습니다." });
-      }
+      //   if (
+      //     !adEmail.includes("@naver.com") &&
+      //     !adEmail.includes("@daum.net") &&
+      //     !adEmail.includes("@google.com") &&
+      //     !adEmail.includes("@googlemail.com") &&
+      //     !adEmail.includes("@hanmail.net") &&
+      //     !adEmail.includes("@icloud.com") &&
+      //     !adEmail.includes("@cyworld.com") &&
+      //     !adEmail.includes("@kakao.com") &&
+      //     !adEmail.includes("@mail.com") &&
+      //     !adEmail.includes("@narasarang.or.kr") &&
+      //     !adEmail.includes("@tistory.com")
+      //   ) {
+      //     return res
+      //       .status(400)
+      //       .json({ message: "이메일 조건이 맞지 않습니다." });
+      //   }
 
       if (adPassword !== adPasswordconfirm) {
         return res
@@ -162,7 +137,9 @@ export class UsersController {
         adPassword
       );
 
-      return res.status(201).json({ message: adusers });
+      return res
+        .status(201)
+        .json({ message: `${adminName}님 회원가입을 축하드립니다.` });
     } catch (err) {
       next(err);
     }
@@ -187,16 +164,18 @@ export class UsersController {
       next(err);
     }
   };
-    getUserPoint = async (req, res, next) => {
-        try {
-            const { userId } = req.user;
 
-            const user = await this.usersService.getUserPoint(userId);
+  getUserPoint = async (req, res, next) => {
+    try {
+      const { userId } = req.user;
 
-            return res.status(200).json({ message: `현재 고객님의 포인트는 ${user[0]._sum.possession}원 있습니다.` });
-        } catch (err) {
-            next(err);
-        }
-    };
-      
+      const user = await this.usersService.getUserPoint(userId);
+
+      return res.status(200).json({
+        message: `현재 고객님의 포인트는 ${user[0]._sum.possession}원 있습니다.`,
+      });
+    } catch (err) {
+      next(err);
+    }
+  };
 }

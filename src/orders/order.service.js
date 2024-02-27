@@ -109,6 +109,7 @@ export class OrdersService {
             throw new Error("사용한 쿠폰입니다.");
         }
         let totalPrice = 0;
+
         for (let i = 0; i < menuIds.length; i++) {
             const menu = await this.menusRepository.getMenuById(menuIds[i]);
             if (!menu) {
@@ -121,17 +122,18 @@ export class OrdersService {
             if (menu.quantity < ea) {
                 throw new Error("가능한 음식 갯수를 초과하였습니다.");
             }
+            if (totalPrice < coupon.certainamount) {
+                throw new Error("주문 금액이 부족합니다.");
+            }
         }
         totalPrice -= coupon.amount;
 
         const user = await this.pointsRepository.getUserPoint(userId);
         const userpoint = user[0]._sum.possession;
-        if (userpoint < totalPrice) {
+        if (userpoint <= totalPrice) {
             throw new Error("포인트가 부족합니다.");
         }
-        if (totalPrice < coupon.certainamount) {
-            throw new Error("주문 금액이 부족합니다.");
-        }
+
         const order = await this.ordersRepository.createOrder(userId, storeId, orderStatus, orderContent, orderAddress, totalPrice);
         totalPrice = -totalPrice;
         const history = `주문 내역: ${store.storeName}에서 주문하셨습니다.)`;

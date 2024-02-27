@@ -18,7 +18,7 @@ export class MenusRepository {
     return menu;
   };
   searchStoreByMenu = async (search) => {
-    const searchByMenu = await prisma.menus.findMany({
+    const searchByMenu = await this.prisma.menus.findMany({
       where: {
         menuName: {
           contains: search,
@@ -50,7 +50,7 @@ export class MenusRepository {
     return deleteMenu;
   };
   findStoreBymenuId = async (menuId) => {
-    const store = await prisma.menus.findFirst({
+    const store = await this.prisma.menus.findFirst({
       where: { menuId: +menuId },
       select: {
         store: {

@@ -4,17 +4,21 @@ import { ReviewsController } from "./review.controller.js";
 import { ReviewsRepository } from "./review.repository.js";
 import { ReviewsService } from "./review.service.js";
 import { authMiddleware } from "../middlewares/auth.middlewares.js";
+import { StoresService } from "../stores/store.service.js";
 import { MenusService } from "../menus/menu.service.js";
 import { OrdersService } from "../orders/order.service.js";
 import { MenusRepository } from "../menus/menu.repository.js";
 import { OrdersRepository } from "../orders/order.repository.js";
+import { StoresRepository } from "../stores/store.repository.js";
 
 const router = express.Router();
 
 const reviewsRepository = new ReviewsRepository(prisma);
 const menusRepository = new MenusRepository(prisma);
 const ordersRepository = new OrdersRepository(prisma);
+const storesRepository = new StoresRepository(prisma);
 
+const storeService = new StoresService(storesRepository);
 const reviewsService = new ReviewsService(reviewsRepository);
 const menusService = new MenusService(menusRepository);
 const ordersService = new OrdersService(ordersRepository);
@@ -26,4 +30,17 @@ const reviewsController = new ReviewsController(
 
 router.post("/:menuId/reviews", authMiddleware, reviewsController.createReview);
 
+//리뷰삭제
+router.delete(
+  "/:reviewId/reviews",
+  authMiddleware,
+  reviewsController.deleteReview
+);
+
+//리뷰수정
+router.patch(
+  "/:reviewId/reviews",
+  authMiddleware,
+  reviewsController.patchReview
+);
 export default router;
