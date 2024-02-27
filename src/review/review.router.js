@@ -26,4 +26,17 @@ const reviewsController = new ReviewsController(
 
 router.post("/:menuId/reviews", authMiddleware, reviewsController.createReview);
 
+//리뷰수정
+router.delete(
+  "/:reviewId/reviews",
+  authMiddleware,
+  reviewsController.deleteReview
+);
+
+//리뷰삭제
+router.patch(
+  "/:reviewId/reviews",
+  authMiddleware,
+  reviewsController.patchReview
+);
 export default router;

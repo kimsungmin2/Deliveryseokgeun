@@ -1,3 +1,9 @@
+import { ValidationError } from "../common.error.js";
+import { UnauthorizedError } from "../common.error.js";
+import { NotFoundError } from "../common.error.js";
+import { ConflictError } from "../common.error.js";
+import { ForbiddenError } from "../common.error.js";
+
 export class ReviewsService {
   constructor(reviewsRepository) {
     this.reviewsRepository = reviewsRepository;
@@ -20,5 +26,31 @@ export class ReviewsService {
       orderId
     );
     return makeReview;
+  };
+
+  findReviewById = async (reviewId) => {
+    const findReivew = await this.reviewsRepository.findReview(reviewId);
+
+    if (!findReivew) {
+      throw new NotFoundError("삭제하려는 리뷰가 존재하지않습니다.");
+    }
+
+    return findReivew;
+  };
+
+  updateReview = async (userId, reviewId, review, reviewRate) => {
+    const updateReview = await this.reviewsRepository.updateReview({
+      userId,
+      reviewId,
+      review,
+      reviewRate,
+    });
+
+    return updateReview;
+  };
+
+  deleteReview = async (reviewId) => {
+    const deleteReview = await this.reviewsRepository.deleteReview(reviewId);
+    return deleteReview;
   };
 }
