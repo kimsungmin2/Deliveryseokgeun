@@ -4,14 +4,15 @@ export class MenusRepository {
     }
 
     // 메뉴 작성
-    createMenu = async (storeId, menuName, menuPrice, menuContent, quantity) => {
+    createMenu = async (storeId, menuName, menuPrice, menuContent, quantity, imageUrl) => {
         const menu = await this.prisma.menus.create({
             data: {
                 storeId: +storeId,
                 menuName,
-                menuPrice,
+                menuPrice: +menuPrice,
                 menuContent,
                 quantity: +quantity,
+                menuImage: imageUrl,
             },
         });
 

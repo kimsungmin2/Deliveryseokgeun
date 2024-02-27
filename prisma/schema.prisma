@@ -15,6 +15,7 @@ model Users {
   emailStatus emailStatus? @default(waiting) @map("emailStatus")
   emailVerified Boolean  @default(false) @map("emailVerified")
   verifiCationToken Int? @map("verifiCationToken")
+  rating rating @map("rating")
   createdAt DateTime @default(now()) @map("createdAt")
   updatedAt DateTime @updatedAt @map("updatedAt")
   orders Orders []
@@ -22,6 +23,12 @@ model Users {
   userpoints Userpoints []
   coupons Coupons []
   @@map("Users")
+}
+
+enum rating {
+basic
+rare
+epic
 }
 enum emailStatus{
   waiting
@@ -76,6 +83,7 @@ model Menus {
   menuPrice   Int   @map("menuPrice")
   menuContent String @map("menuContent") @db.Text
   quantity Int @map("quantity")
+  menuImage String @map("menuImage")
   createdAt DateTime @default(now()) @map("createdAt")
   updatedAt DateTime @updatedAt @map("updatedAt")
   store Stores @relation(fields: [storeId], references: [storeId], onDelete: Cascade)

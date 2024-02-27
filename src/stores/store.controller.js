@@ -94,14 +94,16 @@ export class StoresController {
             const { storeId } = req.params;
             const { aduserId } = req.user;
             const { password } = req.body;
-            if (!aduserId) {
-                return res.status(401).json({ message: "권한이 없습니다." });
-            }
-            if (password !== req.user.adPassword) {
-                return res.status(401).json({ message: "비밀번호가 일치하지 않습니다." });
-            }
+            // if (!aduserId) {
+            //     return res.status(401).json({ message: "권한이 없습니다." });
+            // }
+            // if (password !== req.user.adPassword) {
+            //     return res.status(401).json({ message: "비밀번호가 일치하지 않습니다." });
+            // }
             const store = await this.storesService.getStoreById(storeId);
-
+            if (!store) {
+                return res.status(403).json({ message: "1111" });
+            }
             const deleteStore = await this.storesService.deleteStoreInfo(storeId, aduserId);
 
             return res.status(201).json({ message: "가게 정보가 삭제되었습니다." });

@@ -10,11 +10,10 @@ export class MenusController {
             const { storeId } = req.params;
             const { aduserId } = req.user;
             const { menuName, menuPrice, menuContent, quantity } = req.body;
+            const imageUrl = req.file.Location;
             const store = await this.storesService.getStoreById(storeId);
-            if (!store.aduserId !== aduserId) {
-                return res.status(401).json({ message: "메뉴 생성 권한이 없습니다." });
-            }
-            const createMenu = await this.menusService.createMenu(storeId, aduserId, menuName, menuPrice, menuContent, quantity);
+
+            const createMenu = await this.menusService.createMenu(storeId, menuName, menuPrice, menuContent, quantity, imageUrl);
 
             return res.status(201).json({ message: "메뉴 등록에 성공하였습니다" });
         } catch (err) {

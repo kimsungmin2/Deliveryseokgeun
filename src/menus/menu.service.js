@@ -4,8 +4,8 @@ export class MenusService {
     }
 
     // 메뉴 작성
-    createMenu = async (storeId, menuName, menuPrice, menuContent, quantity) => {
-        const menu = await this.menusRepository.createMenu(storeId, menuName, menuPrice, menuContent, quantity);
+    createMenu = async (storeId, menuName, menuPrice, menuContent, quantity, imageUrl) => {
+        const menu = await this.menusRepository.createMenu(storeId, menuName, menuPrice, menuContent, quantity, imageUrl);
 
         return menu;
     };

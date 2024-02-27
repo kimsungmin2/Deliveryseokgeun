@@ -4,21 +4,38 @@ import bcrypt from "bcrypt";
 import { sendVerificationEmail } from "../middlewares/sendEmail.middlewares.js";
 dotenv.config();
 export class UsersService {
-    constructor(usersRepository, pointsRepository) {
+    constructor(usersRepository, pointsRepository, ordersRepository) {
         this.usersRepository = usersRepository;
         this.pointsRepository = pointsRepository;
+        this.ordersRepository = ordersRepository;
     }
-    signIn = async (email, password) => {
+    signIn = async (email) => {
         const user = await this.usersRepository.getUserByEmail(email);
+        const rating = await this.ordersRepository.ratingUserPoint(user.userId);
+        const userpoint = rating[0]._sum.totalPrice;
+
+        if (userpoint > 1000000) {
+            await this.usersRepository.ratingepicUpdate(user.userId);
+        } else if (userpoint > 500000) {
+            await this.usersRepository.ratingrareUpdate(user.userId);
+        }
+
         const userJWT = jwt.sign({ userId: user.userId }, process.env.JWT_SECRET, {
             expiresIn: "12h",
         });
 
         const refreshToken = jwt.sign({ userId: user.userId }, process.env.REFRESH_SECRET, { expiresIn: "7d" });
+        console.log(userJWT);
         return { userJWT, refreshToken };
     };
+
     adsignIn = async (adEmail, adPassword) => {
         const aduser = await this.usersRepository.adByEmails(adEmail);
+
+        if (!aduser) {
+            throw new Error("유효하지 않은 이메일입니다.");
+        }
+
         const userJWT = jwt.sign({ aduserId: aduser.aduserId }, process.env.JWT_SECRET, {
             expiresIn: "12h",
         });
@@ -26,13 +43,14 @@ export class UsersService {
         const refreshToken = jwt.sign({ aduserId: aduser.aduserId }, process.env.REFRESH_SECRET, { expiresIn: "7d" });
         return { userJWT, refreshToken };
     };
+
     hashPassword = async (password) => {
         const saltRounds = 10;
         const hashedPassword = await bcrypt.hash(password, saltRounds);
         return hashedPassword;
     };
     /// 고객님 회원가입
-    register = async (email, name, password) => {
+    register = async (email, name, password, rating) => {
         const user = await this.usersRepository.getUserByEmail(email);
         if (user) {
             throw new Error("이미 등록된 이메일입니다.");
@@ -41,8 +59,9 @@ export class UsersService {
         const randomNum = () => {
             return Math.floor(1000 + Math.random() * 9000);
         };
+
         const token = randomNum();
-        const usercreate = await this.usersRepository.registercreate(email, name, hashedPassword, token);
+        const usercreate = await this.usersRepository.registercreate(email, name, hashedPassword, token, rating);
         await sendVerificationEmail(email, token);
         return usercreate;
     };
@@ -154,6 +173,7 @@ export class UsersService {
         if (user.emailStatus !== "waiting") {
             throw new Error("이미 인증된 메일입니다.");
         }
+        await this.pointsRepository.createPoint(user.userId);
         const update = await this.usersRepository.useraccess(user.userId, verifiCationToken);
         return update;
     };

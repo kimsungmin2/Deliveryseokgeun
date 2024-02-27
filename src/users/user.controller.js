@@ -27,7 +27,7 @@ export class UsersController {
             ) {
                 return res.status(400).json({ message: "이메일 조건이 맞지 않습니다." });
             }
-            const tokens = await this.usersService.signIn(email, password);
+            const tokens = await this.usersService.signIn(email);
             res.cookie("authorization", `Bearer ${tokens.userJWT}`);
             res.cookie("refreshToken", tokens.refreshToken);
             return res.status(200).json({ message: "로그인 성공" });
@@ -71,7 +71,7 @@ export class UsersController {
     // 고객님 회원가입
     userregister = async (req, res, next) => {
         try {
-            const { email, name, password, passwordconfirm } = req.body;
+            const { email, name, password, passwordconfirm, rating = "basic" } = req.body;
             if (!email) {
                 return res.status(400).json({ message: "가입하실 이메일을 적지 않았습니다." });
             }
@@ -103,7 +103,7 @@ export class UsersController {
             if (password !== passwordconfirm) {
                 return res.status(400).json({ message: "가입하실 비밀번호가 비밀번호 확인란과 다릅니다" });
             }
-            const users = await this.usersService.register(email, name, password);
+            const users = await this.usersService.register(email, name, password, rating);
             return res.status(201).json({ message: users });
         } catch (err) {
             next(err);

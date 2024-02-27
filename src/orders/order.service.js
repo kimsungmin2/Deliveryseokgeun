@@ -10,6 +10,8 @@ export class OrdersService {
     }
     createOrder = async (userId, storeId, menuIds, orderStatus = "cooking", eas, orderContent, orderAddress) => {
         const store = await this.storesRepository.getStoreById(storeId);
+        const user = await this.pointsRepository.getUserPoint(userId);
+        const userrating = await this.usersRepository.getUserById(userId);
         let totalPrice = 0;
         for (let i = 0; i < menuIds.length; i++) {
             const menu = await this.menusRepository.getMenuById(menuIds[i]);
@@ -23,12 +25,16 @@ export class OrdersService {
             if (menu.quantity < ea) {
                 throw new Error("가능한 음식 갯수를 초과하였습니다.");
             }
-        }
+            if (userrating.rating === "rare") {
+                totalPrice -= totalPrice * (3 / 100);
+            } else if (userrating.rating === "epic") {
+                totalPrice -= totalPrice * (5 / 100);
+            }
 
-        const user = await this.pointsRepository.getUserPoint(userId);
-        const userpoint = user[0]._sum.possession;
-        if (userpoint < totalPrice) {
-            throw new Error("포인트가 부족합니다.");
+            const userpoint = user[0]._sum.possession;
+            if (userpoint < totalPrice) {
+                throw new Error("포인트가 부족합니다.");
+            }
         }
 
         const order = await this.ordersRepository.createOrder(userId, storeId, orderStatus, orderContent, orderAddress, totalPrice);

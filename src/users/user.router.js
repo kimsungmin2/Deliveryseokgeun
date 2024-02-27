@@ -8,11 +8,13 @@ import { redisClient } from "../redis/client.js";
 import { PointsRepository } from "../points/point.repository.js";
 import { PointsService } from "../points/point.service.js";
 import { adauthMiddleware } from "../middlewares/adauth.middlewares.js";
+import { OrdersRepository } from "../orders/order.repository.js";
 
 const router = express.Router();
 const usersRepository = new UsersRepository(prisma, redisClient);
+const ordersRepository = new OrdersRepository(prisma);
 const pointsRepository = new PointsRepository(prisma);
-const usersService = new UsersService(usersRepository, pointsRepository);
+const usersService = new UsersService(usersRepository, pointsRepository, ordersRepository);
 const pointsService = new PointsService(pointsRepository);
 const usersController = new UsersController(usersService, pointsService);
 

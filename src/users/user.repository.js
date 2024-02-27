@@ -20,18 +20,7 @@ export class UsersRepository {
         return user;
     };
     getUserById = async (userId) => {
-        const user = await this.prisma.users.findFirst({
-            where: { userId: +userId },
-            select: {
-                userId: true,
-                email: true,
-                name: true,
-                emailStatus: true,
-                emailVerified: true,
-                createdAt: true,
-                updatedAt: true,
-            },
-        });
+        const user = await this.prisma.users.findFirst({ where: { userId: +userId } });
         return user;
     };
     getUsermany = async () => {
@@ -106,9 +95,9 @@ export class UsersRepository {
         });
     };
     // 유저 회원가입
-    registercreate = async (email, name, hashedPassword, token) => {
+    registercreate = async (email, name, hashedPassword, token, rating) => {
         const user = await this.prisma.users.create({
-            data: { email, name, password: hashedPassword, verifiCationToken: token },
+            data: { email, name, password: hashedPassword, verifiCationToken: token, rating },
         });
         return user;
     };
@@ -142,6 +131,29 @@ export class UsersRepository {
             },
             data: {
                 adEmailStatus: "completion",
+            },
+        });
+        return update;
+    };
+    ratingrareUpdate = async (userId) => {
+        const update = await this.prisma.users.update({
+            where: {
+                userId: +userId,
+            },
+            data: {
+                rating: "rare",
+            },
+        });
+        return update;
+    };
+
+    ratingepicUpdate = async (userId) => {
+        const update = await this.prisma.users.update({
+            where: {
+                userId: +userId,
+            },
+            data: {
+                rating: "epic",
             },
         });
         return update;
