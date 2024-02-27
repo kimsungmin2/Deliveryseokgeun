@@ -143,8 +143,9 @@ export class StoresRepository {
 
     return store;
   };
+
   searchStoreByMenuId = async (storeIdList) => {
-    const searchByMenuId = await prisma.stores.findMany({
+    const searchByMenuId = await this.prisma.stores.findMany({
       where: {
         storeId: {
           in: storeIdList,
@@ -154,14 +155,16 @@ export class StoresRepository {
         storeId: true,
         storeName: true,
         storeAddress: true,
-        storeCategory: true,
-        storeRate: true,
+        // storeCategory: true,
+        // storeRate: true,
       },
     });
     return searchByMenuId;
   };
+
   searchStore = async (search) => {
-    const searchStore = await prisma.stores.findMany({
+    console.log(search);
+    const searchStore = await this.prisma.stores.findMany({
       where: {
         storeName: {
           contains: search,
@@ -171,8 +174,8 @@ export class StoresRepository {
         storeId: true,
         storeName: true,
         storeAddress: true,
-        storeCategory: true,
-        storeRate: true,
+        // storeCategory: true,
+        // storeRate: true,
       },
     });
     console.log(searchStore);

@@ -273,6 +273,7 @@ export class StoresController {
   searchData = async (req, res, next) => {
     try {
       const { search } = req.body;
+      console.log(search);
 
       if (!search) {
         return res.status(400).json({ message: "검색어를 입력해주세요" });
@@ -283,10 +284,7 @@ export class StoresController {
 
       return res.status(200).json({ data: searchData });
     } catch (err) {
-      if (err instanceof NotFoundError) {
-        res.status(404).json({ message: err.message });
-      }
+      next(err);
     }
-    next(err);
   };
 }

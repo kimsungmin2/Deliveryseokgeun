@@ -22,6 +22,8 @@ const storesController = new StoresController(storesService);
 
 router.post("/signin", storesController.signIn);
 
+router.post("/search", storesController.searchData);
+
 router.post("/", adauthMiddleware, storesController.createStoreInfo);
 
 router.get("/:storeId", storesController.getStoreById);

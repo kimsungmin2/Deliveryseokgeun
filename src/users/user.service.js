@@ -9,9 +9,30 @@ export class UsersService {
     this.usersRepository = usersRepository;
     this.pointsRepository = pointsRepository;
   }
+  // signIn = async (email, password) => {
+  //   const user = await this.usersRepository.getUserByEmail(email);
+
+  //   const userJWT = jwt.sign({ userId: user.userId }, process.env.JWT_SECRET, {
+  //     expiresIn: "12h",
+  //   });
+  //   const refreshToken = jwt.sign(
+  //     { userId: user.userId },
+  //     process.env.REFRESH_SECRET,
+  //     { expiresIn: "7d" }
+  //   );
+
+  //   return userJWT, refreshToken;
+  // };
+
   signIn = async (email, password) => {
     const user = await this.usersRepository.getUserByEmail(email);
-
+    if (!user) {
+      throw new Error("존재하지 않는 이메일입니다.");
+    }
+    const checkpass = await bcrypt.compare(password, user.password);
+    if (!checkpass) {
+      throw new Error("비밀번호가 일치하지 않습니다.");
+    }
     const userJWT = jwt.sign({ userId: user.userId }, process.env.JWT_SECRET, {
       expiresIn: "12h",
     });
@@ -20,8 +41,7 @@ export class UsersService {
       process.env.REFRESH_SECRET,
       { expiresIn: "7d" }
     );
-
-    return userJWT, refreshToken;
+    return { userJWT, refreshToken };
   };
 
   hashPassword = async (password) => {

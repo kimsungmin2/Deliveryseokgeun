@@ -1,4 +1,5 @@
 import dotenv from "dotenv";
+import { NotFoundError } from "../common.error.js";
 
 dotenv.config();
 export class StoresService {
@@ -169,25 +170,32 @@ export class StoresService {
     );
     return store;
   };
+
   findStore = async (search) => {
+    //검색어가 가게 제목에 포함된 가게 데이터 가져오기
     const searchStore = await this.storesRepository.searchStore(search);
+
+    console.log(searchStore);
 
     //검색키워드를 포함한 메뉴를 가진 storeId 호출
     const searchMenu = await this.menusRepository.searchStoreByMenu(search);
 
+    console.log(searchMenu);
+
+    //storeId만 담은 배열
     const storeIdList = searchMenu.map((menu) => +menu.storeId);
 
     //검색키워드를 포함한 메뉴를 가진 store의 정보들
     const searchStore2 =
       await this.storesRepository.searchStoreByMenuId(storeIdList);
 
-    if (!searchStore && !searchStore2) {
+    if (!(searchStore && searchStore2)) {
       throw new NotFoundError("검색키워드와 일치하는 가게가 없습니다.");
     }
 
     //검색한 데이터를 평점 내림차순으로 정리해 searchData 변수에 저장
     const searchData = [...searchStore, ...searchStore2].sort(
-      (a, b) => b.rate - a.rate
+      (a, b) => b.storeRate - a.storeRate
     );
 
     return searchData;
