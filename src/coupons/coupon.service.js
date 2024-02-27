@@ -21,12 +21,14 @@ export class CouponsService {
         const coupon = await this.couponsRepository.updateCoupon(couponId, couponuse, couponhistory);
         return coupon;
     };
-    updateResume = async (resumeId, title, content, status) => {
-        const updatedResume = await this.prisma.resumes.update({
-            where: { resumeId: +resumeId },
-            data: { title, content, status },
-        });
-
-        return updatedResume;
+    randomCoupon = async (userId) => {
+        const couponname = "3%랜덤 쿠폰";
+        const couponuse = "notuse";
+        const discount = "percentage";
+        const couponhistory = "이벤트 쿠폰";
+        const amount = 70;
+        const certainamount = 25000;
+        const random = await this.couponsRepository.percentageCoupon(userId, couponname, couponuse, discount, couponhistory, amount, certainamount);
+        return random;
     };
 }

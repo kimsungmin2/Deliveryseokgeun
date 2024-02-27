@@ -31,6 +31,19 @@ export class CouponsRepository {
         });
         return coupon;
     };
+    blackCoupon = async (userId) => {
+        const coupon = await this.prisma.coupon.create({
+            data: {
+                userId: +userId,
+                couponname: "블랙프라이데이 쿠폰",
+                couponuse: "notuse",
+                discount: "discountamount",
+                couponhistory: "블랙 프라이데이",
+                amount: 5000,
+                certainamount: 19900,
+            },
+        });
+    };
     getCouponId = async (couponId) => {
         const coupon = await this.prisma.coupons.findFirst({
             where: { couponId: +couponId },

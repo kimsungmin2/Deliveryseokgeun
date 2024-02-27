@@ -47,4 +47,15 @@ export class CouponsController {
         console.log(createcoupon);
         return res.status(201).json({ message: "쿠폰 생성에 성공하였습니다", data: createcoupon });
     };
+    randomCoupon = async (req, res, next) => {
+        const { userId } = req.user;
+        const randomNumber = Math.random();
+        let random;
+        if (randomNumber < 0.03) {
+            random = await this.couponsService.randomCoupon(userId);
+        } else {
+            random = "꽝";
+        }
+        return res.status(200).json({ data: random });
+    };
 }

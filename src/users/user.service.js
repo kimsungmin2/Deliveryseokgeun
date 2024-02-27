@@ -4,15 +4,22 @@ import bcrypt from "bcrypt";
 import { sendVerificationEmail } from "../middlewares/sendEmail.middlewares.js";
 dotenv.config();
 export class UsersService {
-    constructor(usersRepository, pointsRepository, ordersRepository) {
+    constructor(usersRepository, pointsRepository, ordersRepository, couponsRepository) {
         this.usersRepository = usersRepository;
         this.pointsRepository = pointsRepository;
         this.ordersRepository = ordersRepository;
+        this.couponsRepository = couponsRepository;
     }
     signIn = async (email) => {
         const user = await this.usersRepository.getUserByEmail(email);
         const rating = await this.ordersRepository.ratingUserPoint(user.userId);
         const userpoint = rating[0]._sum.totalPrice;
+
+        // const today = Date.prototype.getDay(2);
+        // if (today) {
+        //     const coupon = await this.couponsRepository.blackCoupon(user.userId);
+        //     return coupon;
+        // }
 
         if (userpoint > 1000000) {
             await this.usersRepository.ratingepicUpdate(user.userId);
@@ -25,7 +32,7 @@ export class UsersService {
         });
 
         const refreshToken = jwt.sign({ userId: user.userId }, process.env.REFRESH_SECRET, { expiresIn: "7d" });
-        console.log(userJWT);
+
         return { userJWT, refreshToken };
     };
 
