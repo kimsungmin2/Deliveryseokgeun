@@ -20,42 +20,50 @@ export class StoresController {
   // 가게정보 생성
   createStoreInfo = async (req, res, next) => {
     try {
-    const { storeName, storeAddress, storeContact, storeContent, storeCategory } = req.body;
-    const { aduserId } = req.user;
-    if (!storeName) {
-      return res.status(401).json({ message: "가게 이름을 입력하세요." });
-    }
-    if (!storeAddress) {
-      return res.status(401).json({ message: "가게 주소를 입력하세요." });
-    }
-    if (!storeContact) {
-      return res.status(401).json({ message: "가게 연락처를 입력하세요." });
-    }
-    if (!storeContent) {
-      return res.status(401).json({ message: "가게 내용을 입력하세요." });
-    }
-    if (!storeCategory) {
+      const {
+        storeName,
+        storeAddress,
+        storeContact,
+        storeContent,
+        storeCategory,
+      } = req.body;
+      const { aduserId } = req.user;
+      if (!storeName) {
+        return res.status(401).json({ message: "가게 이름을 입력하세요." });
+      }
+      if (!storeAddress) {
+        return res.status(401).json({ message: "가게 주소를 입력하세요." });
+      }
+      if (!storeContact) {
+        return res.status(401).json({ message: "가게 연락처를 입력하세요." });
+      }
+      if (!storeContent) {
+        return res.status(401).json({ message: "가게 내용을 입력하세요." });
+      }
+      if (!storeCategory) {
+        return res
+          .status(401)
+          .json({ message: "서비스하는 음식의 종류를 입력하세요." });
+      }
+
+      // 서비스로 아이디를 보내면서도 나중엔 가공된 데이터와 함께 돌려받음
+      const storeInfo = await this.storesService.createStoreInfo(
+        aduserId,
+        storeName,
+        storeAddress,
+        storeContact,
+        storeContent,
+        storeCategory
+      );
+
+      // 한바퀴 돌아서 클라이언트에게 반환
       return res
-        .status(401)
-        .json({ message: "서비스하는 음식의 종류를 입력하세요." });
+        .status(201)
+        .json({ message: "업체 정보 등록 완료.", storeInfo });
+    } catch (err) {
+      next(err);
     }
-
-    // 서비스로 아이디를 보내면서도 나중엔 가공된 데이터와 함께 돌려받음
-    const storeInfo = await this.storesService.createStoreInfo(
-      aduserId,
-      storeName,
-      storeAddress,
-      storeContact,
-      storeContent,
-      storeCategory
-    );
-
-    // 한바퀴 돌아서 클라이언트에게 반환
-    return res.status(201).json({ message: "업체 정보 등록 완료.", storeInfo });
-  }catch(err) {
-  next(err)
-}
-};
+  };
 
   // 가게 정보 상세조회
   getStoreById = async (req, res, next) => {
@@ -168,22 +176,22 @@ export class StoresController {
       next(err);
     }
   };
-   // 가게 정보 상세조회
-    getStoreById = async (req, res, next) => {
-        try {
-            const storeId = req.params.storeId;
+  // 가게 정보 상세조회
+  getStoreById = async (req, res, next) => {
+    try {
+      const storeId = req.params.storeId;
 
-            const detailStoreInfo = await this.storesService.getStoreById(storeId);
+      const detailStoreInfo = await this.storesService.getStoreById(storeId);
 
-            return res.status(200).json({ detailStoreInfo });
-        } catch (err) {
-            if (err.message === "존재하지 않는 상점입니다.") {
-                return res.status(401).json({ message: err.message });
-            }
-            next(err);
-        }
-    };
- 
+      return res.status(200).json({ detailStoreInfo });
+    } catch (err) {
+      if (err.message === "존재하지 않는 상점입니다.") {
+        return res.status(401).json({ message: err.message });
+      }
+      next(err);
+    }
+  };
+
   readystatusup = async (req, res, next) => {
     try {
       const { storeId, orderId } = req.params;
@@ -315,17 +323,18 @@ export class StoresController {
       }
       next(err);
     }
-
+  };
   searchData = async (req, res, next) => {
     try {
       const { search } = req.body;
-
       if (!search) {
         return res.status(400).json({ message: "검색어를 입력해주세요" });
       }
+      //검색키워드를 storeName에 포함한 가게들의 정보
+      const searchData = await this.storesService.findStore(search);
+      return res.status(200).json({ data: searchData });
     } catch (err) {
       next(err);
     }
   };
-  
 }
