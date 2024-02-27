@@ -24,6 +24,7 @@ export class ReviewsRepository {
     menuId,
     orderId
   ) => {
+    console.log("리뷰만들기 콘솔테스트", review);
     const makeReview = await this.prisma.reviews.create({
       data: {
         review: review,
@@ -31,9 +32,10 @@ export class ReviewsRepository {
         userId: +userId,
         storeId: +storeId,
         menuId: +menuId,
-        orderId: +orderId,
+        orderId: 11,
       },
     });
+    console.log("리뷰만들기 콘솔테스트", makeReview);
     return makeReview;
   };
 
@@ -47,14 +49,16 @@ export class ReviewsRepository {
   };
 
   updateReview = async (userId, reviewId, review, reviewRate) => {
+    console.log("유저아이디", userId);
+    console.log("리뷰", review);
     const updateReview = await this.prisma.reviews.update({
       where: {
-        userId: +userId,
-        reviewId: +reviewId,
+        userId: +userId.userId,
+        reviewId: +userId.reviewId,
       },
       data: {
-        review: review,
-        reviewRate: reviewRate,
+        review: userId.review,
+        reviewRate: userId.reviewRate,
       },
     });
     return updateReview;

@@ -14,7 +14,12 @@ const storesRepository = new StoresRepository(prisma);
 const pointsRepository = new PointsRepository(prisma);
 const ordersRepository = new OrdersRepository(prisma);
 const menusRepository = new MenusRepository(prisma);
-const storesService = new StoresService(storesRepository, pointsRepository, ordersRepository, menusRepository);
+const storesService = new StoresService(
+  storesRepository,
+  pointsRepository,
+  ordersRepository,
+  menusRepository
+);
 
 const storesController = new StoresController(storesService);
 
@@ -28,19 +33,35 @@ router.patch("/:storeId", adauthMiddleware, storesController.updateStoreInfo);
 
 router.delete("/:storeId", adauthMiddleware, storesController.deleteStoreInfo);
 
-router.patch("/orders/:orderId/ready", adauthMiddleware, storesController.readystatusup);
+router.patch(
+  "/orders/:orderId/ready",
+  adauthMiddleware,
+  storesController.readystatusup
+);
 
-router.patch("/orders/:orderId/ing", adauthMiddleware, storesController.ingstatusup);
+router.patch(
+  "/orders/:orderId/ing",
+  adauthMiddleware,
+  storesController.ingstatusup
+);
 
-router.patch("/orders/:orderId/complet", adauthMiddleware, storesController.completestatusup);
+router.patch(
+  "/orders/:orderId/complet",
+  adauthMiddleware,
+  storesController.completestatusup
+);
 
-router.delete("/:storeId/orders/:orderId", adauthMiddleware, storesController.deleteOrder);
+router.delete(
+  "/:storeId/orders/:orderId",
+  adauthMiddleware,
+  storesController.deleteOrder
+);
 
 router.post("/search", storesController.searchData);
 
 router.get(
-    "/:storeId/ordered",
-    // adauthMiddleware,
-    storesController.getOrderData
+  "/:storeId/ordered",
+  adauthMiddleware,
+  storesController.getOrderData
 );
 export default router;

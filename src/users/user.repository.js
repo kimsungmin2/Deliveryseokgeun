@@ -1,50 +1,62 @@
 export class UsersRepository {
-    constructor(prisma, redisClient) {
-        this.prisma = prisma;
-        this.redisClient = redisClient;
-    }
-    getUserByEmail = async (email) => {
-        const user = await this.prisma.users.findFirst({ where: { email } });
-        return user;
-    };
+  constructor(prisma, redisClient) {
+    this.prisma = prisma;
+    this.redisClient = redisClient;
+  }
+  getUserByEmail = async (email) => {
+    const user = await this.prisma.users.findFirst({ where: { email } });
+    return user;
+  };
 
-    getUserById = async (userId) => {
-        const user = await this.prisma.users.findFirst({ where: { userId: +userId } });
-        return user;
-    };
-    adByEmails = async (adEmail) => {
-        const adusers = await this.prisma.aduser.findFirst({ where: { adEmail } });
+  getUserById = async (userId) => {
+    const user = await this.prisma.users.findFirst({
+      where: { userId: +userId },
+    });
+    return user;
+  };
+  adByEmails = async (adEmail) => {
+    const adusers = await this.prisma.aduser.findFirst({ where: { adEmail } });
 
-        return adusers;
-    };
+    return adusers;
+  };
 
-    // 유저 회원가입
-    registercreate = async (email, name, hashedPassword, token) => {
-        const user = await this.prisma.users.create({
-            data: { email, name, password: hashedPassword, verifiCationToken: token },
-        });
+  // 유저 회원가입
+  registercreate = async (email, name, hashedPassword, token) => {
+    const user = await this.prisma.users.create({
+      data: {
+        email,
+        name,
+        password: hashedPassword,
+        // verifiCationToken: token
+      },
+    });
 
-        return user;
-    };
+    return user;
+  };
 
-    // 사장 회원가입
-    adregistercreate = async (adEmail, adminName, aduserhashPassword, token) => {
-        const aduser = await this.prisma.aduser.create({
-            data: { adEmail, adminName, adPassword: aduserhashPassword, adVerifiCationToken: token },
-        });
+  // 사장 회원가입
+  adregistercreate = async (adEmail, adminName, aduserhashPassword, token) => {
+    const aduser = await this.prisma.aduser.create({
+      data: {
+        adEmail,
+        adminName,
+        adPassword: aduserhashPassword,
+        adVerifiCationToken: token,
+      },
+    });
 
-        return aduser;
-    };
+    return aduser;
+  };
 
-    useridedit = async (userId) => {
-        const update = await this.prisma.users.update({
-            where: {
-                userId: +userId,
-            },
-            data: {
-                emailStatus: "completion",
-            },
-        });
-        return update;
-    };
+  useridedit = async (userId) => {
+    const update = await this.prisma.users.update({
+      where: {
+        userId: +userId,
+      },
+      data: {
+        emailStatus: "completion",
+      },
+    });
+    return update;
+  };
 }

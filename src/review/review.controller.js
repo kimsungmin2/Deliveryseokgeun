@@ -41,6 +41,8 @@ export class ReviewsController {
       const findStoreByMenuId =
         await this.menusService.findStoreByMenuId(menuId);
 
+      console.log(findStoreByMenuId);
+
       //orderId 조회 userId로 찾으면 되겠따
       const findOrderIdbyUserId = await this.ordersService.getOrderById(userId);
 
@@ -53,8 +55,8 @@ export class ReviewsController {
         reviewRate,
         userId,
         storeId,
-        menuId,
-        orderId
+        menuId
+        // orderId
       );
 
       return res
@@ -71,7 +73,7 @@ export class ReviewsController {
       const { reviewId } = req.params;
       const { review, reviewRate } = req.body;
 
-      const findreview = await this.reviewsService.findFirst(reviewId);
+      const findreview = await this.reviewsService.findReviewById(reviewId);
 
       if (findreview.userId !== userId) {
         throw new ForbiddenError("작성자만 리뷰 수정이 가능합니다.");
@@ -97,7 +99,7 @@ export class ReviewsController {
       const { userId } = req.user;
       const { reviewId } = req.params;
 
-      const findreview = await this.reviewsService.findFirst(reviewId);
+      const findreview = await this.reviewsService.findReviewById(reviewId);
 
       if (findreview.userId !== userId) {
         throw new ForbiddenError("작성자만 리뷰 수정이 가능합니다.");

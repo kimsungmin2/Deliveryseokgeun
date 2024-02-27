@@ -2,125 +2,156 @@ import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
 import bcrypt from "bcrypt";
 import { sendVerificationEmail } from "../middlewares/sendEmail.middlewares.js";
+import { ValidationError } from "../common.error.js";
+import { UnauthorizedError } from "../common.error.js";
+import { NotFoundError } from "../common.error.js";
+import { ConflictError } from "../common.error.js";
+import { ForbiddenError } from "../common.error.js";
 
 dotenv.config();
 export class UsersService {
-    constructor(usersRepository, pointsRepository) {
-        this.usersRepository = usersRepository;
-        this.pointsRepository = pointsRepository;
+  constructor(usersRepository, pointsRepository) {
+    this.usersRepository = usersRepository;
+    this.pointsRepository = pointsRepository;
+  }
+  signIn = async (email, password) => {
+    const user = await this.usersRepository.getUserByEmail(email);
+    if (!user) {
+      throw new ForbiddenError("존재하지 않는 이메일입니다.");
     }
-    signIn = async (email, password) => {
-        const user = await this.usersRepository.getUserByEmail(email);
-        if (!user) {
-            throw new Error("존재하지 않는 이메일입니다.");
-        }
 
-        const checkpass = await bcrypt.compare(password, user.password);
-        if (!checkpass) {
-            throw new Error("비밀번호가 일치하지 않습니다.");
-        }
+    const checkpass = await bcrypt.compare(password, user.password);
+    if (!checkpass) {
+      throw new ForbiddenError("비밀번호가 일치하지 않습니다.");
+    }
 
-        const userJWT = jwt.sign({ userId: user.userId }, process.env.JWT_SECRET, {
-            expiresIn: "12h",
-        });
-        const refreshToken = jwt.sign({ userId: user.userId }, process.env.REFRESH_SECRET, { expiresIn: "7d" });
+    const userJWT = jwt.sign({ userId: user.userId }, process.env.JWT_SECRET, {
+      expiresIn: "12h",
+    });
+    const refreshToken = jwt.sign(
+      { userId: user.userId },
+      process.env.REFRESH_SECRET,
+      { expiresIn: "7d" }
+    );
 
-        return { userJWT, refreshToken };
+    return { userJWT, refreshToken };
+  };
+
+  hashPassword = async (password) => {
+    const saltRounds = 10;
+    const hashedPassword = await bcrypt.hash(password, saltRounds);
+    return hashedPassword;
+  };
+
+  /// 고객님 회원가입
+  register = async (email, name, password) => {
+    const user = await this.usersRepository.getUserByEmail(email);
+
+    if (user) {
+      throw new ForbiddenError("이미 등록된 이메일입니다.");
+    }
+
+    //해쉬화한 비밀번호
+    const hashedPassword = await this.hashPassword(password);
+
+    const randomNum = () => {
+      return Math.floor(1000 + Math.random() * 9000);
     };
 
-    hashPassword = async (password) => {
-        const saltRounds = 10;
-        const hashedPassword = await bcrypt.hash(password, saltRounds);
-        return hashedPassword;
+    const token = randomNum();
+
+    const usercreate = await this.usersRepository.registercreate(
+      email,
+      name,
+      hashedPassword
+      // token
+    );
+
+    // await sendVerificationEmail(email, token);
+
+    return usercreate;
+  };
+
+  adhashPassword = async (adPassword) => {
+    const saltRounds = 10;
+    const hashedPassword = await bcrypt.hash(adPassword, saltRounds);
+    return hashedPassword;
+  };
+
+  /// 사장님 회원가입(임시방편 수정했습니다.)
+  adregister = async (adEmail, adminName, adPassword) => {
+    const aduser = await this.usersRepository.adByEmails(adEmail);
+
+    if (aduser) {
+      throw new ForbiddenError("이미 등록된 이메일입니다.");
+    }
+
+    const hashedPassword = await this.adhashPassword(adPassword);
+
+    const randomNum = () => {
+      return Math.floor(1000 + Math.random() * 9000);
     };
 
-    /// 고객님 회원가입
-    register = async (email, name, password) => {
-        const user = await this.usersRepository.getUserByEmail(email);
+    const token = randomNum();
 
-        if (user) {
-            throw new Error("이미 등록된 이메일입니다.");
-        }
+    const adusercreate = await this.usersRepository.adregistercreate(
+      adEmail,
+      adminName,
+      hashedPassword,
+      token
+    );
 
-        const hashedPassword = await this.hashPassword(password);
+    await sendVerificationEmail(adEmail, token);
 
-        const randomNum = () => {
-            return Math.floor(1000 + Math.random() * 9000);
-        };
+    return adusercreate;
+  };
 
-        const token = randomNum();
+  useridedit = async (email, verifiCationToken) => {
+    const user = await this.usersRepository.getUserByEmail(email);
 
-        const usercreate = await this.usersRepository.registercreate(email, name, hashedPassword, token);
+    if (!user) {
+      s;
+      throw new ForbiddenError("유저가 존재하지 않습니다.");
+    }
 
-        await sendVerificationEmail(email, token);
+    if (user.emailStatus !== "waiting") {
+      throw new ForbiddenError("이미 인증된 메일입니다.");
+    }
 
-        return usercreate;
-    };
+    const update = await this.usersRepository.useridedit(
+      user.userId,
+      verifiCationToken
+    );
 
-    adhashPassword = async (adPassword) => {
-        const saltRounds = 10;
-        const hashedPassword = await bcrypt.hash(adPassword, saltRounds);
-        return hashedPassword;
-    };
+    return update;
+  };
 
-    /// 사장님 회원가입
-    adregister = async (adEmail, adminName, adPassword) => {
-        const aduser = await this.usersRepository.adByEmails(adEmail);
+  getUserEmail = async (email) => {
+    const user = await this.usersRepository.getUserByEmail(email);
 
-        if (aduser) {
-            throw new Error("이미 등록된 이메일입니다.");
-        }
+    return user;
+  };
 
-        const hashedPassword = await this.adhashPassword(adPassword);
+  getUserPoint = async (userId) => {
+    const point = await this.pointsRepository.getUserPoint(userId);
 
-        const randomNum = () => {
-            return Math.floor(1000 + Math.random() * 9000);
-        };
+    return point;
+  };
 
-        const token = randomNum();
+  adsignIn = async (adEmail) => {
+    const aduser = await this.usersRepository.getadUserByEmail(adEmail);
 
-        const adusercreate = await this.usersRepository.adregistercreate(adEmail, adminName, hashedPassword, token);
+    const userJWT = jwt.sign(
+      { aduserId: aduser.aduserId },
+      process.env.JWT_SECRET,
+      { expiresIn: "12h" }
+    );
+    const refreshToken = jwt.sign(
+      { aduserId: aduser.aduserId },
+      process.env.REFRESH_SECRET,
+      { expiresIn: "7d" }
+    );
 
-        await sendVerificationEmail(adEmail, token);
-
-        return adusercreate;
-    };
-
-    useridedit = async (email, verifiCationToken) => {
-        const user = await this.usersRepository.getUserByEmail(email);
-
-        if (!user) {
-            s;
-            throw new Error("유저가 존재하지 않습니다.");
-        }
-
-        if (user.emailStatus !== "waiting") {
-            throw new Error("이미 인증된 메일입니다.");
-        }
-
-        const update = await this.usersRepository.useridedit(user.userId, verifiCationToken);
-
-        return update;
-    };
-
-    getUserEmail = async (email) => {
-        const user = await this.usersRepository.getUserByEmail(email);
-
-        return user;
-    };
-
-    getUserPoint = async (userId) => {
-        const point = await this.pointsRepository.getUserPoint(userId);
-
-        return point;
-    };
-
-    adsignIn = async (adEmail) => {
-        const aduser = await this.usersRepository.getadUserByEmail(adEmail);
-
-        const userJWT = jwt.sign({ aduserId: aduser.aduserId }, process.env.JWT_SECRET, { expiresIn: "12h" });
-        const refreshToken = jwt.sign({ aduserId: aduser.aduserId }, process.env.REFRESH_SECRET, { expiresIn: "7d" });
-
-        return { userJWT, refreshToken };
-    };
+    return { userJWT, refreshToken };
+  };
 }
