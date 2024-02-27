@@ -26,7 +26,6 @@ export class StoresService {
   // 로그인
   signIn = async (adEmail, adPassword) => {
     const aduser = await this.storesRepository.getStoreByEmail(adEmail);
-    console.log(aduser);
     const storeJWT = jwt.sign(
       { aduserId: aduser.aduserId },
       process.env.JWT_SECRET,
