@@ -67,6 +67,16 @@ export class ReviewsController {
     }
   };
 
+  getReviews = async (menuId) => {
+    try {
+      const reviews = await this.reviewsService.findReviews(menuId);
+
+      return res.status(200).json({ data: reviews });
+    } catch (err) {
+      next(err);
+    }
+  };
+
   patchReview = async (req, res, next) => {
     try {
       const { userId } = req.user;

@@ -38,6 +38,16 @@ export class ReviewsService {
     return findReivew;
   };
 
+  findReviews = async (menuId) => {
+    const reviews = await this.reviewsRepository.GetReviews(menuId);
+
+    if (!reviews) {
+      throw new NotFoundError("리뷰가 존재하지않습니다.");
+    }
+
+    return reviews;
+  };
+
   updateReview = async (userId, reviewId, review, reviewRate) => {
     const updateReview = await this.reviewsRepository.updateReview({
       userId,
