@@ -15,7 +15,7 @@ const usersService = new UsersService(usersRepository, pointsRepository);
 const pointsService = new PointsService(pointsRepository);
 const usersController = new UsersController(usersService, pointsService);
 
-router.post("/signin", usersController.signIn);
+// router.post("/signin", usersController.signIn);
 router.post("/userregistr", usersController.userregister);
 router.post("/adusers", usersController.adminregister);
 router.patch("/idedit", usersController.userIdedit);

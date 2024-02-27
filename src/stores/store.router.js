@@ -23,6 +23,9 @@ const storesService = new StoresService(
 
 const storesController = new StoresController(storesService);
 
+router.post("/signin", storesController.signIn);
+
+//가게 정보 등록
 router.post("/", adauthMiddleware, storesController.createStoreInfo);
 
 router.get("/:storeId", storesController.getStoreById);
@@ -64,4 +67,5 @@ router.get(
   adauthMiddleware,
   storesController.getOrderData
 );
+
 export default router;

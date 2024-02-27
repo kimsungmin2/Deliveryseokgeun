@@ -32,13 +32,13 @@ const pointsRepository = new PointsRepository(prisma);
 const couponsRepository = new CouponsRepository(prisma);
 
 const ordersService = new OrdersService(
-    ordersRepository,
-    usersRepository,
-    menusRepository,
-    storesRepository,
-    orderlistRepository,
-    pointsRepository,
-    couponsRepository
+  ordersRepository,
+  usersRepository,
+  menusRepository,
+  storesRepository,
+  orderlistRepository,
+  pointsRepository,
+  couponsRepository
 );
 const storesService = new StoresService(storesRepository);
 
@@ -46,17 +46,18 @@ const orderlistService = new OrderlistService(orderlistRepository);
 
 const couponsService = new CouponsService(couponsRepository);
 
-const ordersController = new OrdersController(ordersService, storesService, orderlistService, couponsService);
+const ordersController = new OrdersController(
+  ordersService,
+  storesService,
+  orderlistService,
+  couponsService
+);
 
 router.post("/", authMiddleware, ordersController.createOrder);
 
 router.get("/:orderId", authMiddleware, ordersController.getOrderById);
 
 router.delete("/:orderId", authMiddleware, ordersController.deleteOrder);
-
-//음식점 검색기능
- router.post("/search", ordersController.searchData);
-
 
 //카테고리 검색기능(추후 만들기)
 // router.post("/store/search", async (req, res, next) => {
@@ -69,6 +70,5 @@ router.delete("/:orderId", authMiddleware, ordersController.deleteOrder);
 //   // adauthMiddleware,
 //   ordersController.getOrderData
 // );
-
 
 export default router;
