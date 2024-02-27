@@ -21,15 +21,9 @@ export class StoresController {
   };
   // 가게정보 생성
   createStoreInfo = async (req, res, next) => {
-    const {
-      storeName,
-      storeAddress,
-      storeContact,
-      storeContent,
-      storeCategory,
-    } = req.body;
+    try {
+    const { storeName, storeAddress, storeContact, storeContent, storeCategory } = req.body;
     const { aduserId } = req.user;
-    console.log(aduserId);
     if (!storeName) {
       return res.status(401).json({ message: "가게 이름을 입력하세요." });
     }
@@ -60,7 +54,10 @@ export class StoresController {
 
     // 한바퀴 돌아서 클라이언트에게 반환
     return res.status(201).json({ message: "업체 정보 등록 완료.", storeInfo });
-  };
+  }catch(err) {
+  next(err)
+}
+};
 
   // 가게 정보 상세조회
   getStoreById = async (req, res, next) => {
@@ -318,48 +315,7 @@ export class StoresController {
       next(err);
     }
   };
-
-  // 가게정보 생성
-  createStoreInfo = async (req, res, next) => {
-    const {
-      storeName,
-      storeAddress,
-      storeContact,
-      storeContent,
-      storeCategory,
-    } = req.body;
-    const { aduserId } = req.user;
-    if (!storeName) {
-      return res.status(401).json({ message: "가게 이름을 입력하세요." });
-    }
-    if (!storeAddress) {
-      return res.status(401).json({ message: "가게 주소를 입력하세요." });
-    }
-    if (!storeContact) {
-      return res.status(401).json({ message: "가게 연락처를 입력하세요." });
-    }
-    if (!storeContent) {
-      return res.status(401).json({ message: "가게 내용을 입력하세요." });
-    }
-    if (!storeCategory) {
-      return res
-        .status(401)
-        .json({ message: "서비스하는 음식의 종류를 입력하세요." });
-    }
-
-    // 서비스로 아이디를 보내면서도 나중엔 가공된 데이터와 함께 돌려받음
-    const storeInfo = await this.storesService.createStoreInfo(
-      aduserId,
-      storeName,
-      storeAddress,
-      storeContact,
-      storeContent,
-      storeCategory
-    );
-
-    // 한바퀴 돌아서 클라이언트에게 반환
-    return res.status(201).json({ message: "업체 정보 등록 완료.", storeInfo });
-  };
+  
   // 가게 정보 상세조회
   getStoreById = async (req, res, next) => {
     try {

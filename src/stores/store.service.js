@@ -50,6 +50,10 @@ export class StoresService {
     storeContent,
     storeCategory
   ) => {
+    const findStoreId = await this.storesRepository.findStoreId(aduserId)
+    if (findStoreId) {
+      throw new NotFoundError ("가게 정보는 1개만 생성 가능 합니다.")
+    }
     const storeInfo = await this.storesRepository.createStoreInfo(
       aduserId,
       storeName,

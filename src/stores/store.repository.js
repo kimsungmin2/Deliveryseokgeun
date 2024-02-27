@@ -6,6 +6,16 @@ export class StoresRepository {
         const store = await this.prisma.aduser.findFirst({ where: { adEmail } });
         return store;
     };
+
+    findStoreId = async (aduserId)  => {
+      const findStoreId = await this.prisma.stores.findFirst({
+        where : {
+          aduserId : +aduserId
+        }
+      })
+      return findStoreId
+    }
+
     createStoreInfo = async (aduserId, storeName, storeAddress, storeContact, storeContent, storeCategory) => {
         const storeInfo = await this.prisma.stores.create({
             data: {
