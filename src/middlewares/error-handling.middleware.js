@@ -1,5 +1,5 @@
 //커스텀 에러
-export default (err, req, res, next) => {
+export const ErrorHandlingMiddleware = (err, req, res, next) => {
   switch (err.name) {
     case "ValidationError":
     case "PrismaClientValidationError":

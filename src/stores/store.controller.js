@@ -1,3 +1,5 @@
+import {NotFoundError} from "../common.error.js"
+
 export class StoresController {
   constructor(storesService, ordersService) {
     this.storesService = storesService;
@@ -21,6 +23,7 @@ export class StoresController {
       storeCategory,
     } = req.body;
     const { aduserId } = req.user;
+    console.log(aduserId)
     if (!storeName) {
       return res.status(401).json({ message: "가게 이름을 입력하세요." });
     }
@@ -61,9 +64,6 @@ export class StoresController {
 
       return res.status(200).json({ detailStoreInfo });
     } catch (err) {
-      if (err.message === "존재하지 않는 상점입니다.") {
-        return res.status(401).json({ message: err.message });
-      }
       next(err);
     }
   };
@@ -139,12 +139,15 @@ export class StoresController {
       const hashedPassword = req.user.adPassword; // DB에서 가져온 해시된 비밀번호
       const { aduserId } = req.user
       const { password } = req.body;
-      if (!aduserId) {
-        return res.status(401).json({ message: "권한이 없습니다." });
-      }
+      // if (!aduserId) {
+      //   throw new UnauthorizedError("권한이 없습니다.");
+      // }
 
       const store = await this.storesService.getStoreById(storeId);
-
+      console.log(store)
+      if (!store) {
+        throw new NotFoundError ("삭제하려는 가게 정보가 존재하지 않습니다.");
+      }
       const deleteStore = await this.storesService.deleteStoreInfo(
         storeId,
         aduserId,
@@ -154,12 +157,9 @@ export class StoresController {
 
       return res.status(201).json({ message: "가게 정보가 삭제되었습니다." });
     } catch (err) {
-      if (err.message === "등록된 가게가 없습니다.") {
-        return res.status(401).json({ message: err.message });
-      }
-      if (err.message === "비밀번호가 일치하지 않습니다.") {
-        return res.status(401).json({ message: err.message });
-      }
+      // if (err instanceof NotFoundError) {
+      //   res.status(404).json({ message: err.message });
+      // }
       next(err);
     }
   };

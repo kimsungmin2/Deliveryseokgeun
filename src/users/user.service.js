@@ -2,7 +2,7 @@ import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
 import bcrypt from "bcrypt";
 import { sendVerificationEmail } from "../middlewares/sendEmail.middlewares.js";
-
+import {NotFoundError} from "../common.error.js"
 dotenv.config();
 export class UsersService {
   constructor(usersRepository, pointsRepository) {
@@ -70,7 +70,7 @@ export class UsersService {
     const aduser = await this.usersRepository.adByEmails(adEmail);
 
     if (aduser) {
-      throw new Error("이미 등록된 이메일입니다.");
+      throw new NotFoundError("이미 등록된 이메일 입니다.");
     }
 
     const hashedPassword = await this.adhashPassword(adPassword);
