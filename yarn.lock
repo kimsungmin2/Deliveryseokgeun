@@ -119,7 +119,7 @@
     "@aws-sdk/util-utf8-browser" "^3.0.0"
     tslib "^1.11.1"
 
-"@aws-sdk/client-s3@^3.0.0":
+"@aws-sdk/client-s3@^3.0.0", "@aws-sdk/client-s3@^3.509.0":
   version "3.521.0"
   resolved "https://registry.npmjs.org/@aws-sdk/client-s3/-/client-s3-3.521.0.tgz"
   integrity sha512-txSfcxezAIW72dgRfhX+plc/lMouilY/QFVne/Cv01SL8Tzclcyp7T7LtkV7aSO4Tb9CUScHdqwWOfjZzCm/yQ==
@@ -424,7 +424,7 @@
     "@smithy/types" "^2.10.0"
     tslib "^2.5.0"
 
-"@aws-sdk/lib-storage@^3.46.0":
+"@aws-sdk/lib-storage@^3.46.0", "@aws-sdk/lib-storage@^3.509.0":
   version "3.521.0"
   resolved "https://registry.npmjs.org/@aws-sdk/lib-storage/-/lib-storage-3.521.0.tgz"
   integrity sha512-TDkh6j/9dPlHtMeNsv++CCOT+HSWKTAjKkp8A9du3d9axyILE6ukqssehObgkB+8fNu4h776Hq9YJE2QExdrOw==

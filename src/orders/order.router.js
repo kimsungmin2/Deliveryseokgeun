@@ -8,7 +8,7 @@ import { MenusRepository } from "../menus/menu.repository.js";
 import { StoresRepository } from "../stores/store.repository.js";
 import { authMiddleware } from "../middlewares/auth.middlewares.js";
 import { OrderlistRepository } from "../orderlist/orderlist.repository.js";
-// import { adauthMiddleware } from "../middlewares/adauth.middlewares.js";
+import { adauthMiddleware } from "../middlewares/adauth.middlewares.js";
 import { OrderlistService } from "../orderlist/orderlist.service.js";
 import { PointsRepository } from "../points/point.repository.js";
 import { StoresService } from "../stores/store.service.js";
@@ -25,25 +25,29 @@ const orderlistRepository = new OrderlistRepository(prisma);
 const pointsRepository = new PointsRepository(prisma);
 const couponsRepository = new CouponsRepository(prisma);
 const ordersService = new OrdersService(
-    ordersRepository,
-    usersRepository,
-    menusRepository,
-    storesRepository,
-    orderlistRepository,
-    pointsRepository,
-    couponsRepository
+  ordersRepository,
+  usersRepository,
+  menusRepository,
+  storesRepository,
+  orderlistRepository,
+  pointsRepository,
+  couponsRepository
 );
 
 const storesService = new StoresService(storesRepository);
 const orderlistService = new OrderlistService(orderlistRepository);
 const couponsService = new CouponsService(couponsRepository);
-const ordersController = new OrdersController(ordersService, storesService, orderlistService, couponsService);
+const ordersController = new OrdersController(
+  ordersService,
+  storesService,
+  orderlistService,
+  couponsService
+);
 //주문 생성
 router.post("/", authMiddleware, ordersController.createOrder);
 //주문 확인
-router.get("/:orderId", authMiddleware, ordersController.getOrderById);
+router.get("/:orderId", adauthMiddleware, ordersController.getOrderById);
 //주문 취소
 router.delete("/:orderId", authMiddleware, ordersController.deleteOrder);
-
 
 export default router;
