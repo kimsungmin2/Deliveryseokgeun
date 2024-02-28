@@ -24,6 +24,7 @@ model Users {
   reviews  Reviews []
   userpoints Userpoints []
   coupons Coupons []
+  quizs Quizs []
   @@map("Users")
 }
 
@@ -198,4 +199,14 @@ model Coupons {
 enum Discount {
   discountamount
   percentage
+}
+
+model Quizs {
+  quizId      Int      @id @default(autoincrement()) @map("quizId")
+  userId        Int      @map("userId")
+  title String @map("title")
+  content String @map("content")
+  quizanswer String @map("quizanswer")
+  createdAt     DateTime @default(now()) @map("createdAt")
+  user          Users    @relation(fields: [userId], references: [userId], onDelete: Cascade)
 }

@@ -16,8 +16,6 @@ const menusService = new MenusService(menusRepository, storesRepository);
 const storesService = new StoresService(storesRepository);
 const menusController = new MenusController(menusService, storesService);
 
-// 메뉴 정보 등록, 수정, 삭제, 조회
-
 // 메뉴 정보 등록
 router.post("/stores/:storeId", upload, adauthMiddleware, menusController.createMenu);
 

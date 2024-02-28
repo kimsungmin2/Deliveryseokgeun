@@ -17,65 +17,31 @@ const ordersRepository = new OrdersRepository(prisma);
 const pointsRepository = new PointsRepository(prisma);
 
 const couponsRepository = new CouponsRepository(prisma);
-const usersService = new UsersService(
-  usersRepository,
-  pointsRepository,
-  ordersRepository,
-  couponsRepository
-);
+const usersService = new UsersService(usersRepository, pointsRepository, ordersRepository, couponsRepository);
 
 const pointsService = new PointsService(pointsRepository);
 const usersController = new UsersController(usersService, pointsService);
-
+//로그인
 router.post("/signin", usersController.signIn);
 router.post("/adsignin", usersController.adsignIn);
-
+//회원가입
 router.post("/userregistr", usersController.userregister);
 router.post("/adusers", usersController.adminregister);
-
+//메일 인증
+router.patch("/userregistr", usersController.useraceess);
+router.patch("/adusers/ad", usersController.aduseraceess);
+//유저 조회
 router.get("/point", authMiddleware, usersController.getUserPoint);
-
-router.patch("/users/:userId", authMiddleware, usersController.userEdit);
-router.patch(
-  "/adusers/:aduserId",
-  adauthMiddleware,
-  usersController.aduserEdit
-); //
-router.get("/users/:userId", usersController.getUser);
-router.get("/users", usersController.getUsermany);
-router.get("/adusers/:aduserId", usersController.getadUser);
-router.get("/adusers", usersController.getadUsermany);
-router.patch("/useraceess", usersController.useraceess);
-router.patch("/aduseraceess", usersController.aduseraceess);
-
-router.delete("/users/:userId", authMiddleware, usersController.userdelete);
-router.delete(
-  "/adusers/:aduserId",
-  adauthMiddleware,
-  usersController.aduserdelete
-);
-
-router.patch("/:userId", authMiddleware, usersController.userEdit);
-router.patch(
-  "/adusers/:aduserId",
-  adauthMiddleware,
-  usersController.aduserEdit
-);
-
 router.get("/:userId", usersController.getUser);
 router.get("/", usersController.getUsermany);
+router.get("/adusers/list", usersController.getadmin);
+router.get("/adusers/:aduserId", usersController.getadUser);
 
-router.get("/:aduserId", usersController.getadUser);
-router.get("/adusers", usersController.getadUsermany);
-
-router.patch("/useraceess", usersController.useraceess);
-router.patch("/aduseraceess", usersController.aduseraceess);
-
+//유저 정보 수정
+router.patch("/:userId", authMiddleware, usersController.userEdit);
+router.patch("/adusers/:aduserId", adauthMiddleware, usersController.aduserEdit);
+//유저 삭제
 router.delete("/:userId", authMiddleware, usersController.userdelete);
-router.delete(
-  "/adusers/:aduserId",
-  adauthMiddleware,
-  usersController.aduserdelete
-);
+router.delete("/adusers/:aduserId", adauthMiddleware, usersController.aduserdelete);
 
 export default router;

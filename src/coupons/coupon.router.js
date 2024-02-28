@@ -12,12 +12,11 @@ const couponsRepository = new CouponsRepository(prisma);
 const couponsService = new CouponsService(couponsRepository);
 
 const couponsController = new CouponsController(couponsService);
-
+//쿠폰 생성
 router.post("/discount", authMiddleware, couponsController.discountCoupon);
-
 router.post("/percentage", authMiddleware, couponsController.percentageCoupon);
-
+//랜덤 쿠폰 생성
 router.post("/random", authMiddleware, couponsController.randomCoupon);
-
+//금요일에만 발급되는 쿠폰 생성
 router.post("/black", authMiddleware, couponsController.blackCoupon);
 export default router;

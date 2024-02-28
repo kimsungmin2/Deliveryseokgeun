@@ -14,56 +14,28 @@ const storesRepository = new StoresRepository(prisma);
 const pointsRepository = new PointsRepository(prisma);
 const ordersRepository = new OrdersRepository(prisma);
 const menusRepository = new MenusRepository(prisma);
-const storesService = new StoresService(
-  storesRepository,
-  pointsRepository,
-  ordersRepository,
-  menusRepository
-);
+const storesService = new StoresService(storesRepository, pointsRepository, ordersRepository, menusRepository);
 
 const storesController = new StoresController(storesService);
 
 //가게 정보 등록
 router.post("/", adauthMiddleware, storesController.createStoreInfo);
-
+//가게 조회
 router.get("/:storeId", storesController.getStoreById);
-
 router.get("/", storesController.getStoreList);
-
+//가게 수정
 router.patch("/:storeId", adauthMiddleware, storesController.updateStoreInfo);
-
+//가게 삭제
 router.delete("/:storeId", adauthMiddleware, storesController.deleteStoreInfo);
-
-router.patch(
-  "/orders/:orderId/ready",
-  adauthMiddleware,
-  storesController.readystatusup
-);
-
-router.patch(
-  "/orders/:orderId/ing",
-  adauthMiddleware,
-  storesController.ingstatusup
-);
-
-router.patch(
-  "/orders/:orderId/complet",
-  adauthMiddleware,
-  storesController.completestatusup
-);
-
-router.delete(
-  "/:storeId/orders/:orderId",
-  adauthMiddleware,
-  storesController.deleteOrder
-);
-
+//배달 변경
+router.patch("/orders/:orderId/ready", adauthMiddleware, storesController.readystatusup);
+router.patch("/orders/:orderId/ing", adauthMiddleware, storesController.ingstatusup);
+router.patch("/orders/:orderId/complet", adauthMiddleware, storesController.completestatusup);
+//주문 취소
+router.delete("/:storeId/orders/:orderId", adauthMiddleware, storesController.deleteOrder);
+//키워드 검색
 router.post("/search", storesController.searchData);
-
-router.get(
-  "/:storeId/ordered",
-  adauthMiddleware,
-  storesController.getOrderData
-);
+//배달 조회
+router.get("/:storeId/ordered", adauthMiddleware, storesController.getOrderData);
 
 export default router;

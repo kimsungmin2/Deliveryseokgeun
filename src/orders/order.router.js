@@ -18,57 +18,31 @@ import { CouponsService } from "../coupons/coupon.service.js";
 const router = express.Router();
 
 const ordersRepository = new OrdersRepository(prisma);
-
 const usersRepository = new UsersRepository(prisma);
-
 const menusRepository = new MenusRepository(prisma);
-
 const storesRepository = new StoresRepository(prisma);
-
 const orderlistRepository = new OrderlistRepository(prisma);
-
 const pointsRepository = new PointsRepository(prisma);
-
 const couponsRepository = new CouponsRepository(prisma);
-
 const ordersService = new OrdersService(
-  ordersRepository,
-  usersRepository,
-  menusRepository,
-  storesRepository,
-  orderlistRepository,
-  pointsRepository,
-  couponsRepository
+    ordersRepository,
+    usersRepository,
+    menusRepository,
+    storesRepository,
+    orderlistRepository,
+    pointsRepository,
+    couponsRepository
 );
+
 const storesService = new StoresService(storesRepository);
-
 const orderlistService = new OrderlistService(orderlistRepository);
-
 const couponsService = new CouponsService(couponsRepository);
-
-const ordersController = new OrdersController(
-  ordersService,
-  storesService,
-  orderlistService,
-  couponsService
-);
-
+const ordersController = new OrdersController(ordersService, storesService, orderlistService, couponsService);
+//주문 생성
 router.post("/", authMiddleware, ordersController.createOrder);
-
+//주문 확인
 router.get("/:orderId", authMiddleware, ordersController.getOrderById);
-
+//주문 취소
 router.delete("/:orderId", authMiddleware, ordersController.deleteOrder);
-
-//카테고리 검색기능(추후 만들기)
-// router.post("/store/search", async (req, res, next) => {
-//   const storeCategory = req.body;
-// });
-
-//주문 배달메뉴 조회
-// router.get(
-//   "/:storeId/ordered",
-//   // adauthMiddleware,
-//   ordersController.getOrderData
-// );
 
 export default router;

@@ -70,7 +70,9 @@ export class OrdersController {
     getOrderById = async (req, res, next) => {
         try {
             const { orderId } = req.params;
+            const { userId } = req.user;
             const order = await this.ordersService.getOrderById(orderId);
+            if (!order.userId !== userId) return res.status(401).json({ message: "권한이 없습니다." });
 
             return res.status(200).json({ data: order });
         } catch (err) {
@@ -82,14 +84,17 @@ export class OrdersController {
         try {
             const { orderId } = req.params;
             const { userId } = req.user;
+            const order = await this.ordersService.getOrderById(orderId);
 
-            const user = req.user.userId;
+            if (!orderId) {
+                return res.status(404).json({ message: "주문이 없습니다." });
+            }
 
-            if (!user) return res.status(401).json({ message: "권한이 없습니다." });
+            if (!order.userId !== userId) return res.status(401).json({ message: "권한이 없습니다." });
 
-            const deletedOrder = await this.ordersService.deleteOrder(orderId, userId);
+            await this.ordersService.deleteOrder(orderId, userId);
 
-            res.status(200).json({ message: "삭제 성공" });
+            return res.status(200).json({ message: "배달이 취소되었습니다." });
         } catch (err) {
             next(err);
         }

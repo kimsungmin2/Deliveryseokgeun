@@ -22,28 +22,13 @@ const storeService = new StoresService(storesRepository);
 const reviewsService = new ReviewsService(reviewsRepository);
 const menusService = new MenusService(menusRepository);
 const ordersService = new OrdersService(ordersRepository);
-const reviewsController = new ReviewsController(
-  reviewsService,
-  ordersService,
-  menusService
-);
-
+const reviewsController = new ReviewsController(reviewsService, ordersService, menusService, storeService);
+//리뷰 생성
 router.post("/:menuId/reviews", authMiddleware, reviewsController.createReview);
-
 //메뉴 리뷰조회
 router.get("/:menuId", reviewsController.getReviews);
-
 //리뷰삭제
-router.delete(
-  "/:reviewId/reviews",
-  authMiddleware,
-  reviewsController.deleteReview
-);
-
+router.delete("/:reviewId/reviews", authMiddleware, reviewsController.deleteReview);
 //리뷰수정
-router.patch(
-  "/:reviewId/reviews",
-  authMiddleware,
-  reviewsController.patchReview
-);
+router.patch("/:reviewId/reviews", authMiddleware, reviewsController.patchReview);
 export default router;

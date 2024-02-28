@@ -1,3 +1,9 @@
+import { ValidationError } from "../common.error.js";
+import { UnauthorizedError } from "../common.error.js";
+import { NotFoundError } from "../common.error.js";
+import { ConflictError } from "../common.error.js";
+import { ForbiddenError } from "../common.error.js";
+
 export class OrdersService {
     constructor(ordersRepository, usersRepository, menusRepository, storesRepository, orderlistRepository, pointsRepository, couponsRepository) {
         this.ordersRepository = ordersRepository;
@@ -16,14 +22,14 @@ export class OrdersService {
         for (let i = 0; i < menuIds.length; i++) {
             const menu = await this.menusRepository.getMenuById(menuIds[i]);
             if (!menu) {
-                throw new Error(`ID가 ${menuIds[i]}인 메뉴를 찾을 수 없습니다.`);
+                throw new NotFoundError(`ID가 ${menuIds[i]}인 메뉴를 찾을 수 없습니다.`);
             }
             const ea = eas[i];
             const price = menu.menuPrice;
             totalPrice += price * ea;
 
             if (menu.quantity < ea) {
-                throw new Error("가능한 음식 갯수를 초과하였습니다.");
+                throw new ForbiddenError("가능한 음식 갯수를 초과하였습니다.");
             }
             if (userrating.rating === "rare") {
                 totalPrice -= totalPrice * (3 / 100);
@@ -33,7 +39,7 @@ export class OrdersService {
 
             const userpoint = user[0]._sum.possession;
             if (userpoint < totalPrice) {
-                throw new Error("포인트가 부족합니다.");
+                throw new ForbiddenError("포인트가 부족합니다.");
             }
         }
 
@@ -61,20 +67,20 @@ export class OrdersService {
         const coupon = await this.couponsRepository.getCouponId(couponId);
 
         if (coupon.couponuse !== "notuse") {
-            throw new Error("사용한 쿠폰입니다.");
+            throw new ForbiddenError("사용한 쿠폰입니다.");
         }
         let totalPrice = 0;
         for (let i = 0; i < menuIds.length; i++) {
             const menu = await this.menusRepository.getMenuById(menuIds[i]);
             if (!menu) {
-                throw new Error(`ID가 ${menuIds[i]}인 메뉴를 찾을 수 없습니다.`);
+                throw new NotFoundError(`ID가 ${menuIds[i]}인 메뉴를 찾을 수 없습니다.`);
             }
             const ea = eas[i];
             const price = menu.menuPrice;
             totalPrice += price * ea;
 
             if (menu.quantity < ea) {
-                throw new Error("가능한 음식 갯수를 초과하였습니다.");
+                throw new ForbiddenError("가능한 음식 갯수를 초과하였습니다.");
             }
         }
         totalPrice -= totalPrice * (coupon.amount / 100);
@@ -82,10 +88,10 @@ export class OrdersService {
         const user = await this.pointsRepository.getUserPoint(userId);
         const userpoint = user[0]._sum.possession;
         if (userpoint < totalPrice) {
-            throw new Error("포인트가 부족합니다.");
+            throw new ForbiddenError("포인트가 부족합니다.");
         }
         if (totalPrice < coupon.certainamount) {
-            throw new Error("주문 금액이 부족합니다.");
+            throw new ForbiddenError("주문 금액이 부족합니다.");
         }
 
         const order = await this.ordersRepository.createOrder(userId, storeId, orderStatus, orderContent, orderAddress, totalPrice);
@@ -112,24 +118,24 @@ export class OrdersService {
         const coupon = await this.couponsRepository.getCouponId(couponId);
         console.log(coupon);
         if (coupon.couponuse !== "notuse") {
-            throw new Error("사용한 쿠폰입니다.");
+            throw new ForbiddenError("사용한 쿠폰입니다.");
         }
         let totalPrice = 0;
 
         for (let i = 0; i < menuIds.length; i++) {
             const menu = await this.menusRepository.getMenuById(menuIds[i]);
             if (!menu) {
-                throw new Error(`ID가 ${menuIds[i]}인 메뉴를 찾을 수 없습니다.`);
+                throw new NotFoundError(`ID가 ${menuIds[i]}인 메뉴를 찾을 수 없습니다.`);
             }
             const ea = eas[i];
             const price = menu.menuPrice;
             totalPrice += price * ea;
 
             if (menu.quantity < ea) {
-                throw new Error("가능한 음식 갯수를 초과하였습니다.");
+                throw new ForbiddenError("가능한 음식 갯수를 초과하였습니다.");
             }
             if (totalPrice < coupon.certainamount) {
-                throw new Error("주문 금액이 부족합니다.");
+                throw new ForbiddenError("주문 금액이 부족합니다.");
             }
         }
         totalPrice -= coupon.amount;
@@ -137,7 +143,7 @@ export class OrdersService {
         const user = await this.pointsRepository.getUserPoint(userId);
         const userpoint = user[0]._sum.possession;
         if (userpoint <= totalPrice) {
-            throw new Error("포인트가 부족합니다.");
+            throw new ForbiddenError("포인트가 부족합니다.");
         }
 
         const order = await this.ordersRepository.createOrder(userId, storeId, orderStatus, orderContent, orderAddress, totalPrice);
@@ -161,7 +167,7 @@ export class OrdersService {
 
     getOrderById = async (orderId) => {
         const order = await this.ordersRepository.getOrderById(orderId);
-        if (!order) throw new Error("존재하지 않는 오더입니다.");
+        if (!order) throw new NotFoundError("존재하지 않는 오더입니다.");
         return order;
     };
     // createOrder = async (userId, storeId, menuId, orderStatus = "cooking", ea, orderContent, orderAddress) => {
@@ -207,7 +213,7 @@ export class OrdersService {
     deleteOrder = async (orderId, userId) => {
         const order = await this.ordersRepository.getOrderById(orderId);
         if (!order) {
-            throw new Error("해당 오더를 찾을 수 없습니다.");
+            throw new NotFoundError("해당 오더를 찾을 수 없습니다.");
         }
         const cancelPrice = order.totalPrice;
         const Pasthistory = `주문하신 점포의 주문이 취소되었습니다.`;
