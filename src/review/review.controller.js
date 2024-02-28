@@ -5,6 +5,7 @@ import { ConflictError } from "../common.error.js";
 import { ForbiddenError } from "../common.error.js";
 
 export class ReviewsController {
+
   constructor(reviewsService, ordersService, menusService) {
     this.reviewsService = reviewsService;
     this.ordersService = ordersService;
@@ -64,6 +65,7 @@ export class ReviewsController {
         .json({ message: "리뷰가 성공적으로 작성되었습니다." });
     } catch (err) {
       next(err);
+
     }
   };
 

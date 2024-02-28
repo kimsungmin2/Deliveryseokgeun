@@ -12,7 +12,9 @@ export const adauthMiddleware = async function (req, res, next) {
 
     const decodedToken = jwt.verify(token, process.env.JWT_SECRET);
 
-    const { aduserId } = jwt.verify(token, process.env.JWT_SECRET);
+
+        req.aduser = aduser;
+
 
     const aduser = await prisma.aduser.findFirst({
       where: { aduserId: +aduserId },
