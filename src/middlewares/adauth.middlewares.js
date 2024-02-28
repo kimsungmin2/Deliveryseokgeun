@@ -22,7 +22,7 @@ export const adauthMiddleware = async function (req, res, next) {
             throw new Error("토큰 사용자가 존재하지 않습니다.");
         }
 
-        req.user = aduser;
+        req.aduser = aduser;
 
         next();
     } catch (error) {

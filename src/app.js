@@ -10,7 +10,7 @@ const PORT = 3020;
 app.use(LogMiddleware);
 app.use(express.json());
 app.use(cookieParser());
-app.use("/api", router);
+app.use("/", router);
 
 app.use(ErrorHandlingMiddleware);
 app.listen(PORT, () => {
