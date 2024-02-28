@@ -4,16 +4,16 @@ export const adauthMiddleware = async function (req, res, next) {
   try {
     const { authorization } = req.cookies;
     if (!authorization) throw new Error("토큰이 존재하지 않습니다.");
-
     const [tokenType, token] = authorization.split(" ");
-
     if (tokenType !== "Bearer")
       throw new Error("토큰 타입이 일치하지 않습니다.");
-
+    if (!token) {
+      return res
+        .status(400)
+        .json({ message: "인증 정보가 올바르지 않습니다." });
+    }
     const decodedToken = jwt.verify(token, process.env.JWT_SECRET);
-
     const { aduserId } = jwt.verify(token, process.env.JWT_SECRET);
-
     const aduser = await prisma.aduser.findFirst({
       where: { aduserId: +aduserId },
     });
@@ -21,13 +21,10 @@ export const adauthMiddleware = async function (req, res, next) {
       res.clearCookie("authorization");
       throw new Error("토큰 사용자가 존재하지 않습니다.");
     }
-
-    req.user = aduser;
-
+    req.aduser = aduser;
     next();
   } catch (error) {
     res.clearCookie("authorization");
-
     // 토큰이 만료되었거나, 조작되었을 때, 에러 메시지를 다르게 출력합니다.
     switch (error.name) {
       case "TokenExpiredError":
