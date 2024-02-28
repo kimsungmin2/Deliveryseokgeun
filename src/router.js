@@ -6,7 +6,6 @@ import MenusRouter from "./menus/menu.router.js";
 import ReviewRouter from "./review/review.router.js";
 import CouponsRouter from "./coupons/coupon.router.js";
 
-
 const router = express.Router();
 
 router.use("/stores", StoresRouter);

@@ -17,4 +17,7 @@ router.post("/discount", authMiddleware, couponsController.discountCoupon);
 
 router.post("/percentage", authMiddleware, couponsController.percentageCoupon);
 
+router.post("/random", authMiddleware, couponsController.randomCoupon);
+
+router.post("/black", authMiddleware, couponsController.blackCoupon);
 export default router;
