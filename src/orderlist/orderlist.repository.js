@@ -3,11 +3,13 @@ export class OrderlistRepository {
         this.prisma = prisma;
         this.redisClient = redisClient;
     }
-    createOrderlist = (orderId, menuId) => {
+    createOrderlist = (orderId, menuId, ea) => {
         const orderlist = this.prisma.orderlist.create({
             data: {
                 orderId: +orderId,
                 menuId: +menuId,
+                ea: +ea,
+
             },
         });
         return orderlist;
