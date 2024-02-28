@@ -4,6 +4,7 @@ export class StoresRepository {
     }
     getStoreByEmail = async (adEmail) => {
         const store = await this.prisma.aduser.findFirst({ where: { adEmail } });
+
         return store;
     };
     findStoreId = async (aduserId) => {

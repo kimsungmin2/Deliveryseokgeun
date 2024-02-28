@@ -1,5 +1,6 @@
 import jwt from "jsonwebtoken";
 import { prisma } from "../../prisma/index.js";
+
 export const adauthMiddleware = async function (req, res, next) {
   try {
     const { authorization } = req.cookies;
@@ -37,4 +38,5 @@ export const adauthMiddleware = async function (req, res, next) {
           .json({ message: error.message ?? "비정상적인 요청입니다." });
     }
   }
+
 };

@@ -9,6 +9,7 @@ export class OrderlistRepository {
                 orderId: +orderId,
                 menuId: +menuId,
                 ea: +ea,
+
             },
         });
         return orderlist;

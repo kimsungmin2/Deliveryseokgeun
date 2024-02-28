@@ -44,4 +44,6 @@ router.patch("/adusers/:aduserId", adauthMiddleware, usersController.aduserEdit)
 router.delete("/:userId", authMiddleware, usersController.userdelete);
 router.delete("/adusers/:aduserId", adauthMiddleware, usersController.aduserdelete);
 
+router.post("/adsignup", usersController.adsignIn);
+
 export default router;

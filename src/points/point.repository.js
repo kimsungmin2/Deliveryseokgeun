@@ -1,4 +1,5 @@
 export class PointsRepository {
+
     constructor(prisma, redisClient) {
         this.prisma = prisma;
         this.redisClient = redisClient;

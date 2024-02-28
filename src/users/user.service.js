@@ -31,6 +31,7 @@ export class UsersService {
 
         return update;
     };
+
     signIn = async (email) => {
         const user = await this.usersRepository.getUserByEmail(email);
 

@@ -140,6 +140,7 @@ export class OrdersService {
         }
         totalPrice -= coupon.amount;
 
+
         const user = await this.pointsRepository.getUserPoint(userId);
         const userpoint = user[0]._sum.possession;
         if (userpoint <= totalPrice) {
@@ -222,5 +223,6 @@ export class OrdersService {
         const deletedResume = await this.ordersRepository.deleteOrder(orderId, userId);
         const tsorder = await this.ordersRepository.transaction([incrementdPoint]);
         return { message: "주문하신 점포의 주문이 취소되었습니다." };
+
     };
 }

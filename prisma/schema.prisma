@@ -3,12 +3,10 @@
 generator client {
   provider = "prisma-client-js"
 }
-
 datasource db {
   provider = "mysql"
   url      = env("DATABASE_URL")
 }
-
 model Users {
   userId    Int      @id @default(autoincrement()) @map("userId")
   email     String   @unique @map("email")
@@ -33,6 +31,7 @@ basic
 rare
 epic
 }
+
 enum emailStatus{
 
   waiting
@@ -87,6 +86,7 @@ enum StoreCategory {
   SchoolFood
 }
 
+
 model Menus {
   menuId    Int      @id @default(autoincrement()) @map("menuId")
   storeId Int @map("storeId")
@@ -100,10 +100,8 @@ model Menus {
   store Stores @relation(fields: [storeId], references: [storeId], onDelete: Cascade)
   reviews Reviews []
   orderlist Orderlist []
-
   @@map("Menus")
 }
-
 model Orders {
   orderId      Int         @id @default(autoincrement()) @map("orderId")
   userId       Int         @map("userId")
@@ -139,7 +137,6 @@ enum Orderstatus {
   delivering
   deliveryCompleted
 }
-
 model Reviews {
   reviewId   Int      @id @default(autoincrement()) @map("reviewId")
   userId     Int      @map("userId")
