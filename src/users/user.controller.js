@@ -1,6 +1,5 @@
 export class UsersController {
-  
-    constructor(usersService) {
+  constructor(usersService) {
     this.usersService = usersService;
   }
   signIn = async (req, res, next) => {
@@ -117,7 +116,6 @@ export class UsersController {
           .json({ message: "가입하실 이름을 적지 않았습니다." });
       }
 
-
       if (
         !email.includes("@naver.com") &&
         !email.includes("@daum.net") &&
@@ -143,7 +141,7 @@ export class UsersController {
           .json({ message: "가입하실 비밀번호가 비밀번호 확인란과 다릅니다" });
       }
 
-      const users = await this.usersService.register(email, name, password);
+      await this.usersService.register(email, name, password);
 
       return res.status(201).json({ message: "회원가입 완료" });
     } catch (err) {
@@ -198,11 +196,7 @@ export class UsersController {
           .status(400)
           .json({ message: "가입하실 비밀번호가 비밀번호 확인란과 다릅니다" });
       }
-      await this.usersService.adregister(
-        adEmail,
-        adminName,
-        adPassword,
-      );
+      await this.usersService.adregister(adEmail, adminName, adPassword);
       return res.status(201).json({ message: "어드민 회원가입 완료" });
     } catch (err) {
       next(err);
@@ -211,55 +205,53 @@ export class UsersController {
 
   getUser = async (req, res, next) => {
     const { userId } = req.params;
-      try {
-        const users = await this.usersService.getUser(userId);
-    
-        return res.status(201).json({ User : users });
-      } catch (err) {
-        next(err);
-      }
-  }
-  
+    try {
+      const users = await this.usersService.getUser(userId);
+
+      return res.status(201).json({ User: users });
+    } catch (err) {
+      next(err);
+    }
+  };
+
   getUsermany = async (req, res, next) => {
-      try {
-        const users = await this.usersService.getUsermany();
-    
-        return res.status(201).json({ User : users });
-      } catch (err) {
-        next(err);
-      }
-  }
+    try {
+      const users = await this.usersService.getUsermany();
+
+      return res.status(201).json({ User: users });
+    } catch (err) {
+      next(err);
+    }
+  };
 
   getadUser = async (req, res, next) => {
     const { aduserId } = req.params;
-      try {
-        const adusers = await this.usersService.getadUser(aduserId);
-    
-        return res.status(201).json({ Admin : adusers });
-      } catch (err) {
-        next(err);
-      }
-  }
-  
+    try {
+      const adusers = await this.usersService.getadUser(aduserId);
+
+      return res.status(201).json({ Admin: adusers });
+    } catch (err) {
+      next(err);
+    }
+  };
+
   getadUsermany = async (req, res, next) => {
-      try {
-        const adusers = await this.usersService.getadUsermany();
-    
-        return res.status(201).json({ Admin : adusers });
-      } catch (err) {
-        next(err);
-      }
-  }
+    try {
+      const adusers = await this.usersService.getadUsermany();
+
+      return res.status(201).json({ Admin: adusers });
+    } catch (err) {
+      next(err);
+    }
+  };
 
   userEdit = async (req, res, next) => {
     try {
-      const { userId } = req.user;
+      const { userId } = req.params;
       const { email, password, name } = req.body;
 
-      if(!userId){
-        return res
-          .status(400)
-          .json({ message: "유저가 존재하지 않습니다." });
+      if (!userId) {
+        return res.status(400).json({ message: "유저가 존재하지 않습니다." });
       }
 
       if (!email) {
@@ -297,27 +289,24 @@ export class UsersController {
           .status(400)
           .json({ message: "이메일 조건이 맞지 않습니다." });
       }
-      
+
       await this.usersService.userEdit(userId, email, password, name);
-  
-      return res.status(201).json({ message : "회원정보 수정완료" });
+
+      return res.status(201).json({ message: "회원정보 수정완료" });
     } catch (err) {
       next(err);
     }
-}
+  };
 
   aduserEdit = async (req, res, next) => {
     try {
       const { aduserId } = req.aduser;
       const { adEmail, adPassword, adminName } = req.body;
 
-
-      if(!aduserId){
-        return res
-          .status(400)
-          .json({ message: "어드민이 존재하지 않습니다." });
+      if (!aduserId) {
+        return res.status(400).json({ message: "어드민이 존재하지 않습니다." });
       }
-      
+
       if (!adEmail) {
         return res
           .status(400)
@@ -353,69 +342,58 @@ export class UsersController {
           .status(400)
           .json({ message: "이메일 조건이 맞지 않습니다." });
       }
-      
-      await this.usersService.aduserEdit(aduserId, adEmail, adPassword, adminName);
-      
-      return res.status(201).json({ message : "어드민 회원정보 수정완료" });
+
+      await this.usersService.aduserEdit(
+        aduserId,
+        adEmail,
+        adPassword,
+        adminName
+      );
+
+      return res.status(201).json({ message: "어드민 회원정보 수정완료" });
     } catch (err) {
       next(err);
     }
-}
 
-userdelete = async (req, res, next) => {
-  try {
-    const { userId } = req.user;
-    const { password } = req.body;
-
-    if(userId === null){
-      return res.status(404).json({ message : "유저가 존재하지 않습니다."});
+  aduserdelete = async (req, res, next) => {
+    try {
+      const aduserId = req.params.aduserId;
+      if (aduserId === null) {
+        return res.status(404).json({ message: "어드민이 존재하지 않습니다." });
+      }
+      await this.usersService.aduserdelete(aduserId);
+      return res.status(201).json({ message: "어드민 삭제완료" });
+    } catch (err) {
+      next(err);
     }
-
-    await this.usersService.userdelete(userId, password);
-
-    return res.status(201).json({ message : "유저 삭제완료" });
-  } catch (err) {
-    next(err);
-  }
-}
-
-aduserdelete = async (req, res, next) => {
-  try {
-    const { aduserId } = req.aduser;
-    const { adPassword } = req.body;
-
-    if(aduserId === null){
-      return res.status(404).json({ message : "어드민이 존재하지 않습니다."});
+  };
+  userdelete = async (req, res, next) => {
+    try {
+      const userId = req.params.userId;
+      if (userId === null) {
+        return res.status(404).json({ message: "유저가 존재하지 않습니다." });
+      }
+      await this.usersService.userdelete(userId);
+      return res.status(201).json({ message: "유저 삭제완료" });
+    } catch (err) {
+      next(err);
     }
-    
-    await this.usersService.aduserdelete(aduserId, adPassword);
-
-    return res.status(201).json({ message : "어드민 삭제완료" });
-  } catch (err) {
-    next(err);
-  }
-}
-
+  };
   useraceess = async (req, res, next) => {
     try {
       const { email, verifiCationToken } = req.body;
-
       const user = await this.usersService.getUserEmail(email);
-
       if (verifiCationToken !== user.verifiCationToken) {
         return res
           .status(401)
           .json({ message: "인증번호가 일치하지 않습니다." });
       }
-
       await this.usersService.useraccess(email, verifiCationToken);
-
       return res.status(201).json({ message: "회원정보 상태 변경완료" });
     } catch (err) {
       next(err);
     }
   };
-
   aduseraceess = async (req, res, next) => {
     try {
       const { adEmail, adVerifiCationToken } = req.body;
@@ -431,20 +409,18 @@ aduserdelete = async (req, res, next) => {
       next(err);
     }
   };
-
   getUserPoint = async (req, res, next) => {
     try {
-        const { userId } = req.user;
+      const { userId } = req.user;
 
-        const user = await this.usersService.getUserPoint(userId);
+      const user = await this.usersService.getUserPoint(userId);
 
-        return res.status(200).json({
-            message: `현재 고객님의 포인트는 ${user[0]._sum.possession}원 있습니다.`,
-        });
+      return res.status(200).json({
+        message: `현재 고객님의 포인트는 ${user[0]._sum.possession}원 있습니다.`,
+      });
     } catch (err) {
-        next(err);
+      next(err);
     }
-};
-
-
+  };
+}
 }

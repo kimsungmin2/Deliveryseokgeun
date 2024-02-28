@@ -9,16 +9,21 @@ import { PointsRepository } from "../points/point.repository.js";
 import { PointsService } from "../points/point.service.js";
 import { adauthMiddleware } from "../middlewares/adauth.middlewares.js";
 import { OrdersRepository } from "../orders/order.repository.js";
+import { CouponsRepository } from "../coupons/coupon.repository.js";
 
 const router = express.Router();
 const usersRepository = new UsersRepository(prisma, redisClient);
 const ordersRepository = new OrdersRepository(prisma);
 const pointsRepository = new PointsRepository(prisma);
+
+const couponsRepository = new CouponsRepository(prisma);
 const usersService = new UsersService(
   usersRepository,
   pointsRepository,
-  ordersRepository
+  ordersRepository,
+  couponsRepository
 );
+
 const pointsService = new PointsService(pointsRepository);
 const usersController = new UsersController(usersService, pointsService);
 
@@ -29,7 +34,8 @@ router.post("/userregistr", usersController.userregister);
 router.post("/adusers", usersController.adminregister);
 
 router.get("/point", authMiddleware, usersController.getUserPoint);
-router.patch("/users/:userId", authMiddleware, usersController.userEdit); //
+
+router.patch("/users/:userId", authMiddleware, usersController.userEdit);
 router.patch(
   "/adusers/:aduserId",
   adauthMiddleware,

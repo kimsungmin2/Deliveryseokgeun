@@ -4,11 +4,32 @@ import bcrypt from "bcrypt";
 import { sendVerificationEmail } from "../middlewares/sendEmail.middlewares.js";
 dotenv.config();
 export class UsersService {
-  constructor(usersRepository, pointsRepository, ordersRepository) {
-    this.usersRepository = usersRepository;
-    this.pointsRepository = pointsRepository;
-    this.ordersRepository = ordersRepository;
-  }
+    constructor(usersRepository, pointsRepository, ordersRepository, couponsRepository) {
+        this.usersRepository = usersRepository;
+        this.pointsRepository = pointsRepository;
+        this.ordersRepository = ordersRepository;
+        this.couponsRepository = couponsRepository;
+    }
+    signIn = async (email) => {
+        const user = await this.usersRepository.getUserByEmail(email);
+        const rating = await this.ordersRepository.ratingUserPoint(user.userId);
+        const userpoint = rating[0]._sum.totalPrice;
+
+        if (userpoint > 1000000) {
+            await this.usersRepository.ratingepicUpdate(user.userId);
+        } else if (userpoint > 500000) {
+            await this.usersRepository.ratingrareUpdate(user.userId);
+        }
+
+        const userJWT = jwt.sign({ userId: user.userId }, process.env.JWT_SECRET, {
+            expiresIn: "12h",
+        });
+
+        const refreshToken = jwt.sign({ userId: user.userId }, process.env.REFRESH_SECRET, { expiresIn: "7d" });
+
+        return { userJWT, refreshToken };
+    };
+
   signIn = async (email) => {
     const user = await this.usersRepository.getUserByEmail(email);
     // const rating = await this.ordersRepository.ratingUserPoint(user.userId);

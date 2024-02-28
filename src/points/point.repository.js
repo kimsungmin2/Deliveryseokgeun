@@ -18,6 +18,9 @@ export class PointsRepository {
         const point = await this.prisma.userpoints.create({ data: { userId: +userId, possession: 1000000, history: "가입 축하 포인트" } });
         return point;
     };
+    quizPoint = async (userId) => {
+        const point = await this.prisma.userpoints.create({ data: { userId: +userId, possession: possession, history: history } });
+    };
 
     userdecrementPoint = (userId, possession, history) => {
         const user = this.prisma.userpoints.create({
