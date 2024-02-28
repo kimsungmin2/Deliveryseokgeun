@@ -28,6 +28,7 @@ export class UsersController {
                 return res.status(400).json({ message: "이메일 조건이 맞지 않습니다." });
             }
             const tokens = await this.usersService.signIn(email);
+            console.log(tokens);
             res.cookie("authorization", `Bearer ${tokens.userJWT}`);
             res.cookie("refreshToken", tokens.refreshToken);
             return res.status(200).json({ message: "로그인 성공" });

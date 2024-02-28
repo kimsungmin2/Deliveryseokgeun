@@ -15,12 +15,6 @@ export class UsersService {
         const rating = await this.ordersRepository.ratingUserPoint(user.userId);
         const userpoint = rating[0]._sum.totalPrice;
 
-        // const today = Date.prototype.getDay(2);
-        // if (today) {
-        //     const coupon = await this.couponsRepository.blackCoupon(user.userId);
-        //     return coupon;
-        // }
-
         if (userpoint > 1000000) {
             await this.usersRepository.ratingepicUpdate(user.userId);
         } else if (userpoint > 500000) {

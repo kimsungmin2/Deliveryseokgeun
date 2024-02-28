@@ -32,7 +32,7 @@ export class CouponsRepository {
         return coupon;
     };
     blackCoupon = async (userId) => {
-        const coupon = await this.prisma.coupon.create({
+        const coupon = await this.prisma.coupons.create({
             data: {
                 userId: +userId,
                 couponname: "블랙프라이데이 쿠폰",
@@ -43,6 +43,7 @@ export class CouponsRepository {
                 certainamount: 19900,
             },
         });
+        return coupon;
     };
     getCouponId = async (couponId) => {
         const coupon = await this.prisma.coupons.findFirst({

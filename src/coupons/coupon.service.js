@@ -31,4 +31,8 @@ export class CouponsService {
         const random = await this.couponsRepository.percentageCoupon(userId, couponname, couponuse, discount, couponhistory, amount, certainamount);
         return random;
     };
+    blackCoupon = async (userId) => {
+        const coupon = await this.couponsRepository.blackCoupon(userId);
+        return coupon;
+    };
 }

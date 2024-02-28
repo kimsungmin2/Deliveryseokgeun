@@ -52,10 +52,24 @@ export class CouponsController {
         const randomNumber = Math.random();
         let random;
         if (randomNumber < 0.03) {
+            sd;
             random = await this.couponsService.randomCoupon(userId);
         } else {
             random = "꽝";
         }
         return res.status(200).json({ data: random });
+    };
+    blackCoupon = async (req, res, next) => {
+        const { userId } = req.user;
+
+        const today = new Date().getDay();
+        console.log(today);
+        if (today === 5) {
+            await this.couponsService.blackCoupon(userId);
+        } else {
+            return res.status(201).json({ message: "금요일이이 아닙니다" });
+        }
+
+        return res.status(201).json({ message: "블랙 프라이데이 쿠폰 발급이 완료되었습니다." });
     };
 }
