@@ -1,5 +1,6 @@
 export class UsersController {
-  constructor(usersService) {
+  
+    constructor(usersService) {
     this.usersService = usersService;
   }
   signIn = async (req, res, next) => {
@@ -424,8 +425,7 @@ aduserdelete = async (req, res, next) => {
   aduseraceess = async (req, res, next) => {
     try {
       const { adEmail, adVerifiCationToken } = req.body;
-
-      const aduser = await this.usersService.getadUserEmail(adEmail);
+  const aduser = await this.usersService.getadUserEmail(adEmail);
 
       if (adVerifiCationToken !== aduser.adVerifiCationToken) {
         return res
@@ -454,5 +454,6 @@ aduserdelete = async (req, res, next) => {
         next(err);
     }
 };
-  
+
+
 }

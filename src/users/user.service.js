@@ -4,14 +4,18 @@ import bcrypt from "bcrypt";
 import { sendVerificationEmail } from "../middlewares/sendEmail.middlewares.js";
 dotenv.config();
 export class UsersService {
-  constructor(usersRepository, pointsRepository) {
+    constructor(usersRepository, pointsRepository, ordersRepository) {
         this.usersRepository = usersRepository;
         this.pointsRepository = pointsRepository;
+        this.ordersRepository = ordersRepository;
     }
-
-  signIn = async (email, password) => {
-    const user = await this.usersRepository.getUserByEmail(email);
-
+  
+   signIn = async (email) => {
+        const user = await this.usersRepository.getUserByEmail(email);
+        const rating = await this.ordersRepository.ratingUserPoint(user.userId);
+        const userpoint = rating[0]._sum.totalPrice;
+     
+     
     if(user === null){
       throw new Error("유저가 존재하지 않습니다.")
     }
@@ -19,17 +23,22 @@ export class UsersService {
     if(user.emailStatus !== "completion"){
       throw new Error("활성화 되지 않은 어드민입니다.");
     }
-    
-    const userJWT = jwt.sign({ userId: user.userId }, process.env.JWT_SECRET, {
-      expiresIn: "12h",
-    });
-    const refreshToken = jwt.sign(
-      { userId: user.userId },
-      process.env.REFRESH_SECRET,
-      { expiresIn: "7d" }
-    );
-    return { userJWT, refreshToken };
-  };
+
+        if (userpoint > 1000000) {
+            await this.usersRepository.ratingepicUpdate(user.userId);
+        } else if (userpoint > 500000) {
+            await this.usersRepository.ratingrareUpdate(user.userId);
+        }
+
+        const userJWT = jwt.sign({ userId: user.userId }, process.env.JWT_SECRET, {
+            expiresIn: "12h",
+        });
+
+        const refreshToken = jwt.sign({ userId: user.userId }, process.env.REFRESH_SECRET, { expiresIn: "7d" });
+        console.log(userJWT);
+        return { userJWT, refreshToken };
+    };
+ 
 
   adsignIn = async (adEmail) => {
     const aduser = await this.usersRepository.getAdByEmails(adEmail);
@@ -301,3 +310,4 @@ export class UsersService {
         return point;
     };
 }
+

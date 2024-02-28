@@ -22,11 +22,11 @@ export class OrdersController {
                 return res.status(403).json({ message: "주소 입력은 필수입니다." });
             }
 
-            const coupon = await this.couponsService.getCouponId(couponId);
-
             let order;
-            if (!coupon) return res.status(403).json({ message: "쿠폰을 확인해주세요." });
+
             if (couponId) {
+                const coupon = await this.couponsService.getCouponId(couponId);
+                if (!coupon) return res.status(403).json({ message: "쿠폰을 확인해주세요." });
                 if (coupon && coupon.discount === "percentage") {
                     order = await this.ordersService.percentagecreateOrder(
                         userId,
@@ -53,6 +53,7 @@ export class OrdersController {
             } else {
                 order = await this.ordersService.createOrder(userId, storeId, menuIds, orderStatus, eas, orderContent, orderAddress);
             }
+            console.log(order);
 
             return res.status(201).json({ message: "주문에 성공하였습니다", data: order });
         } catch (err) {

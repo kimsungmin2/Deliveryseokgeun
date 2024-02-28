@@ -8,8 +8,7 @@ export class UsersRepository {
 
         return user;
     };
-
-    getAdByEmails = async (adEmail) => {
+   getAdByEmails = async (adEmail) => {
         const adusers = await this.prisma.aduser.findFirst({ where: { adEmail } });
         
         return adusers;
@@ -128,19 +127,22 @@ export class UsersRepository {
     // 사장 회원가입
     adregistercreate = async (adEmail, adminName, aduserhashPassword, token) => {
         const aduser = await this.prisma.aduser.create({
-            data: { adEmail, adminName, adPassword: aduserhashPassword, adVerifiCationToken: token },
+               data: { adEmail, adminName, adPassword: aduserhashPassword, adVerifiCationToken: token },
         });
         return aduser;
     };
 
-    useraccess = async (userId) => {
-        await this.prisma.users.update({
-            where : { userId : +userId },
-            data : {
-                emailStatus : "completion"
-            }
-        })
-    }
+  useraccess = async (userId) => {
+        const update = await this.prisma.users.update({
+            where: {
+                userId: +userId,
+            },
+            data: {
+                emailStatus: "completion",
+            },
+        });
+        return update;
+    };
 
     aduseraccess = async (aduserId) => {
         await this.prisma.aduser.update({
@@ -151,3 +153,55 @@ export class UsersRepository {
         })
     }
 }
+ data: {
+                adEmail,
+                adminName,
+                adPassword: aduserhashPassword,
+                adVerifiCationToken: token,
+            },
+        });
+        return aduser;   };
+   aduseraccess = async (aduserId) => {
+        const update = await this.prisma.aduser.update({
+            where: {
+                aduserId: +aduserId,
+            },
+            data: {
+                adEmailStatus: "completion",
+            },
+        });
+        return update;
+    };
+    ratingrareUpdate = async (userId) => {
+        const update = await this.prisma.users.update({
+            where: {
+                userId: +userId,
+            },
+            data: {
+                rating: "rare",
+            },
+        });
+        return update;
+    };
+
+    ratingepicUpdate = async (userId) => {
+        const update = await this.prisma.users.update({
+            where: {
+                userId: +userId,
+            },
+            data: {
+                rating: "epic",
+            },
+        });
+        return update;
+    };
+
+}
+
+
+           
+ 
+  
+ 
+
+
