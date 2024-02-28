@@ -17,7 +17,12 @@ const ordersRepository = new OrdersRepository(prisma);
 const pointsRepository = new PointsRepository(prisma);
 
 const couponsRepository = new CouponsRepository(prisma);
-const usersService = new UsersService(usersRepository, pointsRepository, ordersRepository, couponsRepository);
+const usersService = new UsersService(
+  usersRepository,
+  pointsRepository,
+  ordersRepository,
+  couponsRepository
+);
 
 const pointsService = new PointsService(pointsRepository);
 const usersController = new UsersController(usersService, pointsService);
@@ -29,7 +34,8 @@ router.post("/userregistr", usersController.userregister);
 router.post("/adusers", usersController.adminregister);
 
 router.get("/point", authMiddleware, usersController.getUserPoint);
-router.patch("/users/:userId", authMiddleware, usersController.userEdit); //
+
+router.patch("/users/:userId", authMiddleware, usersController.userEdit);
 router.patch(
   "/adusers/:aduserId",
   adauthMiddleware,
