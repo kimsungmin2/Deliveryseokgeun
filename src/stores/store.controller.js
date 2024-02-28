@@ -20,7 +20,7 @@ export class StoresController {
         storeContent,
         storeCategory,
       } = req.body;
-      const { aduserId } = req.user;
+      const { aduserId } = req.aduser;
       if (!storeName) {
         return res.status(401).json({ message: "가게 이름을 입력하세요." });
       }
@@ -81,7 +81,7 @@ export class StoresController {
   updateStoreInfo = async (req, res, next) => {
     try {
       const { storeId } = req.params;
-      const { user } = req.user;
+      const { aduserId } = req.aduser;
       const {
         storeName,
         storeAddress,
@@ -116,7 +116,7 @@ export class StoresController {
 
       await this.storesService.updateStoreInfo(
         storeId,
-        user,
+        aduserId,
         storeName,
         storeAddress,
         storeContact,
@@ -142,8 +142,8 @@ export class StoresController {
   deleteStoreInfo = async (req, res, next) => {
     try {
       const { storeId } = req.params;
-      const hashedPassword = req.user.adPassword; // DB에서 가져온 해시된 비밀번호
-      const { aduserId } = req.user;
+      const hashedPassword = req.aduser.adPassword; // DB에서 가져온 해시된 비밀번호
+      const { aduserId } = req.aduser;
       const { password } = req.body;
       // if (!aduserId) {
       //   throw new UnauthorizedError("권한이 없습니다.");

@@ -155,7 +155,6 @@ export class UsersController {
   adminregister = async (req, res, next) => {
     try {
       const { adEmail, adminName, adPassword, adPasswordconfirm } = req.body;
-
       if (!adEmail) {
         return res
           .status(400)
@@ -171,13 +170,11 @@ export class UsersController {
           .status(400)
           .json({ message: "가입하실 비밀번호를 적지 않았습니다." });
       }
-
       if (!adPasswordconfirm) {
         return res
           .status(400)
           .json({ message: "비밀번호 확인란을 적지 않았습니다." });
       }
-
       if (
         !adEmail.includes("@naver.com") &&
         !adEmail.includes("@daum.net") &&
@@ -196,19 +193,16 @@ export class UsersController {
           .status(400)
           .json({ message: "이메일 조건이 맞지 않습니다." });
       }
-
       if (adPassword !== adPasswordconfirm) {
         return res
           .status(400)
           .json({ message: "가입하실 비밀번호가 비밀번호 확인란과 다릅니다" });
       }
-
-      const adusers = await this.usersService.adregister(
+      await this.usersService.adregister(
         adEmail,
         adminName,
         adPassword,
       );
-
       return res.status(201).json({ message: "어드민 회원가입 완료" });
     } catch (err) {
       next(err);
@@ -425,16 +419,13 @@ aduserdelete = async (req, res, next) => {
   aduseraceess = async (req, res, next) => {
     try {
       const { adEmail, adVerifiCationToken } = req.body;
-  const aduser = await this.usersService.getadUserEmail(adEmail);
-
+      const aduser = await this.usersService.getadUserEmail(adEmail);
       if (adVerifiCationToken !== aduser.adVerifiCationToken) {
         return res
           .status(401)
           .json({ message: "인증번호가 일치하지 않습니다." });
       }
-
       await this.usersService.aduseraccess(adEmail, adVerifiCationToken);
-
       return res.status(201).json({ message: "회원정보 상태 변경완료" });
     } catch (err) {
       next(err);

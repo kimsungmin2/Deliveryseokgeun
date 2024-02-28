@@ -153,7 +153,7 @@ export class StoresService {
   // 가게 정보 수정
   updateStoreInfo = async (
     storeId,
-    user,
+    aduserId,
     storeName,
     storeAddress,
     storeContact,
@@ -164,12 +164,12 @@ export class StoresService {
     if (!store) {
       throw new Error("존재하지 않는 가게 입니다.");
     }
-    if (store.userId !== user) {
+    if (store.aduserId !== aduserId) {
       throw new Error("본인 가게만 수정 가능합니다.");
     }
     await this.storesRepository.updateStoreInfo(
       storeId,
-      user,
+      aduserId,
       storeName,
       storeAddress,
       storeContact,
