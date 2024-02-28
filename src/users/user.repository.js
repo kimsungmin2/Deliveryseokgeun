@@ -5,30 +5,24 @@ export class UsersRepository {
   }
   getUserByEmail = async (email) => {
     const user = await this.prisma.users.findFirst({ where: { email } });
-
     return user;
   };
   getAdByEmails = async (adEmail) => {
     const adusers = await this.prisma.aduser.findFirst({ where: { adEmail } });
-
     return adusers;
   };
-
   userById = async (userId) => {
     const user = await this.prisma.users.findFirst({
       where: { userId: +userId },
     });
-
     return user;
   };
-
   aduserById = async (aduserId) => {
     const user = await this.prisma.aduser.findFirst({
       where: { aduserId: +aduserId },
     });
     return user;
   };
-
   getUserById = async (userId) => {
     const user = await this.prisma.users.findFirst({
       where: { userId: +userId },
@@ -44,7 +38,6 @@ export class UsersRepository {
     });
     return user;
   };
-
   getUsermany = async () => {
     const user = await this.prisma.users.findMany({
       select: {
@@ -59,7 +52,6 @@ export class UsersRepository {
     });
     return user;
   };
-
   getadUserById = async (aduserId) => {
     const aduser = await this.prisma.aduser.findFirst({
       where: { aduserId: +aduserId },
@@ -75,7 +67,6 @@ export class UsersRepository {
     });
     return aduser;
   };
-
   adgetUsermany = async () => {
     const aduser = await this.prisma.aduser.findMany({
       select: {
@@ -90,7 +81,6 @@ export class UsersRepository {
     });
     return aduser;
   };
-
   userEdit = async (userId, name) => {
     await this.prisma.users.update({
       where: { userId: +userId },
@@ -99,9 +89,7 @@ export class UsersRepository {
       },
     });
   };
-
   aduserEdit = async (aduserId, adminName) => {
-    console.log(adminName);
     await this.prisma.aduser.update({
       where: { aduserId: +aduserId },
       data: {
@@ -109,21 +97,18 @@ export class UsersRepository {
       },
     });
   };
-
   userdelete = async (userId) => {
     await this.prisma.users.delete({
       where: { userId: +userId },
     });
   };
-
   aduserdelete = async (aduserId) => {
     await this.prisma.aduser.delete({
       where: { aduserId: +aduserId },
     });
   };
-
   // 유저 회원가입
-  registercreate = async (email, name, hashedPassword, token) => {
+  registercreate = async (email, name, hashedPassword, token, rating) => {
     const user = await this.prisma.users.create({
       data: {
         email,
@@ -143,12 +128,10 @@ export class UsersRepository {
         adminName,
         adPassword: aduserhashPassword,
         adVerifiCationToken: token,
-        rating: "basic",
       },
     });
     return aduser;
   };
-
   useraccess = async (userId) => {
     const update = await this.prisma.users.update({
       where: {
@@ -160,20 +143,15 @@ export class UsersRepository {
     });
     return update;
   };
-
   aduseraccess = async (aduserId) => {
-    await this.prisma.aduser.update({
+    const update = await this.prisma.aduser.update({
       where: { aduserId: +aduserId },
       data: {
-        adEmail,
-        adminName,
-        adPassword: aduserhashPassword,
-        adVerifiCationToken: token,
+        adEmailStatus: "completion",
       },
     });
-    return aduser;
+    return update;
   };
-
   ratingrareUpdate = async (userId) => {
     const update = await this.prisma.users.update({
       where: {
@@ -185,7 +163,6 @@ export class UsersRepository {
     });
     return update;
   };
-
   ratingepicUpdate = async (userId) => {
     const update = await this.prisma.users.update({
       where: {

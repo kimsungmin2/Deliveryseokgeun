@@ -97,7 +97,7 @@ export class StoresRepository {
   // 가게 정보 수정
   updateStoreInfo = async (
     storeId,
-    userId,
+    aduserId,
     storeName,
     storeAddress,
     storeContact,
@@ -109,7 +109,7 @@ export class StoresRepository {
         storeId: +storeId,
       },
       data: {
-        userId,
+        aduserId,
         storeName,
         storeAddress,
         storeContact,
