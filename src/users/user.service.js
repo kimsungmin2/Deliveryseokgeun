@@ -7,15 +7,22 @@ import { UnauthorizedError } from "../common.error.js";
 import { NotFoundError } from "../common.error.js";
 import { ConflictError } from "../common.error.js";
 import { ForbiddenError } from "../common.error.js";
+import { tokenKey } from "../redis/key.js";
 
 dotenv.config();
 export class UsersService {
-    constructor(usersRepository, pointsRepository, ordersRepository, couponsRepository) {
+    constructor(usersRepository, pointsRepository, ordersRepository, couponsRepository, redisClient) {
         this.usersRepository = usersRepository;
         this.pointsRepository = pointsRepository;
         this.ordersRepository = ordersRepository;
         this.couponsRepository = couponsRepository;
+        this.redisClient = redisClient;
     }
+    saveToken = async (userId, refreshToken) => {
+        const tokens = await this.redisClient.hSet(tokenKey(userId), "token", refreshToken);
+        console.log(tokens);
+        return tokens;
+    };
     aduseraceess = async (adEmail, adVerifiCationToken) => {
         const aduser = await this.usersRepository.getAdByEmails(adEmail);
         console.log(aduser.aduserId);
@@ -54,7 +61,7 @@ export class UsersService {
         });
 
         const refreshToken = jwt.sign({ userId: user.userId }, process.env.REFRESH_SECRET, { expiresIn: "7d" });
-
+        await this.saveToken(user.userId, refreshToken);
         return { userJWT, refreshToken };
     };
 

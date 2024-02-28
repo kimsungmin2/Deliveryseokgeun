@@ -12,12 +12,12 @@ import { OrdersRepository } from "../orders/order.repository.js";
 import { CouponsRepository } from "../coupons/coupon.repository.js";
 
 const router = express.Router();
-const usersRepository = new UsersRepository(prisma, redisClient);
+const usersRepository = new UsersRepository(prisma);
 const ordersRepository = new OrdersRepository(prisma);
 const pointsRepository = new PointsRepository(prisma);
 
 const couponsRepository = new CouponsRepository(prisma);
-const usersService = new UsersService(usersRepository, pointsRepository, ordersRepository, couponsRepository);
+const usersService = new UsersService(usersRepository, pointsRepository, ordersRepository, couponsRepository, redisClient);
 
 const pointsService = new PointsService(pointsRepository);
 const usersController = new UsersController(usersService, pointsService);
