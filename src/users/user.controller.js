@@ -354,7 +354,7 @@ export class UsersController {
     } catch (err) {
       next(err);
     }
-
+  };
   aduserdelete = async (req, res, next) => {
     try {
       const aduserId = req.params.aduserId;
@@ -422,5 +422,4 @@ export class UsersController {
       next(err);
     }
   };
-}
 }

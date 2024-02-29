@@ -23,9 +23,9 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">61.9% </span>
+                <span class="strong">90.47% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>13/21</span>
+                <span class='fraction'>19/21</span>
             </div>
         
             
@@ -37,16 +37,16 @@
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">50% </span>
+                <span class="strong">83.33% </span>
                 <span class="quiet">Functions</span>
-                <span class='fraction'>3/6</span>
+                <span class='fraction'>5/6</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">61.9% </span>
+                <span class="strong">90.47% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>13/21</span>
+                <span class='fraction'>19/21</span>
             </div>
         
             
@@ -61,7 +61,7 @@
             </div>
         </template>
     </div>
-    <div class='status-line medium'></div>
+    <div class='status-line high'></div>
     <pre><table class="coverage">
 <tr><td class="line-count quiet"><a name='L1'></a><a href='#L1'>1</a>
 <a name='L2'></a><a href='#L2'>2</a>
@@ -188,16 +188,8 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -205,9 +197,17 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -217,7 +217,7 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
@@ -263,20 +263,20 @@
         userId: +userId,
         storeId: +storeId,
         menuId: +menuId,
-        orderId: 11,
+        orderId: +orderId,
       },
     });
     console.log("리뷰만들기 콘솔테스트", makeReview);
     return makeReview;
   };
 &nbsp;
-  findReview = <span class="fstat-no" title="function not covered" >as</span>ync (reviewId) =&gt; {
-    const findReivew = <span class="cstat-no" title="statement not covered" >await this.prisma.reviews.findFirst({</span>
+  findReview = async (reviewId) =&gt; {
+    const findReivew = await this.prisma.reviews.findFirst({
       where: {
         reviewId: +reviewId,
       },
     });
-<span class="cstat-no" title="statement not covered" >    return findReivew;</span>
+    return findReivew;
   };
 &nbsp;
   GetReviews = async (menuId) =&gt; {
@@ -287,20 +287,20 @@
     return Reviews;
   };
 &nbsp;
-  updateReview = <span class="fstat-no" title="function not covered" >as</span>ync (userId, reviewId, review, reviewRate) =&gt; {
-<span class="cstat-no" title="statement not covered" >    console.log("유저아이디", userId);</span>
-<span class="cstat-no" title="statement not covered" >    console.log("리뷰", review);</span>
-    const updateReview = <span class="cstat-no" title="statement not covered" >await this.prisma.reviews.update({</span>
+  updateReview = async (userId, reviewId, review, reviewRate) =&gt; {
+    console.log("유저아이디", userId);
+    console.log("리뷰", review);
+    const updateReview = await this.prisma.reviews.update({
       where: {
         userId: +userId.userId,
         reviewId: +userId.reviewId,
       },
       data: {
         review: userId.review,
-        reviewRate: userId.reviewRate,
+        reviewRate: +userId.reviewRate,
       },
     });
-<span class="cstat-no" title="statement not covered" >    return updateReview;</span>
+    return updateReview;
   };
 &nbsp;
   deleteReview = <span class="fstat-no" title="function not covered" >as</span>ync (reviewId) =&gt; {
@@ -319,7 +319,7 @@
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2024-02-28T18:31:47.824Z
+                at 2024-02-29T02:01:41.934Z
             </div>
         <script src="prettify.js"></script>
         <script>
