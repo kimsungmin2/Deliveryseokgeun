@@ -3,6 +3,7 @@ import { UnauthorizedError } from "../common.error.js";
 import { NotFoundError } from "../common.error.js";
 import { ConflictError } from "../common.error.js";
 import { ForbiddenError } from "../common.error.js";
+import { WebClient } from "@slack/web-api";
 
 export class OrdersService {
     constructor(ordersRepository, usersRepository, menusRepository, storesRepository, orderlistRepository, pointsRepository, couponsRepository) {
@@ -14,6 +15,20 @@ export class OrdersService {
         this.pointsRepository = pointsRepository;
         this.couponsRepository = couponsRepository;
     }
+    sendTodayData = async () => {
+        try {
+            const token = process.env.SLACK_TOKEN;
+            const channel = process.env.SLACK_CHANNEL;
+            const slackBot = new WebClient(token);
+            const message = "주문이 들어왔습니다. 확인해주세요.";
+            await slackBot.chat.postMessage({
+                channel: channel,
+                text: message,
+            });
+        } catch (err) {
+            console.log(err.message);
+        }
+    };
     createOrder = async (userId, storeId, menuIds, orderStatus = "cooking", eas, orderContent, orderAddress) => {
         const store = await this.storesRepository.getStoreById(storeId);
         const user = await this.pointsRepository.getUserPoint(userId);
@@ -57,6 +72,7 @@ export class OrdersService {
         });
 
         const tsorder = await this.ordersRepository.transaction([...orderlists, decrementdPoint]);
+        await this.sendTodayData();
         return tsorder;
     };
 
@@ -83,15 +99,16 @@ export class OrdersService {
                 throw new ForbiddenError("가능한 음식 갯수를 초과하였습니다.");
             }
         }
+        console.log(totalPrice);
+        if (totalPrice < coupon.certainamount) {
+            throw new ForbiddenError("주문 금액이 부족합니다.");
+        }
         totalPrice -= totalPrice * (coupon.amount / 100);
 
         const user = await this.pointsRepository.getUserPoint(userId);
         const userpoint = user[0]._sum.possession;
         if (userpoint < totalPrice) {
             throw new ForbiddenError("포인트가 부족합니다.");
-        }
-        if (totalPrice < coupon.certainamount) {
-            throw new ForbiddenError("주문 금액이 부족합니다.");
         }
 
         const order = await this.ordersRepository.createOrder(userId, storeId, orderStatus, orderContent, orderAddress, totalPrice);
@@ -109,6 +126,7 @@ export class OrdersService {
         });
 
         const tsorder = await this.ordersRepository.transaction([...orderlists, decrementdPoint]);
+        await this.sendTodayData();
         return tsorder;
     };
     discountcreateOrder = async (userId, storeId, menuIds, orderStatus = "cooking", eas, orderContent, orderAddress, couponId) => {
@@ -140,7 +158,6 @@ export class OrdersService {
         }
         totalPrice -= coupon.amount;
 
-
         const user = await this.pointsRepository.getUserPoint(userId);
         const userpoint = user[0]._sum.possession;
         if (userpoint <= totalPrice) {
@@ -163,6 +180,7 @@ export class OrdersService {
         });
 
         const tsorder = await this.ordersRepository.transaction([...orderlists, decrementdPoint]);
+        await this.sendTodayData();
         return tsorder;
     };
 
@@ -223,6 +241,5 @@ export class OrdersService {
         const deletedResume = await this.ordersRepository.deleteOrder(orderId, userId);
         const tsorder = await this.ordersRepository.transaction([incrementdPoint]);
         return { message: "주문하신 점포의 주문이 취소되었습니다." };
-
     };
 }

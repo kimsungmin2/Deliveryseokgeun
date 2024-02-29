@@ -16,28 +16,21 @@ export class ReviewsRepository {
   //     return orderId;
   //   };
 
-  createReview = async (
-    review,
-    reviewRate,
-    userId,
-    storeId,
-    menuId,
-    orderId
-  ) => {
-    console.log("리뷰만들기 콘솔테스트", orderId);
-    const makeReview = await this.prisma.reviews.create({
-      data: {
-        review: review,
-        reviewRate: reviewRate,
-        userId: +userId,
-        storeId: +storeId,
-        menuId: +menuId,
-        orderId: +orderId,
-      },
-    });
-    console.log("리뷰만들기 콘솔테스트", makeReview);
-    return makeReview;
-  };
+    createReview = async (review, reviewRate, userId, storeId, menuId, orderId) => {
+        console.log("리뷰만들기 콘솔테스트", review);
+        const makeReview = await this.prisma.reviews.create({
+            data: {
+                review: review,
+                reviewRate: reviewRate,
+                userId: +userId,
+                storeId: +storeId,
+                menuId: +menuId,
+                orderId: +orderId,
+            },
+        });
+        console.log("리뷰만들기 콘솔테스트", makeReview);
+        return makeReview;
+    };
 
   findReview = async (reviewId) => {
     const findReivew = await this.prisma.reviews.findFirst({

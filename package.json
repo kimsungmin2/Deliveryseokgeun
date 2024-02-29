@@ -18,6 +18,7 @@
         "@aws-sdk/client-s3": "^3.509.0",
         "@aws-sdk/lib-storage": "^3.509.0",
         "@prisma/client": "^5.8.1",
+        "@slack/web-api": "^7.0.2",
         "aws-sdk": "^2.1565.0",
         "axios": "^1.6.7",
         "bcrypt": "^5.1.1",

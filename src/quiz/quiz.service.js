@@ -32,4 +32,8 @@ export class QuizsService {
         const quiz = await this.quizsRepository.quizCreate(userId, title, content, quizanswer);
         return quiz;
     };
+    quiztoday = async (quizId) => {
+        const quiz = await this.quizsRepository.quizById(quizId);
+        return quiz;
+    };
 }

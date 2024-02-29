@@ -8,7 +8,7 @@ export class MenusController {
     createMenu = async (req, res, next) => {
         try {
             const { storeId } = req.params;
-            const { aduserId } = req.user;
+            const { aduserId } = req.aduser;
             const { menuName, menuPrice, menuContent, quantity } = req.body;
             const imageUrl = req.file.Location;
             const store = await this.storesService.getStoreById(storeId);

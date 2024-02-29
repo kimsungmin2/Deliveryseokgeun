@@ -27,4 +27,13 @@ export class QuizsController {
         await this.quizsService.quizCreate(userId, title, content, quizanswer);
         return res.status(201).json({ message: "문제가 생성되었습니다." });
     };
+    quiztoday = async (req, res, next) => {
+        const { quizId } = req.params;
+
+        const quiz = await this.quizsService.quiztoday(quizId);
+        const title = quiz.title;
+        const content = quiz.content;
+        console.log(quiz);
+        return res.status(200).json({ title, content });
+    };
 }
