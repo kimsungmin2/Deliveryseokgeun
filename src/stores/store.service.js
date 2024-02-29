@@ -165,4 +165,5 @@ export class StoresService {
         }
         return searchData;
     };
+
 }
