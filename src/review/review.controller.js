@@ -5,7 +5,6 @@ import { ConflictError } from "../common.error.js";
 import { ForbiddenError } from "../common.error.js";
 
 export class ReviewsController {
-
   constructor(reviewsService, ordersService, menusService) {
     this.reviewsService = reviewsService;
     this.ordersService = ordersService;
@@ -65,12 +64,12 @@ export class ReviewsController {
         .json({ message: "리뷰가 성공적으로 작성되었습니다." });
     } catch (err) {
       next(err);
-
     }
   };
 
-  getReviews = async (menuId) => {
+  getReviews = async (req, res, next) => {
     try {
+      const { menuId } = req.params;
       const reviews = await this.reviewsService.findReviews(menuId);
 
       return res.status(200).json({ data: reviews });

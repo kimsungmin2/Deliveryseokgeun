@@ -61,12 +61,12 @@ export class ReviewsRepository {
     console.log("리뷰", review);
     const updateReview = await this.prisma.reviews.update({
       where: {
-        userId: +userId.userId,
-        reviewId: +userId.reviewId,
+        userId: +userId,
+        reviewId: +reviewId,
       },
       data: {
-        review: userId.review,
-        reviewRate: +userId.reviewRate,
+        review: review,
+        reviewRate: +reviewRate,
       },
     });
     return updateReview;

@@ -97,20 +97,18 @@ describe("Review Repository Unit Test", () => {
 
     // 가상으로 줄 값들
     const updateReviewParams = {
-      userId: {
-        userId: 4,
-        reviewId: 4,
-        review: "Updated Review Content",
-        reviewRate: 4,
-      },
+      userId: 4,
+      reviewId: 4,
+      review: "Updated Review Content",
+      reviewRate: 4,
     };
-    console.log(updateReviewParams);
+
     // postsRepository의 createPost Method를 실행합니다.
     const createReivewData = await reviewsRepository.updateReview(
-      updateReviewParams.userId.userId,
-      updateReviewParams.userId.reviewId,
-      updateReviewParams.userId.review,
-      updateReviewParams.userId.reviewRate
+      updateReviewParams.userId,
+      updateReviewParams.reviewId,
+      updateReviewParams.review,
+      updateReviewParams.reviewRate
     );
 
     // createPostData는 prisma.posts의 create를 실행한 결과값을 바로 반환한 값인지 테스트합니다.
@@ -122,12 +120,37 @@ describe("Review Repository Unit Test", () => {
     // postsRepository의 createPost Method를 실행했을 때, prisma.posts의 create를 아래와 같은 값으로 호출합니다.
     expect(mockPrisma.reviews.update).toHaveBeenCalledWith({
       where: {
-        userId: +updateReviewParams.userId.userId,
-        reviewId: +updateReviewParams.userId.reviewId,
+        userId: +updateReviewParams.userId,
+        reviewId: +updateReviewParams.reviewId,
       },
       data: {
-        review: updateReviewParams.userId.review,
-        reviewRate: +updateReviewParams.userId.reviewRate,
+        review: updateReviewParams.review,
+        reviewRate: +updateReviewParams.reviewRate,
+      },
+    });
+  });
+
+  test("deleteReviews Method", async () => {
+    // create Mock의 Return 값을 "create Return String"으로 설정합니다.
+    const mockReturn = "delete Return String";
+    mockPrisma.reviews.delete.mockReturnValue(mockReturn);
+
+    // 가상으로 줄 값들
+    const deleteReviewParams = "reviewId";
+
+    // postsRepository의 createPost Method를 실행합니다.
+    const createReivewData = await reviewsRepository.deleteReview();
+
+    // createPostData는 prisma.posts의 create를 실행한 결과값을 바로 반환한 값인지 테스트합니다.
+    expect(createReivewData).toBe(mockReturn);
+
+    // postsRepository의 createPost Method를 실행했을 때, prisma.posts의 create를 1번 실행합니다.
+    expect(mockPrisma.reviews.delete).toHaveBeenCalledTimes(1);
+
+    // postsRepository의 createPost Method를 실행했을 때, prisma.posts의 create를 아래와 같은 값으로 호출합니다.
+    expect(mockPrisma.reviews.delete).toHaveBeenCalledWith({
+      where: {
+        reviewId: +deleteReviewParams,
       },
     });
   });
