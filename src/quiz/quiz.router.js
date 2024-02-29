@@ -15,7 +15,7 @@ const quizsService = new QuizsService(quizsRepository, pointsRepository);
 const quizsController = new QuizsController(quizsService);
 
 router.post("/", authMiddleware, quizsController.quizCreate);
-
+router.get("/:quizId", authMiddleware, quizsController.quiztoday);
 router.post("/:quizId", authMiddleware, quizsController.quizanswer);
 
 export default router;

@@ -55,7 +55,6 @@ export class OrdersController {
             }
             console.log(order);
 
-
             return res.status(201).json({ message: "주문에 성공하였습니다", data: order });
         } catch (err) {
             if (err.message === "포인트가 부족합니다.") {

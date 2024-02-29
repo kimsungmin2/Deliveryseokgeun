@@ -49,14 +49,7 @@ export class ReviewsController {
             const orderId = findOrderIdbyUserId.orderId;
 
             //바디에서 받은 부분 리뷰테이블에 새로 생성
-            const createReview = await this.reviewsService.createReview(
-                review,
-                reviewRate,
-                userId,
-                storeId,
-                menuId
-                // orderId
-            );
+            const createReview = await this.reviewsService.createReview(review, reviewRate, userId, storeId, menuId, orderId);
 
             return res.status(201).json({ message: "리뷰가 성공적으로 작성되었습니다." });
         } catch (err) {

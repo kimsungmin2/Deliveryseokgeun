@@ -43,13 +43,13 @@ export class UsersController {
 
     aduseraceess = async (req, res, next) => {
         try {
-            const { adEmail, adVerifiCationToken } = req.body;
+            const { adEmail, adVerifiCationToken, adEmailStatus = "completion" } = req.body;
             const aduser = await this.usersService.getadUserEmail(adEmail);
             console.log(aduser);
             if (adVerifiCationToken !== aduser.adVerifiCationToken) {
                 return res.status(401).json({ message: "인증번호가 일치하지 않습니다." });
             }
-            const user = await this.usersService.aduseraceess(adEmail, adVerifiCationToken);
+            const user = await this.usersService.aduseraceess(adEmail, adEmailStatus, adVerifiCationToken);
             return res.status(201).json({ message: "회원정보 상태 변경완료" });
         } catch (err) {
             next(err);

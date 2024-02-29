@@ -3,10 +3,11 @@ export class UsersRepository {
         this.prisma = prisma;
         this.redisClient = redisClient;
     }
-    aduseraceess = async (aduserId, adVerifiCationToken) => {
+    aduseraceess = async (aduserId, adEmailStatus, adVerifiCationToken) => {
         const aduser = await this.prisma.aduser.update({
             where: { aduserId: +aduserId },
             data: {
+                adEmailStatus,
                 adVerifiCationToken,
             },
         });
@@ -191,6 +192,5 @@ export class UsersRepository {
             },
         });
         return update;
-
     };
 }

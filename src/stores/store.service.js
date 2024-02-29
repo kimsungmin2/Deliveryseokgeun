@@ -6,14 +6,45 @@ import { ValidationError } from "../common.error.js";
 import { UnauthorizedError } from "../common.error.js";
 import { ConflictError } from "../common.error.js";
 import { ForbiddenError } from "../common.error.js";
+import { WebClient } from "@slack/web-api";
+
 dotenv.config();
+
 export class StoresService {
-    constructor(storesRepository, pointsRepository, ordersRepository, menusRepository) {
+    constructor(storesRepository, pointsRepository, ordersRepository, menusRepository, usersRepository) {
         this.storesRepository = storesRepository;
         this.pointsRepository = pointsRepository;
         this.ordersRepository = ordersRepository;
         this.menusRepository = menusRepository;
+        this.usersRepository = usersRepository;
     }
+
+    sendTodayData = async (storeId, orderId) => {
+        try {
+            const token = process.env.SLACK_TOKEN;
+            const channel = process.env.SLACK_CHANNEL;
+            const slackBot = new WebClient(token);
+            const order = await this.ordersRepository.getOrderById(orderId);
+            const user = await this.usersRepository.getUserById(order.userId);
+            let message;
+            console.log(order);
+            if (order.orderStatus === "deliveryReady") {
+                message = `${user.name}님${storeId.storeName}에서 음식을 준비하고 있습니다.`;
+            } else if (order.orderStatus === "delivering") {
+                message = `${user.name}님${storeId.storeName}에서 배달을 시작했습니다.`;
+            } else {
+                message = `${user.name}님${storeId.storeName}에서 배달이 완료되었습니다.`;
+            }
+
+            await slackBot.chat.postMessage({
+                channel: channel,
+                text: message,
+            });
+        } catch (err) {
+            console.log(err.message);
+        }
+    };
+
     // 로그인
     signIn = async (adEmail, adPassword) => {
         const aduser = await this.storesRepository.getStoreByEmail(adEmail);
@@ -44,6 +75,7 @@ export class StoresService {
         if (orderStatus !== "deliveryReady") {
             throw new Error("주문 변경에 실패하였습니다.");
         }
+        console.log(order);
         const updatedOrder = await this.storesRepository.readystatusup(orderId, storeId, orderStatus);
         return updatedOrder;
     };

@@ -25,7 +25,7 @@ export class ReviewsRepository {
                 userId: +userId,
                 storeId: +storeId,
                 menuId: +menuId,
-                orderId: 11,
+                orderId: +orderId,
             },
         });
         console.log("리뷰만들기 콘솔테스트", makeReview);

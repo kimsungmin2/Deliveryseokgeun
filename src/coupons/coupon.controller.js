@@ -51,8 +51,7 @@ export class CouponsController {
         const { userId } = req.user;
         const randomNumber = Math.random();
         let random;
-        if (randomNumber < 0.03) {
-            sd;
+        if (randomNumber < 0.1) {
             random = await this.couponsService.randomCoupon(userId);
         } else {
             random = "꽝";

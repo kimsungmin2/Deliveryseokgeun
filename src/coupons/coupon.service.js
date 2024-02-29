@@ -27,7 +27,7 @@ export class CouponsService {
         const discount = "percentage";
         const couponhistory = "이벤트 쿠폰";
         const amount = 70;
-        const certainamount = 25000;
+        const certainamount = 50000;
         const random = await this.couponsRepository.percentageCoupon(userId, couponname, couponuse, discount, couponhistory, amount, certainamount);
         return random;
     };

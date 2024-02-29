@@ -23,7 +23,7 @@ export class UsersService {
         console.log(tokens);
         return tokens;
     };
-    aduseraceess = async (adEmail, adVerifiCationToken) => {
+    aduseraceess = async (adEmail, adEmailStatus, adVerifiCationToken) => {
         const aduser = await this.usersRepository.getAdByEmails(adEmail);
         console.log(aduser.aduserId);
         // if (!aduser) {
@@ -34,7 +34,7 @@ export class UsersService {
         //     throw new NotFoundError("이미 인증된 메일입니다.");
         // }
 
-        const update = await this.usersRepository.aduseraceess(aduser.aduserId, adVerifiCationToken);
+        const update = await this.usersRepository.aduseraceess(aduser.aduserId, adEmailStatus, adVerifiCationToken);
 
         return update;
     };
@@ -78,6 +78,7 @@ export class UsersService {
 
         const userJWT = jwt.sign({ aduserId: aduser.aduserId }, process.env.JWT_SECRET, { expiresIn: "12h" });
         const refreshToken = jwt.sign({ aduserId: aduser.aduserId }, process.env.REFRESH_SECRET, { expiresIn: "7d" });
+
         return { userJWT, refreshToken };
     };
 
