@@ -1,5 +1,5 @@
 import { jest } from "@jest/globals";
-import { ReviewRepository } from "./review.repository.js";
+import { ReviewsRepository } from "./review.repository.js";
 
 // Prisma 클라이언트에서는 아래 5개의 메서드만 사용합니다.
 let mockPrisma = {
@@ -12,59 +12,65 @@ let mockPrisma = {
   },
 };
 
-let reviewsRepository = new ReviewRepository(mockPrisma);
+let reviewsRepository = new ReviewsRepository(mockPrisma);
 
-describe("Posts Repository Unit Test", () => {
+describe("Review Repository Unit Test", () => {
   // 각 test가 실행되기 전에 실행됩니다.
   beforeEach(() => {
     jest.resetAllMocks(); // 모든 Mock을 초기화합니다.
   });
 
-  test("findAllPosts Method", async () => {
+  test("findManyReview Method", async () => {
     // findMany Mock의 Return 값을 "findMany String"으로 설정합니다.
     const mockReturn = "findMany String";
-    mockPrisma.posts.findMany.mockReturnValue(mockReturn);
+    mockPrisma.reviews.findMany.mockReturnValue(mockReturn);
 
     // postsRepository의 findAllPosts Method를 호출합니다.
-    const posts = await postsRepository.findAllPosts();
+    const reviews = await reviewsRepository.GetReviews();
 
     // prisma.posts의 findMany은 1번만 호출 되었습니다.
-    expect(postsRepository.prisma.posts.findMany).toHaveBeenCalledTimes(1);
+    expect(mockPrisma.reviews.findMany).toHaveBeenCalledTimes(1);
+    //findMany가 여러개 있으면 안되나여
+    //expect 안의 findMany가 repository의 findMany가 맞는지???★★★★
 
-    // mockPrisma의 Return과 출력된 findMany Method의 값이 일치하는지 비교합니다.
-    expect(posts).toBe(mockReturn);
+    // mockPrisma의 Return과 출력된 findMany Method의 값이 일치하는지 비교합니다.★★★★
+    expect(reviews).toBe(mockReturn);
   });
 
-  test("createPost Method", async () => {
+  test("createReviews Method", async () => {
     // create Mock의 Return 값을 "create Return String"으로 설정합니다.
     const mockReturn = "create Return String";
-    mockPrisma.posts.create.mockReturnValue(mockReturn);
+    mockPrisma.reviews.create.mockReturnValue(mockReturn);
 
     // createPost Method를 실행하기 위해 필요한 Params 입니다.
-    const createPostParams = {
-      nickname: "createPostNickname",
-      password: "createPostPassword",
-      title: "createPostTitle",
-      content: "createPostContent",
+    const createReviewParams = {
+      review: "createPostNickname",
+      reviewRate: "createPostPassword",
+      userId: "createPostTitle",
+      storeId: "createPostContent",
+      menuId: "sadas",
+      orderId: 11,
     };
 
     // postsRepository의 createPost Method를 실행합니다.
-    const createPostData = await postsRepository.createPost(
-      createPostParams.nickname,
-      createPostParams.password,
-      createPostParams.title,
-      createPostParams.content
+    const createReivewData = await reviewsRepository.createReview(
+      createReviewParams.review,
+      createReviewParams.reviewRate,
+      createReviewParams.userId,
+      createReviewParams.storeId,
+      createReviewParams.menuId,
+      createReviewParams.orderId
     );
 
     // createPostData는 prisma.posts의 create를 실행한 결과값을 바로 반환한 값인지 테스트합니다.
-    expect(createPostData).toBe(mockReturn);
+    expect(createReivewData).toBe(mockReturn);
 
     // postsRepository의 createPost Method를 실행했을 때, prisma.posts의 create를 1번 실행합니다.
-    expect(mockPrisma.posts.create).toHaveBeenCalledTimes(1);
+    expect(mockPrisma.reviews.create).toHaveBeenCalledTimes(1);
 
     // postsRepository의 createPost Method를 실행했을 때, prisma.posts의 create를 아래와 같은 값으로 호출합니다.
-    expect(mockPrisma.posts.create).toHaveBeenCalledWith({
-      data: createPostParams,
+    expect(mockPrisma.reviews.create).toHaveBeenCalledWith({
+      data: createReviewParams,
     });
   });
 });

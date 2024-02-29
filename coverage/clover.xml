@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<coverage generated="1709145107852" clover="3.2.0">
+  <project timestamp="1709145107852" name="All files">
+    <metrics statements="21" coveredstatements="13" conditionals="0" coveredconditionals="0" methods="6" coveredmethods="3" elements="27" coveredelements="16" complexity="0" loc="21" ncloc="21" packages="1" files="1" classes="1"/>
+    <file name="review.repository.js" path="C:\Users\dorut\Desktop\스파르타\백오피스2\Deliveryseokgeun\src\review\review.repository.js">
+      <metrics statements="21" coveredstatements="13" conditionals="0" coveredconditionals="0" methods="6" coveredmethods="3"/>
+      <line num="3" count="1" type="stmt"/>
+      <line num="4" count="1" type="stmt"/>
+      <line num="19" count="1" type="stmt"/>
+      <line num="27" count="1" type="stmt"/>
+      <line num="28" count="1" type="stmt"/>
+      <line num="38" count="1" type="stmt"/>
+      <line num="39" count="1" type="stmt"/>
+      <line num="42" count="1" type="stmt"/>
+      <line num="43" count="0" type="stmt"/>
+      <line num="48" count="0" type="stmt"/>
+      <line num="51" count="1" type="stmt"/>
+      <line num="52" count="1" type="stmt"/>
+      <line num="56" count="1" type="stmt"/>
+      <line num="59" count="1" type="stmt"/>
+      <line num="60" count="0" type="stmt"/>
+      <line num="61" count="0" type="stmt"/>
+      <line num="62" count="0" type="stmt"/>
+      <line num="72" count="0" type="stmt"/>
+      <line num="75" count="1" type="stmt"/>
+      <line num="76" count="0" type="stmt"/>
+      <line num="81" count="0" type="stmt"/>
+    </file>
+  </project>
+</coverage>
