@@ -6,7 +6,7 @@ const slackBot = new WebClient(token);
 
 export const sendTodayData = async () => {
     try {
-        const message = "요청이 처리되었습니다.";
+        const message = "주문이 들어왔습니다. 확인해주세요.";
         await slackBot.chat.postMessage({
             channel: channel,
             text: message,

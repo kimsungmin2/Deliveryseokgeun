@@ -3,28 +3,26 @@ export class CouponsRepository {
         this.prisma = prisma;
         this.redisClient = redisClient;
     }
-    discountCoupon = async (userId, couponname, couponuse, discount, couponhistory, amount, certainamount) => {
+    discountCoupon = async (userId, couponname, couponuse, discount, amount, certainamount) => {
         const coupon = await this.prisma.coupons.create({
             data: {
                 userId: +userId,
                 couponname,
                 couponuse,
                 discount,
-                couponhistory,
                 amount,
                 certainamount,
             },
         });
         return coupon;
     };
-    percentageCoupon = async (userId, couponname, couponuse, discount, couponhistory, amount, certainamount) => {
+    percentageCoupon = async (userId, couponname, couponuse, discount, amount, certainamount) => {
         const coupon = await this.prisma.coupons.create({
             data: {
                 userId: +userId,
                 couponname,
                 couponuse,
                 discount,
-                couponhistory,
                 amount,
                 certainamount,
             },

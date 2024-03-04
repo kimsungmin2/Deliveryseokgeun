@@ -185,7 +185,6 @@ model Coupons {
   amount        Int      @map("amount")
   certainamount Int      @map("certainamount")
   couponuse     String   @map("couponuse")
-  couponhistory String   @map("couponhistory")
   createdAt     DateTime @default(now()) @map("createdAt")
   updatedAt     DateTime @updatedAt @map("updatedAt")
   user          Users    @relation(fields: [userId], references: [userId], onDelete: Cascade)
