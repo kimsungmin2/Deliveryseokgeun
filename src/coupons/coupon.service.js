@@ -25,10 +25,9 @@ export class CouponsService {
         const couponname = "3%랜덤 쿠폰";
         const couponuse = "notuse";
         const discount = "percentage";
-        const couponhistory = "이벤트 쿠폰";
         const amount = 70;
         const certainamount = 50000;
-        const random = await this.couponsRepository.percentageCoupon(userId, couponname, couponuse, discount, couponhistory, amount, certainamount);
+        const random = await this.couponsRepository.percentageCoupon(userId, couponname, couponuse, discount, amount, certainamount);
         return random;
     };
     blackCoupon = async (userId) => {

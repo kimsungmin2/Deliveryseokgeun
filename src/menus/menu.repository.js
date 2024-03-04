@@ -79,18 +79,18 @@ export class MenusRepository {
 
         return getstore;
     };
-    decrementquantity = async (menuId, quantity) => {
-        const user = await this.prisma.menus.update({
-            where: { menuId: +menuId },
-            data: {
-                quantity: {
-                    decrement: +quantity,
-                },
-            },
-        });
+    // decrementquantity = async (menuId, quantity) => {
+    //     const user = await this.prisma.menus.update({
+    //         where: { menuId: +menuId },
+    //         data: {
+    //             quantity: {
+    //                 decrement: +quantity,
+    //             },
+    //         },
+    //     });
 
-        return user;
-    };
+    //     return user;
+    // };
     incrementquantity = async (menuId, quantity) => {
         const user = await this.prisma.menus.update({
             where: { menuId: +menuId },
