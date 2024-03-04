@@ -11,6 +11,7 @@ import { PointsRepository } from "../points/point.repository.js";
 import { StoresService } from "../stores/store.service.js";
 import { CouponsRepository } from "../coupons/coupon.repository.js";
 import { CouponsService } from "../coupons/coupon.service.js";
+import { adauthMiddleware } from "../middlewares/adauth.middlewares.js";
 
 const router = express.Router();
 
